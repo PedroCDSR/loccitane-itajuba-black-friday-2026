@@ -12,3 +12,7 @@
 | Seis fotos do showroom | Enviadas pelo Pedro na conversa; cópias originais em references/showroom (referência, não entram no build). Três são capturas com atribuição Google Street View, preservada no arquivo. Uso comercial depende da autorização da marca. |
 
 Não há assets do pacote 14collective, personagens Disney, músicas, fotos de pessoas ou logos G9 neste repositório. O histórico Git do outro projeto não foi copiado. Nenhuma licença global de código aberto foi atribuída ao conjunto de marca/arte/código por conta própria.
+
+## Novas artes de produtos
+
+`public/assets/produtos/caju-sabonete-pixel-art.png` e `roma-chantilly-pixel-art.png`: conversões estilizadas por geração de imagem, guiadas por fotos oficiais da marca. Fontes, aprovação e limitações técnicas no README da pasta. Caju aprovado pelo usuário; Romã em avaliação. Não são sprites nativos nem estão integrados ao gameplay.
