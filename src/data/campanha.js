@@ -20,7 +20,7 @@ export const CAMPANHA = {
     { titulo: 'Sua missão', texto: 'Recupere os produtos espalhados por Itajubá e leve tudo ao showroom da L’Occitane. É só seguir sempre em frente. Sem pressa!' },
   ],
   instagram: 'https://www.instagram.com/loccitane.itajuba/',
-  whatsapp: '', // DDI + DDD + número. Nunca usar o contato do espetáculo anterior.
+  whatsapp: '553598137549', // Número informado pelo usuário, com DDI + DDD.
   oferta: { ativa: false, descontoPercentual: 10, validade: '', condicoes: '' },
   privacidade: { responsavel: '', contato: '', retencao: '' },
 };
