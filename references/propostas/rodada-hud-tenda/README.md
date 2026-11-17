@@ -32,3 +32,7 @@ Esta rodada adiciona apenas imagens e documentação. Nenhuma mudança no gamepl
 ## Correção dos produtos do HUD
 
 `05-hud-sprites-originais.html` e sua captura PNG usam diretamente os três PNGs originais do projeto em elementos img, sem regenerar as embalagens. Substituem os ícones incorretos da prancha 04. Estudo isolado de interface, não integrado ao jogo. Abrir o HTML por servidor na raiz do repositório para carregar imagens e fonte. Contadores exemplificam produtos já coletados; lógica de exibição após coleta ainda pertence à implementação futura.
+
+### Ajuste final: sprites pequenos
+
+A proposta 05 agora referencia `public/assets/showroom/caju.png` (32×78), `public/assets/showroom/roma.png` (31×78) e `public/assets/produtos/capim-limao-colonia-sprite.png` (32×78). Substituem as artes grandes da versão anterior. Preservar pixels com image-rendering: pixelated e proporção original, sem regenerar embalagens. Captura conferida em navegador headless; jogo continua sem alterações nesta entrega.
