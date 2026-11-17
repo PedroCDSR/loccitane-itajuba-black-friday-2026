@@ -30,6 +30,8 @@ Artes geradas com a ferramenta de imagens e referências visuais do showroom, ex
 
 Runtime integrado: versões WebP dos assets novos, sprites sem redução de cores e cidade quantizada para128 cores sem dithering antes da codificação lossless. Os PNGs entregues permanecem intactos. Física/estrutura reaproveitadas; modo fácil conserva os cinco corações do ajuste do projeto-base, sem copiar seu mapa curto ou dados do espetáculo.
 
-## Carina — dona do showroom
+## Karina — dona do showroom
 
-Coleção em `public/assets/personagens/carina/`, com fontes e dois rostos aprovados em `references/carina/`. Arte gerada a partir da direção aprovada pelo usuário (duas opções de rosto da coluna esquerda), usando as fotografias enviadas somente como referência de aparência e roupa; fotos pessoais não publicadas.14 quadros, normalização técnica nearest-neighbor e alfa binário. Helper opcional, sem alteração automática da cena. A coleção final ainda requer avaliação de semelhança/continuidade.
+Coleção em `public/assets/personagens/karina/`, com fontes e dois rostos aprovados em `references/karina/`. Arte gerada a partir da direção aprovada pelo usuário (duas opções de rosto da coluna esquerda), usando as fotografias enviadas somente como referência de aparência e roupa; fotos pessoais não publicadas.14 quadros, normalização técnica nearest-neighbor e alfa binário. Helper opcional, sem alteração automática da cena. A coleção final ainda requer avaliação de semelhança/continuidade.
+
+Colônia Capim-Limão: nova arte pixel art baseada na foto oficial do produto BROBVS100354, com derivado técnico32×78 px; referências e limitações em public/assets/produtos/README.md. Sem integração automática no gameplay. Nome da dona do showroom corrigido para Karina em arquivos, helpers, documentação e pacote ZIP, sem alterar os pixels dos sprites.

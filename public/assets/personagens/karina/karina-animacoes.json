@@ -1,13 +1,13 @@
 {
-  "character": "Carina",
+  "character": "Karina",
   "role": "Dona do showroom e atendimento",
   "approvedFaces": [
-    "references/carina/01-rosto-frontal-aprovado.png",
-    "references/carina/02-rosto-tres-quartos-aprovado.png"
+    "references/karina/01-rosto-frontal-aprovado.png",
+    "references/karina/02-rosto-tres-quartos-aprovado.png"
   ],
   "files": [
     {
-      "file": "carina-parada.png",
+      "file": "karina-parada.png",
       "frameWidth": 90,
       "frameHeight": 180,
       "frames": 4,
@@ -16,7 +16,7 @@
       "sha256": "8d65311f020220125da6e4db12918b465bf26a6b7e8e1c66000db77505842a89"
     },
     {
-      "file": "carina-aceno.png",
+      "file": "karina-aceno.png",
       "frameWidth": 90,
       "frameHeight": 180,
       "frames": 6,
@@ -25,7 +25,7 @@
       "sha256": "3382e1c17e2bb35c87e1f9b7608b168c80607118a73bfbbe7b55466a863b9217"
     },
     {
-      "file": "carina-conversa.png",
+      "file": "karina-conversa.png",
       "frameWidth": 90,
       "frameHeight": 180,
       "frames": 4,
@@ -35,7 +35,7 @@
     }
   ],
   "combined": {
-    "file": "carina-spritesheet.png",
+    "file": "karina-spritesheet.png",
     "frameWidth": 90,
     "frameHeight": 180,
     "frames": 14,
@@ -44,24 +44,24 @@
   },
   "animations": [
     {
-      "key": "carina-parada",
-      "texture": "carina-parada",
+      "key": "karina-parada",
+      "texture": "karina-parada",
       "start": 0,
       "end": 3,
       "frameRate": 4,
       "repeat": -1
     },
     {
-      "key": "carina-aceno",
-      "texture": "carina-aceno",
+      "key": "karina-aceno",
+      "texture": "karina-aceno",
       "start": 0,
       "end": 5,
       "frameRate": 6,
       "repeat": 0
     },
     {
-      "key": "carina-conversa",
-      "texture": "carina-conversa",
+      "key": "karina-conversa",
+      "texture": "karina-conversa",
       "start": 0,
       "end": 3,
       "frameRate": 5,

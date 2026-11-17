@@ -35,6 +35,6 @@ this.pedro.play('pedro-parado');
 
 Estes são quadros gerados, não animação pixel a pixel homologada. A conversa usa expressão/gesto discreto, sem sincronização labial. A folha permanece em resolução alta, com bordas semitransparentes e pequenas variações de proporção que devem ser avaliadas em movimento e em tamanho de jogo. O atlas corrige posicionamento e linha dos pés, não redesenha a anatomia. Nesta entrega foram verificadas estrutura PNG, limites dos recortes, base dos pés e referências de animações; o preview no navegador e a integração na cena ainda não foram homologados. Originais preservados.
 
-## Carina
+## Karina
 
-Coleção separada da dona do showroom em `carina/`:14 quadros de parada, aceno e conversa, folhas de90×180 por célula e helper opcional. Leia `carina/README.md`. As bases dos rostos aprovadas estão em `references/carina`; Pedro e gameplay não foram substituídos.
+Coleção separada da dona do showroom em `karina/`:14 quadros de parada, aceno e conversa, folhas de90×180 por célula e helper opcional. Leia `karina/README.md`. As bases dos rostos aprovadas estão em `references/karina`; Pedro e gameplay não foram substituídos.
