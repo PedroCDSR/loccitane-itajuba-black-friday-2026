@@ -50,7 +50,7 @@ export class Aventura extends Phaser.Scene {
     this.tempo+=delta/1000;this.entrada.atualizar();
     const soltou=this.jogador.atualizar(this.entrada,agora,delta,true);
     if(this.entrada.pularApertou)tocar('pulo');
-    if(soltou&&agora>=this.proximoArremesso){this.proximoArremesso=agora+350;const dir=this.jogador.olhandoDireita?1:-1;const f=this.frutas.create(this.jogador.x+dir*22,this.jogador.y-30,'caju');f.body.setAllowGravity(false);f.setVelocityX(dir*260);this.time.delayedCall(1500,()=>{if(f.active)f.destroy();});}
+    if(soltou&&agora>=this.proximoArremesso){this.proximoArremesso=agora+350;const dir=this.jogador.olhandoDireita?1:-1;const f=this.frutas.create(this.jogador.x+dir*22,this.jogador.y-20,'caju');f.body.setAllowGravity(false);f.setVelocityX(dir*260);this.time.delayedCall(1500,()=>{if(f.active)f.destroy();});}
     for(const c of this.capivaras.getChildren())if(!c.getData('alimentada')){const dir=Math.sin(agora/1800+c.getData('origem'))>0?1:-1;c.setVelocityX(dir*16);c.setFlipX(dir<0);}
     const cam=this.cameras.main;cam.setFollowOffset(this.jogador.olhandoDireita?-40:40,0);this.morros.tilePositionX=cam.scrollX*.15;this.casas.tilePositionX=cam.scrollX*.4;
     if(this.jogador.x>this.checkpoint+1000)this.checkpoint=this.jogador.x;

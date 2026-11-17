@@ -27,9 +27,9 @@ Associação feita pela ordem de envio e pelo conteúdo visível. **Confirmar co
 | Carregamento no Chromium (844×390) | Passou. Sem assets ausentes após a correção do favicon |
 | Início da partida | Passou |
 | Movimento, salto, pausa e retomada | Passou. O tempo fica parado durante a pausa |
-| Coleta de presentes | Passou (2 presentes na partida de teste) |
-| Arremesso de caju | Só verificado que a tecla X é aceita e o jogo continua. Não verificado se o caju acertou capivara |
-| Chegada à tela final | Passou em 71 s, por tempo ou chegada à fachada |
+| Coleta de presentes | Passou, mas o robô deste teste ficou preso na primeira caixa (só 2 presentes). Ver `docs/REVISAO-QUALIDADE.md` |
+| Arremesso de caju | Só verificado que a tecla X é aceita. A revisão seguinte achou e corrigiu um bug: o caju não acertava a capivara |
+| Chegada à tela final | Passou, **pelo limite de 75 s**, não por chegar ao showroom. Partida completa até o showroom em `docs/REVISAO-QUALIDADE.md` |
 | Reinício | Passou. A partida volta com 0 presentes |
 | Resgate bloqueado sem configuração | Passou. Botão "enviar" desabilitado e aviso de pendência |
 | Compartilhamento pelo WhatsApp | Só conferido o link (`wa.me` com texto). **Não clicado**, para não abrir mensagem real |
