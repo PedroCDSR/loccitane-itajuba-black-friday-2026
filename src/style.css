@@ -25,7 +25,7 @@ body.jogando main{padding:0;max-width:none}
 body.jogando{background:#20301f}
 #partida{--painel-min:190px;--hud:76px}
 body.jogando #partida{display:flex;flex-direction:column;height:100dvh;max-width:760px;margin:0 auto;background:var(--verde);padding-top:env(safe-area-inset-top,0px)}
-#partida #hud{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;border-radius:0;padding:8px 12px;font-size:13px;height:auto}
+#partida #hud{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;border-radius:0;padding:8px 12px;font-size:13px;height:auto}
 #partida #hud #local{display:none}
 #partida #hud #presentes{grid-column:2;justify-self:center;font-weight:600}
 #partida #hud #vida{grid-column:1;grid-row:1}
@@ -62,3 +62,9 @@ body.com-selo #partida #painel{padding-bottom:calc(82px + env(safe-area-inset-bo
 @media(prefers-reduced-motion:reduce){#dica::after,#partida #controles button.destaque{animation:none}}
 /* computador: coluna mais estreita, botões menores (o teclado é o principal) */
 @media(pointer:fine){#partida{--painel-min:150px}#partida #controles [data-controle=esquerda],#partida #controles [data-controle=direita],#partida #controles .caju{width:64px;height:64px}#partida #controles .pular{width:80px;height:80px}}
+/* botão de som no HUD: sempre visível durante a partida; a escolha fica guardada no aparelho */
+#hud #som-hud{grid-row:1;grid-column:3;background:#f4eddb1a;color:var(--creme);border:1px solid #f4eddb66;min-width:40px;min-height:30px;border-radius:4px;padding:3px 8px;display:grid;place-items:center}
+#hud #som-hud svg{width:20px;height:20px;display:block}
+#hud #som-hud[aria-pressed=true] .mudo,#hud #som-hud[aria-pressed=false] .ondas{display:none}
+#hud #som-hud[aria-pressed=false]{opacity:.75}
+#hud #pausar{grid-row:1;grid-column:4}
