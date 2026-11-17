@@ -1,0 +1,42 @@
+{
+  "status": "pending_original_files",
+  "source": "Seis imagens visíveis na conversa do usuário; binários não acessíveis nesta execução",
+  "images": [
+    {
+      "id": 1,
+      "expected_file": "01-fachada-obliqua.jpg",
+      "status": "missing",
+      "sha256": null
+    },
+    {
+      "id": 2,
+      "expected_file": "02-fachada-jardim.jpg",
+      "status": "missing",
+      "sha256": null
+    },
+    {
+      "id": 3,
+      "expected_file": "03-toldo-vermelho.jpg",
+      "status": "missing",
+      "sha256": null
+    },
+    {
+      "id": 4,
+      "expected_file": "04-kits-presentes.jpg",
+      "status": "missing",
+      "sha256": null
+    },
+    {
+      "id": 5,
+      "expected_file": "05-estantes-showroom.jpg",
+      "status": "missing",
+      "sha256": null
+    },
+    {
+      "id": 6,
+      "expected_file": "06-jardim-bandeira.jpg",
+      "status": "missing",
+      "sha256": null
+    }
+  ]
+}
