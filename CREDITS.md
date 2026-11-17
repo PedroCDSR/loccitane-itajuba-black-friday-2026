@@ -16,3 +16,7 @@ Não há assets do pacote 14collective, personagens Disney, músicas, fotos de p
 ## Novas artes de produtos
 
 `public/assets/produtos/caju-sabonete-pixel-art.png` e `roma-chantilly-pixel-art.png`: conversões estilizadas por geração de imagem, guiadas por fotos oficiais da marca. Fontes, aprovação e limitações técnicas no README da pasta. Caju aprovado pelo usuário; Romã em avaliação. Não são sprites nativos nem estão integrados ao gameplay.
+
+## Pedro — personagem do showroom
+
+`public/assets/personagens/pedro-pixel-art.png`: arte em pixel art gerada a pedido do usuário com base na fotografia de Pedro, funcionário da loja, enviada na conversa. Uma pose com fundo transparente, sem integração ou animação automática. Foto original não incluída neste commit. Orientações em `public/assets/personagens/README.md` e handoff para Fable.

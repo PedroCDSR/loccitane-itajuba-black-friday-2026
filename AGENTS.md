@@ -17,3 +17,4 @@ Leia README.md, docs/DIRECAO-CRIATIVA.md, docs/HANDOFF-FABLE-5.2.md e references
 - O repositório é público: não commitar leads, segredos ou credenciais. .env* está ignorado.
 - Antes de entregar: npm test e npm run build; registrar quais testes de navegador realmente foram feitos. Não dizer que arte ou mobile estão homologados sem conferir.
 - Usuário pretende continuar com Fable 5.2. Manter módulos simples e evitar refatoração sem necessidade.
+- Pedro, funcionário da loja: arte-base em `public/assets/personagens/pedro-pixel-art.png`. Papel proposto de NPC acolhedor do showroom; não substituir a exploradora. Leia o README da pasta e o handoff atualizado para integração e limitações da pose única.
