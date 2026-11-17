@@ -5,6 +5,7 @@ import { criarArte, criarCapivaraDormindo, criarZ } from './arte.js';
 import { contatoCapivara, capivaraInofensiva, forcaQuique } from './capivaras.js';
 import { criarCenario, TENDA } from './cenario.js';
 import { Tutorial } from './Tutorial.js';
+import { paginar } from './falas.js';
 import { GuiaShowroom } from './guiaShowroom.js';
 import { carregarArte } from './assets.js';
 import { carregarPedro, criarPedro } from './pedro-animacoes.js';
@@ -55,7 +56,7 @@ export class Aventura extends Phaser.Scene {
     this.load.on('progress', progresso); this.load.on('loaderror', falhou);
     this.events.once('shutdown', () => { this.load.off('progress', progresso); this.load.off('loaderror', falhou); });
     carregarArte(this);
-    for (const n of ['fachada', 'interior', 'caju', 'roma', 'bandeira-jardim']) this.load.image(n, `assets/showroom/${n}.png`);
+    for (const n of ['fachada', 'interior', 'caju', 'roma', 'bandeira-jardim', 'logo-tenda', 'selo-tenda']) this.load.image(n, `assets/showroom/${n}.png`);
     this.load.image('capim', 'assets/produtos/capim-limao-colonia-sprite.png');
     carregarPedro(this); carregarKarina(this);
   }
@@ -71,7 +72,9 @@ export class Aventura extends Phaser.Scene {
     this.estacoes = []; this.ultimoHUD = ''; this.avisoFaltaAte = 0;
     this.uiAbort = new AbortController();
     $('fechar-dialogo').addEventListener('click', () => this.avancarDialogo(), { signal: this.uiAbort.signal });
-    $('pular-intro').addEventListener('click', () => this.terminarIntro(), { signal: this.uiAbort.signal });
+    $('pular-intro').addEventListener('click', e => { e.stopPropagation(); this.terminarIntro(); }, { signal: this.uiAbort.signal });
+    // tocar na própria caixa também avança (primeiro completa o texto)
+    $('dialogo').addEventListener?.('click', () => this.avancarDialogo(), { signal: this.uiAbort.signal });
 
     this.criarCidade();
     this.criarShowroom();
@@ -125,7 +128,7 @@ export class Aventura extends Phaser.Scene {
     this.entrada = new Entrada(this);
     this.events.once('shutdown', () => {
       this.uiAbort.abort(); $('controles').hidden = true; $('dialogo').hidden = true; $('interagir').hidden = true;
-      $('pular-intro').hidden = true; $('transicao').hidden = true; $('dialogo').classList.remove('no-alto');
+      $('pular-intro').hidden = true; $('transicao').hidden = true; $('fechar-dialogo').hidden = true;
       this.tutorial?.esconder();
     });
     this.atualizarHUD();
@@ -251,7 +254,8 @@ export class Aventura extends Phaser.Scene {
 
   adicionarItem(tipo, x, y) {
     const textura = tipo === 'caixa' ? 'embalagem' : tipo;
-    const item = this.itens.create(x, y, textura).setScale(tipo === 'caixa' ? .3 : .42).setDepth(4).setData('tipo', tipo);
+    // Capim-Limão ocupa os 78 px do PNG; Caju e Romã, 67: ele fica 67/78 menor para parecerem do mesmo tamanho
+    const item = this.itens.create(x, y, textura).setScale(tipo === 'caixa' ? .3 : tipo === 'capim' ? .42 * 67 / 78 : .42).setDepth(4).setData('tipo', tipo);
     item.refreshBody();
     // Sombra oval e flutuação leve: destaca sem caixa nem halo sobre a arte.
     const sinal = this.add.ellipse(x, y + item.displayHeight / 2 + 3, item.displayWidth + 4, 3, 0x2a1626, .35).setDepth(3);
@@ -283,58 +287,101 @@ export class Aventura extends Phaser.Scene {
   // ---------- Intro encenada ----------
   // A exploradora chega, uma capivara derruba a entrega e os frascos voam pela rua. Não gasta tempo.
   comecarIntro() {
-    this.estado = 'intro'; this.passoIntro = -1;
+    this.estado = 'intro'; this.passoIntro = -1; this.acaoIntro = false;
+    // tudo perto da exploradora, dentro do enquadramento do celular em pé: ela à esquerda, o cesto logo ao lado
+    // e a capivara chegando pela direita
     this.jogador.body.enable = false; this.jogador.setPosition(-20, CHAO).play('correndo');
-    const entrega = [this.add.image(176, CHAO, 'caixa').setOrigin(.5, 1).setScale(1 / 3).setDepth(4)];
-    entrega.push(this.add.image(170, CHAO - 19, 'presente').setOrigin(.5, 1).setScale(.28).setDepth(4));
-    entrega.push(this.add.image(184, CHAO - 19, 'sacola').setOrigin(.5, 1).setScale(.24).setDepth(4));
+    const entrega = [this.add.image(112, CHAO, 'caixa').setOrigin(.5, 1).setScale(1 / 3).setDepth(4)];
+    entrega.push(this.add.image(106, CHAO - 19, 'presente').setOrigin(.5, 1).setScale(.28).setDepth(4));
+    entrega.push(this.add.image(120, CHAO - 19, 'sacola').setOrigin(.5, 1).setScale(.24).setDepth(4));
     this.frascosIntro = [];
-    for (let i = 0; i < 6; i++) this.frascosIntro.push(this.add.image(166 + i * 4, CHAO - 14, i % 2 ? 'roma' : 'caju').setOrigin(.5, 1).setScale(.3).setDepth(3));
+    const tipos = ['caju', 'capim', 'roma'];
+    for (let i = 0; i < 6; i++) this.frascosIntro.push(this.add.image(102 + i * 4, CHAO - 14, tipos[i % 3]).setOrigin(.5, 1).setScale(tipos[i % 3] === 'capim' ? .3 * 67 / 78 : .3).setDepth(3));
     this.entregaIntro = entrega;
-    this.capivaraIntro = this.add.sprite(300, CHAO, 'capivara', 0).setOrigin(.5, 1).setScale(1 / 3).setFlipX(true).setDepth(5);
-    this.tweens.add({ targets: this.jogador, x: 96, duration: 1300, onComplete: () => { if (this.estado === 'intro') this.jogador.play('parado'); } });
-    $('pular-intro').hidden = false; $('dialogo').classList.add('no-alto');
+    this.capivaraIntro = this.add.sprite(178, CHAO, 'capivara', 0).setOrigin(.5, 1).setScale(1 / 3).setFlipX(true).setDepth(5);
+    this.tweens.add({ targets: this.jogador, x: 58, duration: 1100, onComplete: () => { if (this.estado === 'intro') this.jogador.play('parado'); } });
+    $('pular-intro').hidden = false;
     this.ultimoHUD = ''; this.atualizarHUD(); $('local').textContent = 'Itajubá';
     this.avancarDialogo();
   }
-  passoDaIntro(n) {
-    if (n === 1) {
-      // capivara entra, derruba a entrega e os frascos voam pela rua
-      this.capivaraIntro.play('capivara-andar');
-      this.tweens.add({ targets: this.capivaraIntro, x: 196, duration: 900, onComplete: () => {
-        tocar('derruba');
-        this.tweens.add({ targets: this.entregaIntro, angle: { from: 0, to: 70 }, x: '+=14', y: '+=4', duration: 260 });
-        this.frascosIntro.forEach((f, i) => {
-          const destinoX = 300 + i * 90, altura = 60 + (i % 3) * 25;
-          this.tweens.add({ targets: f, x: destinoX, duration: 900 + i * 90, ease: 'Linear' });
-          this.tweens.add({ targets: f, y: CHAO - 14 - altura, duration: (900 + i * 90) / 2, yoyo: true, ease: 'Sine.out' });
-          this.tweens.add({ targets: f, angle: 540, duration: 900 + i * 90 });
-        });
-        this.capivaraIntro.play('capivara-comer');
-      } });
-    }
-    if (n === 2) this.jogador.setFlipX(false);
+  // A capivara anda até o cesto, derruba a entrega e os frascos voam pela rua. Chama pronto() no fim da cena.
+  derrubarEntrega(pronto) {
+    this.capivaraIntro.play('capivara-andar');
+    this.tweens.add({ targets: this.capivaraIntro, x: 132, duration: 1000, onComplete: () => {
+      tocar('derruba');
+      this.tweens.add({ targets: this.entregaIntro, angle: { from: 0, to: 70 }, x: '+=12', y: '+=4', duration: 260 });
+      this.frascosIntro.forEach((f, i) => {
+        const destinoX = 260 + i * 80, altura = 60 + (i % 3) * 25;
+        this.tweens.add({ targets: f, x: destinoX, duration: 900 + i * 90, ease: 'Linear' });
+        this.tweens.add({ targets: f, y: CHAO - 14 - altura, duration: (900 + i * 90) / 2, yoyo: true, ease: 'Sine.out' });
+        this.tweens.add({ targets: f, angle: 540, duration: 900 + i * 90 });
+      });
+      this.capivaraIntro.play('capivara-comer');
+      this.time.delayedCall(1300, pronto);
+    } });
   }
+
+  // ---------- Caixa de diálogo (creme e vinho): páginas curtas, texto revelado aos poucos ----------
+  // O primeiro toque (ou E/Enter/Espaço) completa a página; o seguinte avança. AVANÇAR fica acima de Caju/Pular.
+  mostrarFala(titulo, texto, botaoFinal = 'AVANÇAR') {
+    this.paginas = paginar(texto); this.pagina = 0; this.botaoFinal = botaoFinal;
+    $('dialogo-titulo').textContent = titulo; $('dialogo').hidden = false; $('fechar-dialogo').hidden = false;
+    $('objetivo-aviso')?.classList.remove('visivel'); // o aviso de objetivo não fica embaixo da conversa
+    this.entrada?.ignorarAteSoltar();
+    this.escreverPagina();
+  }
+  escreverPagina() {
+    const texto = this.paginas[this.pagina], el = $('dialogo-texto'), ultima = this.pagina === this.paginas.length - 1;
+    $('fechar-dialogo').textContent = ultima ? this.botaoFinal : 'AVANÇAR';
+    el.setAttribute?.('aria-label', texto);
+    this.digitacao?.remove(); this.digitacao = null;
+    const semMovimento = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!this.time?.addEvent || semMovimento) { this.completarPagina(); return; }
+    let n = 0; el.textContent = ''; this.digitando = true; $('dialogo').classList?.remove('pronto');
+    this.digitacao = this.time.addEvent({ delay: 24, repeat: texto.length - 1, callback: () => {
+      n++; el.textContent = texto.slice(0, n);
+      if (n >= texto.length) this.completarPagina();
+    } });
+  }
+  completarPagina() {
+    this.digitacao?.remove(); this.digitacao = null; this.digitando = false;
+    $('dialogo-texto').textContent = this.paginas?.[this.pagina] ?? ''; $('dialogo').classList?.add('pronto');
+  }
+  // Devolve true se o toque foi usado pela fala (completar o texto ou passar de página).
+  avancarFala() {
+    if (this.digitando) { this.completarPagina(); return true; }
+    if (this.paginas && this.pagina < this.paginas.length - 1) { this.pagina++; this.escreverPagina(); tocar('botao'); return true; }
+    return false;
+  }
+  esconderFala() { this.digitacao?.remove(); this.digitacao = null; this.digitando = false; this.paginas = null; $('dialogo').hidden = true; $('fechar-dialogo').hidden = true; }
+
   avancarDialogo() {
+    if (this.acaoIntro) return; // a capivara está em cena: nada de avanço duplicado
+    if (this.avancarFala()) return;
     if (this.estado === 'intro') {
       this.passoIntro++;
       const linhas = CAMPANHA.introCena;
       if (this.passoIntro > 0) tocar('botao');
       if (this.passoIntro >= linhas.length) { this.terminarIntro(); return; }
-      this.passoDaIntro(this.passoIntro);
-      const l = linhas[this.passoIntro];
-      $('dialogo-titulo').textContent = l.titulo; $('dialogo-texto').textContent = l.texto;
-      $('fechar-dialogo').textContent = this.passoIntro === linhas.length - 1 ? 'Começar a aventura →' : 'Continuar →';
-      $('dialogo').hidden = false; this.entrada.ignorarAteSoltar();
+      if (this.passoIntro === 1) this.jogador.setFlipX(false);
+      const l = linhas[this.passoIntro], botao = this.passoIntro === linhas.length - 1 ? 'COMEÇAR' : 'AVANÇAR';
+      if (l.acao === 'derrubar') {
+        // a caixa some para a cena da capivara aparecer inteira; a fala continua quando ela termina
+        this.esconderFala(); this.acaoIntro = true;
+        this.derrubarEntrega(() => { if (this.estado !== 'intro') return; this.acaoIntro = false; this.mostrarFala(l.titulo, l.texto, botao); });
+        return;
+      }
+      this.mostrarFala(l.titulo, l.texto, botao);
       return;
     }
-    this.fecharDialogo();
+    if (this.dialogoAberto) this.fecharDialogo();
   }
   terminarIntro() {
     if (this.estado !== 'intro') return;
+    this.acaoIntro = false;
     this.tweens.killTweensOf([this.jogador, this.capivaraIntro, ...this.entregaIntro, ...this.frascosIntro]);
     for (const o of [this.capivaraIntro, ...this.entregaIntro, ...this.frascosIntro]) o.destroy();
-    $('dialogo').hidden = true; $('pular-intro').hidden = true; $('dialogo').classList.remove('no-alto');
+    this.esconderFala(); $('pular-intro').hidden = true;
     this.comecarJogo();
   }
   comecarJogo() {
@@ -389,6 +436,7 @@ export class Aventura extends Phaser.Scene {
       this.time.delayedCall(dentroDaLoja ? 450 : 650, () => {
         $('transicao').hidden = true; cam.fadeIn(420, 30, 16, 22);
         this.physics.world.resume(); this.estado = 'jogo'; this.entrada.ignorarAteSoltar();
+        this.ultimoHUD = ''; this.atualizarHUD(); // mostra o objetivo do lugar novo
       });
     });
   }
@@ -400,19 +448,17 @@ export class Aventura extends Phaser.Scene {
   // ---------- Conversas: Pedro na praça, Karina no showroom ----------
   // quem: 'pedro' ou 'karina'. Textos em CAMPANHA.conversas.
   abrirDialogo(quem = 'karina') {
-    this.dialogoAberto = quem; this.entrada.ignorarAteSoltar();
+    this.dialogoAberto = quem; // mostrarFala descarta o toque que abriu a conversa
     this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
     this[quem].play(`${quem}-conversa`); tocar('conversa');
     const fala = CAMPANHA.conversas[quem];
-    $('dialogo-titulo').textContent = fala.titulo;
-    $('dialogo-texto').textContent = fala.texto;
-    $('fechar-dialogo').textContent = fala.botao;
-    $('dialogo').hidden = false; $('interagir').hidden = true; this.tutorial?.esconder(); $('fechar-dialogo').focus({ preventScroll: true });
+    this.mostrarFala(fala.titulo, fala.texto, fala.botao);
+    $('interagir').hidden = true; this.tutorial?.esconder(); $('fechar-dialogo').focus?.({ preventScroll: true });
   }
   fecharDialogo() {
     const quem = this.dialogoAberto;
     if (!quem) return;
-    this.dialogoAberto = false; $('dialogo').hidden = true;
+    this.dialogoAberto = false; this.esconderFala();
     this.entrada.ignorarAteSoltar(); this.physics.world.resume(); this[quem].play(`${quem}-${quem === 'pedro' ? 'parado' : 'parada'}`);
     if (quem === 'pedro') { this.pedroConversou = true; this.pedro.disableInteractive(); } else this.karinaEntra();
   }
@@ -509,9 +555,22 @@ export class Aventura extends Phaser.Scene {
     }
     const nomes = { caju: 'Caju', capim: 'Capim-Limão', roma: 'Romã', caixa: 'caixas' };
     $('presentes').setAttribute?.('aria-label', Object.entries(nomes).filter(([t]) => m.coletados[t]).map(([t, nome]) => `${m.coletados[t]} ${nome}`).join(', ') || 'Nenhum produto ainda');
-    $('vida').textContent = `${this.jogador?.vida ?? 5} ♥`;
-    $('objetivo').textContent = this.estado === 'intro' ? 'A aventura vai começar…' : objetivoMissao(m, this.sala);
+    // cinco corações pixel art: cheios até a vida atual, vazios depois
+    const vida = this.jogador?.vida ?? 5, coracoes = $('vida');
+    Array.from(coracoes.children ?? []).forEach((c, i) => c.classList.toggle('vazio', i >= vida));
+    coracoes.setAttribute?.('aria-label', `${vida} de 5 corações`);
+    if (!coracoes.children) coracoes.textContent = `${vida} ♥`;
+    if (this.estado === 'jogo') this.mostrarObjetivo(objetivoMissao(m, this.sala));
     $('kits').textContent = `Kits ${m.kits}/${META_KITS}`;
+  }
+  // Objetivo: aviso curto em creme e vinho que aparece quando muda e some sozinho (sem barra fixa).
+  mostrarObjetivo(texto) {
+    if (texto === this.objetivoAtual) return;
+    this.objetivoAtual = texto; $('objetivo').textContent = texto;
+    const aviso = $('objetivo-aviso');
+    if (!aviso) return;
+    aviso.classList.add('visivel'); this.objetivoSome?.remove?.();
+    this.objetivoSome = this.time?.delayedCall(5000, () => aviso.classList.remove('visivel'));
   }
   concluir(motivo) {
     if (this.fim) return;
@@ -576,7 +635,7 @@ export class Aventura extends Phaser.Scene {
       if (this.entrada.interagirApertou || this.entrada.pularApertou) this.avancarDialogo();
       this.atualizarCamera(); return;
     }
-    if (this.dialogoAberto) { if (this.entrada.interagirApertou) this.fecharDialogo(); return; }
+    if (this.dialogoAberto) { if (this.entrada.interagirApertou || this.entrada.pularApertou) this.avancarDialogo(); return; }
     if (this.estado === 'transicao') return;
     this.tempo += delta / 1000;
     const agora = this.tempo * 1000; // relógio de jogo ativo (invencibilidade, avisos): pausa, intro, transição e conversa não contam
@@ -627,6 +686,6 @@ export class Aventura extends Phaser.Scene {
     this.atualizarHUD();
     // A partida só termina saindo à direita com os três kits; não há fim por tempo.
     if (x > MUNDO - 14 && this.missao.kits === META_KITS) this.concluir('vitrine');
-    else if (x > MUNDO - 14) $('objetivo').textContent = 'Antes de sair, monte os três kits na bancada ←';
+    else if (x > MUNDO - 14) this.mostrarObjetivo('Antes de sair, monte os três kits na bancada');
   }
 }

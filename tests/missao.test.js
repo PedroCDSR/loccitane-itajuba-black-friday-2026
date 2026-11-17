@@ -64,3 +64,14 @@ test('de volta à cidade, o objetivo convida a passear sem perder a missão', ()
   f.conversouKarina = true; assert.match(objetivoMissao(f), /porta/, 'quem volta à fachada não é mandado falar com a Karina de novo');
   for (const fase of ['cidade', 'fachada', 'showroom']) { const n = criarMissao(); n.fase = fase; assert.doesNotMatch(objetivoMissao(n, 'cidade') + objetivoMissao(n), /segundo|tempo|rápido/i); }
 });
+
+test('cidade com Caju, Romã e Capim-Limão em quantidades iguais, sem os três juntos em toda tenda', () => {
+  const tendas = [870, 1630, 2385, 3130, 3795, 4800];
+  const itens = criarProdutosCidade({ chao: 240, tendas, cestos: [[1065, 1], [1830, 2], [2575, 1], [3320, 2], [3985, 2], [4690, 1]], topoToldo: 168 });
+  const conta = t => itens.filter(i => i.tipo === t).length;
+  assert.equal(conta('caju'), conta('roma')); assert.equal(conta('roma'), conta('capim'));
+  for (const lugar of ['chao', 'cesto', 'alto']) assert.ok(itens.some(i => i.lugar === lugar && i.tipo === 'capim'), `capim também em ${lugar}`);
+  const porTenda = tendas.map(x => itens.filter(i => i.lugar === 'alto' && Math.abs(i.x - x) < 40).length);
+  assert.ok(porTenda.every(n => n >= 1 && n <= 2), `um ou dois por tenda: ${porTenda}`);
+  assert.ok(porTenda.includes(1) && porTenda.includes(2), 'alterna tendas com um e com dois produtos');
+});

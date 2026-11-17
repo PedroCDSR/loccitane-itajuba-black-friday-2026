@@ -34,7 +34,7 @@ test('versões runtime mantêm as dimensões dos 25 PNGs entregues',()=>{
 
 test('contadores do HUD: um por produto, com ícone, escondidos até o primeiro item', () => {
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-  const tipos = [...html.matchAll(/class="contador" data-tipo="(\w+)" hidden><img src="([^"]+)"/g)].map(m => [m[1], m[2]]);
+  const tipos = [...html.matchAll(/class="contador" data-tipo="(\w+)" hidden><span class="frasco \w+"><img src="([^"]+)"/g)].map(m => [m[1], m[2]]);
   assert.deepEqual(tipos.map(t => t[0]), ['caju', 'capim', 'roma', 'caixa']);
   for (const [, src] of tipos) assert.ok(existsSync(new URL(`../public/${src}`, import.meta.url)), src);
 });

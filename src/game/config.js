@@ -7,7 +7,7 @@ export const ALTURA = 270;
 // A largura em pixels é fixa; a altura acompanha a proporção da área (ver tamanhoTela em main.js).
 // A câmera aproxima até a cidade (270 de altura) ou o showroom (180) preencher a altura: no celular em pé
 // aparecem ~175 unidades de largura da rua e ~115 do showroom.
-export const TELA = { largura: 960, altura: 960, alturaMin: 540, alturaMax: 1700 };
+export const TELA = { largura: 960, altura: 960, alturaMin: 540, alturaMax: 2400 }; // sem a faixa do HUD, a tela do jogo vai até o painel de botões
 export const ALTURA_CIDADE = 270, ALTURA_SHOWROOM = 180;
 export const ZOOM_CIDADE = TELA.altura / ALTURA_CIDADE;
 export const ZOOM_SHOWROOM = TELA.altura / ALTURA_SHOWROOM;

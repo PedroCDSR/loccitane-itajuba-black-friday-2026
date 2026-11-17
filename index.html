@@ -19,12 +19,17 @@
     <p class="nota">Campanha em preparação · condições do benefício ainda serão definidas pela loja.</p>
   </section>
   <section id="partida" hidden aria-label="Jogo de plataforma">
-    <div id="hud"><span id="local">Itajubá</span><span id="presentes" aria-label="Nenhum produto ainda"><span class="contador" data-tipo="caju" hidden><img src="assets/showroom/caju.png" alt="" width="10" height="24"><b>0</b></span><span class="contador" data-tipo="capim" hidden><img src="assets/produtos/capim-limao-colonia-sprite.png" alt="" width="10" height="24"><b>0</b></span><span class="contador" data-tipo="roma" hidden><img src="assets/showroom/roma.png" alt="" width="10" height="24"><b>0</b></span><span class="contador" data-tipo="caixa" hidden><img src="assets/runtime-sprites/caixa-presente.webp" alt="" width="22" height="22"><b>0</b></span></span><span id="vida">5 ♥</span><button id="som-hud" class="som-alternar" aria-pressed="true" aria-label="Som ligado" title="Som"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="ondas" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="mudo" d="M16 9l6 6M22 9l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button id="pausar" hidden aria-label="Pausar aventura">Ⅱ</button></div>
-    <div id="objetivo-panel"><span id="objetivo">Reúna os produtos</span><span id="kits">Kits 0/3</span></div>
     <div id="palco">
       <div id="jogo"></div>
+      <!-- HUD sobre o céu, sem faixa: corações, contadores (cada um aparece no primeiro item), som e pausa -->
+      <div id="hud">
+        <span id="vida" role="img" aria-label="5 de 5 corações"><i class="coracao"></i><i class="coracao"></i><i class="coracao"></i><i class="coracao"></i><i class="coracao"></i></span>
+        <span class="hud-botoes"><button id="som-hud" class="som-alternar" aria-pressed="true" aria-label="Som ligado" title="Som"><svg viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges"><path d="M3 9h4v6H3zM7 8h2v8H7zM9 6h2v12H9zM11 4h2v16h-2z" fill="currentColor"/><path class="ondas" d="M15 9h2v6h-2zM18 6h2v2h-2zM20 8h2v8h-2zM18 16h2v2h-2z" fill="currentColor"/><path class="mudo" d="M15 8h2v2h-2zM17 10h2v2h-2zM19 8h2v2h-2zM19 12h2v2h-2zM15 12h2v2h-2zM17 12h2v2h-2zM19 14h2v2h-2zM15 14h2v2h-2zM21 6h1v2h-1zM21 16h1v2h-1z" fill="currentColor"/></svg></button><button id="pausar" hidden aria-label="Pausar aventura" title="Pausar"><svg viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges"><path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor"/></svg></button></span>
+        <span id="presentes" aria-label="Nenhum produto ainda"><span class="contador" data-tipo="caju" hidden><span class="frasco caju"><img src="assets/showroom/caju.png" alt="" width="32" height="78"></span><b>0</b></span><span class="contador" data-tipo="capim" hidden><span class="frasco capim"><img src="assets/produtos/capim-limao-colonia-sprite.png" alt="" width="32" height="78"></span><b>0</b></span><span class="contador" data-tipo="roma" hidden><span class="frasco roma"><img src="assets/showroom/roma.png" alt="" width="32" height="78"></span><b>0</b></span><span class="contador" data-tipo="caixa" hidden><span class="frasco caixa"><img src="assets/runtime-sprites/caixa-presente.webp" alt="" width="32" height="32"></span><b>0</b></span></span>
+        <p id="objetivo-aviso" aria-live="polite"><span id="objetivo">Recupere os produtos</span><span id="kits" hidden>Kits 0/3</span><span id="local" hidden>Itajubá</span></p>
+      </div>
       <section id="dialogo" hidden role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
-        <p class="eyebrow" id="dialogo-titulo">KARINA · SHOWROOM ITAJUBÁ</p><p id="dialogo-texto"></p><div class="acoes-dialogo"><button id="fechar-dialogo" class="principal">Vamos montar os kits →</button><button id="pular-intro" hidden>Pular abertura</button></div>
+        <p class="eyebrow" id="dialogo-titulo">Karina · Showroom Itajubá</p><p id="dialogo-texto"></p><span class="dialogo-mais" aria-hidden="true"></span><button id="pular-intro" hidden>Pular abertura</button>
       </section>
       <div id="transicao" hidden aria-live="polite"><p id="transicao-titulo">Showroom</p><strong id="transicao-nome">L’Occitane au Brésil</strong><span id="transicao-sub">Itajubá</span></div>
       <div id="loading" hidden role="status"><p id="loading-texto">Preparando a aventura…</p><button id="tentar-carga" hidden>Tentar novamente</button></div>
@@ -33,6 +38,7 @@
       <div id="dica" hidden role="status"><p id="dica-texto"></p></div>
       <div id="controles" hidden aria-label="Controles">
         <button id="interagir" data-controle="interagir" hidden>Conversar</button>
+        <button id="fechar-dialogo" class="avancar" hidden>AVANÇAR</button>
         <div class="botoes">
           <div class="grupo"><button data-controle="esquerda" aria-label="Andar para a esquerda"><span aria-hidden="true">◀</span></button><button data-controle="direita" aria-label="Andar para a direita"><span aria-hidden="true">▶</span></button></div>
           <div class="grupo"><button data-controle="fruta" class="caju"><span class="icone" aria-hidden="true"></span>Caju</button><button data-controle="pular" class="pular">Pular</button></div>

@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 // Peças de cenário desenhadas em código na mesma densidade da cidade (3 pixels de textura por unidade do mundo):
-// a tendinha da L'Occitane e a bandeira que marca o fim da rua. Os produtos sobre o balcão reaproveitam as artes
-// já carregadas (frascos de Caju e Romã, kit e sacola).
+// a tendinha da L'Occitane, a placa do showroom e o brilho dos kits. A placa da tenda e o pano usam as logos
+// ORIGINAIS (ferramentas/preparar_logos.py); os produtos do balcão reaproveitam os sprites já carregados.
 const K = 3;
 const COR = {
   contorno: '#3b1d1c', vermelho: '#a8323d', vermelhoClaro: '#c94a52', vermelhoEscuro: '#7d2029', creme: '#f6e6c4', cremeSombra: '#dcc59a',
@@ -19,41 +19,46 @@ function textura(scene, chave, w, h, pintar) {
   t.refresh();
 }
 
-// Tendinha: 96 x 80 unidades, com a base na última linha. Toldo em y 6..30, balcão em y 50..80.
-export const TENDA = { largura: 96, altura: 80, toldo: 8, balcao: 50 };
+// Tendinha: 96 x 92 unidades, com a base na última linha. Placa com a logo original em y 0..19, toldo em y 18..43,
+// balcão em y 62..92. Toldo e balcão ficam na mesma altura do mundo de antes (a textura só cresceu para cima).
+export const TENDA = { largura: 96, altura: 92, toldo: 20, balcao: 62 };
+// Altura visível dos frascos (alfa) dentro dos PNGs de 78 px: Caju 4..71, Romã 5..72, Capim-Limão 0..78.
+// Para os três parecerem do mesmo tamanho, o Capim-Limão é desenhado 67/78 menor (docs/HANDOFF-CLAUDE.md).
+export const FRASCOS = { caju: { topo: 4, base: 71 }, roma: { topo: 5, base: 72 }, capim: { topo: 0, base: 78 } };
 export function criarCenario(scene) {
   textura(scene, 'tenda', TENDA.largura, TENDA.altura, (r, img, c) => {
-    const W = TENDA.largura;
+    const W = TENDA.largura, D = 12; // D: tudo o que era da tenda antiga desce 12 unidades
+    // frasco com a base visível em y, altura visível a (unidades)
+    const frasco = (chave, x, y, a) => { const f = FRASCOS[chave], h = a * 78 / (f.base - f.topo); img(chave, x, y - h * f.base / 78, h * 32 / 78, h); };
+    // placa de madeira com a logo ORIGINAL (marca branca no vermelho), presa ao toldo por dois suportes
+    for (const x of [24, W - 28]) { r(x, 14, 4, 8, COR.contorno); r(x + .7, 14, 2.6, 8, COR.madeira); }
+    r(W / 2 - 31, 0, 62, 20, COR.contorno); r(W / 2 - 30, 1, 60, 18, COR.madeira); r(W / 2 - 30, 1, 60, 1, COR.madeiraClara);
+    img('logo-tenda', W / 2 - 28, 1.5, 56, 17);
     // postes
-    for (const x of [7, W - 11]) { r(x, 20, 4, 60, COR.contorno); r(x + .7, 20, 2.6, 60, COR.madeira); r(x + .7, 20, .9, 60, COR.madeiraClara); }
-    // balcão: tampo, frente em tábuas e barrado de pano creme com borda vermelha
-    r(2, 48, W - 4, 32, COR.contorno);
-    r(3, 49, W - 6, 4, COR.madeiraClara); r(3, 49, W - 6, 1.2, '#e3b27a');
-    for (let x = 4; x < W - 4; x += 9) { r(x, 53, 8.3, 27, COR.madeira); r(x, 53, 1, 27, COR.madeiraClara); r(x + 7.3, 53, 1, 27, COR.madeiraEscura); }
-    r(10, 56, W - 20, 18, COR.vermelhoEscuro); r(11, 57, W - 22, 16, COR.creme); r(11, 57, W - 22, 2, COR.vermelho); r(11, 71, W - 22, 2, COR.vermelho);
-    // emblema simples no pano (disco vermelho com ramos claros), sem reproduzir o logotipo oficial
-    r(W / 2 - 5, 59, 10, 10, COR.vermelho); r(W / 2 - 6, 60, 12, 8, COR.vermelho);
-    for (const dx of [-3, -1, 1, 3]) r(W / 2 + dx - .4, 61 + Math.abs(dx) * .5, .9, 6 - Math.abs(dx), COR.creme);
-    // produtos sobre o balcão (artes existentes, reduzidas)
-    img('caju', 14, 34, 6, 15); img('roma', 22, 35, 6, 14); img('presente', 31, 37, 13, 12);
-    img('caju', 54, 34, 6, 15); img('sacola', 62, 35, 12, 14); img('roma', 76, 35, 6, 14);
+    for (const x of [7, W - 11]) { r(x, 20 + D, 4, 60, COR.contorno); r(x + .7, 20 + D, 2.6, 60, COR.madeira); r(x + .7, 20 + D, .9, 60, COR.madeiraClara); }
+    // balcão: tampo, frente em tábuas e pano creme com borda vermelha
+    r(2, 48 + D, W - 4, 32, COR.contorno);
+    r(3, 49 + D, W - 6, 4, COR.madeiraClara); r(3, 49 + D, W - 6, 1.2, '#e3b27a');
+    for (let x = 4; x < W - 4; x += 9) { r(x, 53 + D, 8.3, 27, COR.madeira); r(x, 53 + D, 1, 27, COR.madeiraClara); r(x + 7.3, 53 + D, 1, 27, COR.madeiraEscura); }
+    r(20, 54 + D, W - 40, 26, COR.vermelhoEscuro); r(21, 54 + D, W - 42, 25, COR.creme); r(21, 54 + D, 3, 25, COR.vermelho); r(W - 24, 54 + D, 3, 25, COR.vermelho);
+    // selo circular original de revendedor, em vermelho com a arte branca
+    img('selo-tenda', W / 2 - 12, 54.5 + D, 24, 24);
+    // produtos menores sobre o balcão: os três frascos com a mesma altura visível, sacola e caixa de presente
+    frasco('caju', 13, 49 + D, 11); frasco('roma', 19.5, 49 + D, 11); frasco('capim', 26, 49 + D, 11);
+    img('sacola', 58, 38.5 + D, 10, 10.5); img('embalagem', 70, 40 + D, 11, 9);
     // toldo listrado em leve perspectiva, com franja ondulada
-    r(0, 6, W, 25, COR.contorno);
+    r(0, 6 + D, W, 25, COR.contorno);
     for (let i = 0; i < 8; i++) {
       const x = 1 + i * (W - 2) / 8, w = (W - 2) / 8;
-      r(x, 7, w, 22, i % 2 ? COR.creme : COR.vermelho);
-      r(x, 7, w, 2, i % 2 ? '#fff6dc' : COR.vermelhoClaro);
-      r(x, 25, w, 4, i % 2 ? COR.cremeSombra : COR.vermelhoEscuro);
+      r(x, 7 + D, w, 22, i % 2 ? COR.creme : COR.vermelho);
+      r(x, 7 + D, w, 2, i % 2 ? '#fff6dc' : COR.vermelhoClaro);
+      r(x, 25 + D, w, 4, i % 2 ? COR.cremeSombra : COR.vermelhoEscuro);
     }
     for (let i = 0; i < 16; i++) {
       const x = i * W / 16, cor = Math.floor(i / 2) % 2 ? COR.creme : COR.vermelho;
-      c.fillStyle = COR.contorno; c.beginPath(); c.arc((x + W / 32) * K, 30 * K, (W / 32 + .5) * K, 0, Math.PI); c.fill();
-      c.fillStyle = cor; c.beginPath(); c.arc((x + W / 32) * K, 30 * K, (W / 32 - .2) * K, 0, Math.PI); c.fill();
+      c.fillStyle = COR.contorno; c.beginPath(); c.arc((x + W / 32) * K, (30 + D) * K, (W / 32 + .5) * K, 0, Math.PI); c.fill();
+      c.fillStyle = cor; c.beginPath(); c.arc((x + W / 32) * K, (30 + D) * K, (W / 32 - .2) * K, 0, Math.PI); c.fill();
     }
-    // placa no topo com o nome em letras claras
-    r(W / 2 - 22, 0, 44, 9, COR.contorno); r(W / 2 - 21, 1, 42, 7, COR.vermelho);
-    c.fillStyle = COR.creme; c.font = `bold ${Math.round(5.2 * K)}px Georgia, serif`; c.textAlign = 'center'; c.textBaseline = 'middle';
-    c.fillText('L’OCCITANE', (W / 2) * K, 4.8 * K);
   });
 
   // Bandeira vertical vermelha no fim da rua: 34 x 100 unidades, base na última linha.

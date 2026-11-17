@@ -6,6 +6,7 @@ import { SHOWROOM, MUNDO, ALTURA, ALTURA_CIDADE, ALTURA_SHOWROOM } from '../src/
 import { CAMPANHA } from '../src/data/campanha.js';
 import { criarMissao, coletarProduto, objetivoMissao, META_KITS } from '../src/game/missao.js';
 import { enquadramento } from '../src/game/guiaShowroom.js';
+import { paginar } from '../src/game/falas.js';
 
 // Carrega a cena com adaptadores em memória (sem Phaser nem navegador), como em dialogo.test.js.
 function cena() {
@@ -14,7 +15,7 @@ function cena() {
   const metricas = [];
   const source = readFileSync(new URL('../src/game/Aventura.js', import.meta.url), 'utf8').replace(/^import[^\n]*\n/gm, '').replace('export class Aventura', 'class Aventura');
   const Klass = vm.runInNewContext(source + '\nAventura;', {
-    Phaser: { Scene: class {} }, CAMPANHA, SHOWROOM, MUNDO, ALTURA, ALTURA_CIDADE, ALTURA_SHOWROOM, META_KITS, objetivoMissao, faltaParaKit: () => [],
+    Phaser: { Scene: class {} }, CAMPANHA, paginar, SHOWROOM, MUNDO, ALTURA, ALTURA_CIDADE, ALTURA_SHOWROOM, META_KITS, objetivoMissao, faltaParaKit: () => [],
     MODO_FACIL: { capivaraVelocidade: 10, checkpointDistancia: 400 }, TENDA: {}, registrar: n => metricas.push(n), tocar() {},
     document: { getElementById: id => elements[id] },
   });

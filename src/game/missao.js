@@ -38,21 +38,21 @@ export function objetivoMissao(missao, sala) {
   }
   return 'Recupere os produtos e siga em frente até o showroom →';
 }
-// Produtos da cidade a partir do traçado da rua (posições das tendas e dos cestos).
-// - chão: um par garantido no caminho, para nunca faltar o mínimo da missão;
-// - sobre os cestos: pega quem salta por cima;
-// - no alto de cada tenda: só com o quique no toldo.
+// Produtos da cidade a partir do traçado da rua (posições das tendas e dos cestos). Caju, Romã e Capim-Limão
+// em quantidades iguais (9 de cada), espalhados entre chão, cestos e tendas:
+// - chão: 12 pontos entre os marcos, alternando os três (o primeiro Caju logo no começo da rua);
+// - sobre os cestos: alternando os três, pega quem salta por cima;
+// - no alto das tendas: um ou dois produtos por tenda, nunca os três juntos (só com o quique no toldo).
+export const CHAO_PRODUTOS = [330, 600, 1000, 1450, 1900, 2200, 2480, 2950, 3250, 3550, 3880, 4250];
+export const TOPO_TENDAS = [['caju', 'capim'], ['roma'], ['capim', 'roma'], ['caju'], ['roma', 'caju'], ['capim']];
 export function criarProdutosCidade({ chao, tendas, cestos, alturaCesto = 20, topoToldo }) {
-  const produtos = [];
-  const tipo = i => (i % 2 ? 'roma' : 'caju');
-  [330, 1500, 2700, 3880].forEach((x, i) => produtos.push({ tipo: tipo(i), x, y: chao - 30, lugar: 'chao' }));
-  cestos.forEach(([x, n], i) => produtos.push({ tipo: tipo(i + 1), x, y: chao - alturaCesto * n - 18, lugar: 'cesto' }));
-  for (const x of tendas) {
-    produtos.push({ tipo: 'caju', x: x - 10, y: topoToldo - 86, lugar: 'alto' });
-    produtos.push({ tipo: 'capim', x: x + 6, y: topoToldo - 92, lugar: 'alto' });
-    produtos.push({ tipo: 'roma', x: x + 22, y: topoToldo - 80, lugar: 'alto' });
-  }
-  // Capim-Limão também pelo chão, entre os marcos (coleção, fora da receita dos kits)
-  [610, 1900, 3250, 4250].forEach(x => produtos.push({ tipo: 'capim', x, y: chao - 30, lugar: 'chao' }));
+  const produtos = [], ciclo = ['caju', 'capim', 'roma'];
+  CHAO_PRODUTOS.forEach((x, i) => produtos.push({ tipo: ciclo[i % 3], x, y: chao - 30, lugar: 'chao' }));
+  cestos.forEach(([x, n], i) => produtos.push({ tipo: ciclo[(i + 2) % 3], x, y: chao - alturaCesto * n - 18, lugar: 'cesto' }));
+  tendas.forEach((x, i) => {
+    const tipos = TOPO_TENDAS[i % TOPO_TENDAS.length];
+    if (tipos.length === 1) produtos.push({ tipo: tipos[0], x: x + 6, y: topoToldo - 88, lugar: 'alto' });
+    else { produtos.push({ tipo: tipos[0], x: x - 10, y: topoToldo - 86, lugar: 'alto' }); produtos.push({ tipo: tipos[1], x: x + 22, y: topoToldo - 80, lugar: 'alto' }); }
+  });
   return produtos;
 }

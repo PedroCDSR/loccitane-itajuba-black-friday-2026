@@ -170,3 +170,67 @@ Testado no Chromium em 390×844:
 - sem erros nem 4xx/5xx.
 
 `npm test` passou (54 de 54; novos: Capim-Limão fora da receita e contadores com ícone real) e `npm run build` também. Capturas: `revisao-contadores-0.png`, `-1.png` e `revisao-contadores-tenda.png`.
+
+## Rodada do handoff consolidado: HUD sobre o céu, diálogo creme e vinho, abertura, tenda e produtos (mesmo dia)
+
+Seguindo `docs/HANDOFF-CLAUDE.md` (versão consolidada na `main`, `a2563ba`) e os estudos aprovados de `references/propostas/rodada-hud-tenda/` (05 para o HUD, 04 só para a paleta, 03 e 01 para a tenda). A prancha `references/propostas/ui/hud-dialogos-abertura-proposta.png`, rejeitada, não foi usada.
+
+- **Merge da `main` na `dev`** com o handoff, os estudos, as logos originais, o loader do Caju e o card de 10%. Um conflito em `AGENTS.md` foi resolvido ficando com a versão da `main`; as duas diziam "sem limite de tempo".
+- **Sem limite de tempo:** já valia desde `c39b084`. Nada mudou aqui.
+- **HUD sobre o jogo** (`index.html`, `src/style.css`, `atualizarHUD` em `src/game/Aventura.js`):
+  - saíram a faixa verde e a barra bege;
+  - a tela do jogo vai do topo até o painel de botões (`TELA.alturaMax` 2400);
+  - cinco corações pixel art cheios e vazios, com `aria-label` "N de 5 corações";
+  - contadores com os sprites pequenos originais (`showroom/caju.png`, `showroom/roma.png`, `produtos/capim-limao-colonia-sprite.png`), na mesma altura visível: o Capim-Limão fica em 67/78 da altura, a Romã sobe meio pixel, como na proposta 05;
+  - cada contador aparece só depois do primeiro item daquele tipo, mostra só a quantidade e nunca total ou "0/3";
+  - som e pausa como símbolos pixel translúcidos, com alvo de 44×44 px e os mesmos `aria-label`/`aria-pressed`;
+  - o objetivo virou um aviso curto em creme e vinho, que aparece quando muda e some em 5 s; "Kits 3/3" não aparece mais no HUD.
+- **Diálogo creme e vinho:**
+  - fundo #F4EDDB, borda #942C39, texto marrom, cantos em degrau, fonte pixel local (Press Start 2P, com todos os acentos);
+  - falas divididas em páginas curtas (`src/game/falas.js`, quebra nas frases e, se preciso, na vírgula);
+  - texto revelado letra a letra: o primeiro toque completa, o seguinte avança; E, Enter ou Espaço fazem o mesmo; com `prefers-reduced-motion`, o texto aparece de uma vez;
+  - **AVANÇAR** separado, acima de Caju e Pular, só durante a conversa;
+  - a caixa fica abaixo do HUD e não cobre a Karina: em 390×844 ela termina em 200 px e a cabeça da Karina começa em 256 px;
+  - títulos em maiúsculas e minúsculas, porque nas maiúsculas da fonte o acento é um pixel só.
+- **Abertura:**
+  - 1ª fala (duas páginas) → a caixa e o AVANÇAR somem → a capivara anda até o cesto, derruba a entrega e os frascos voam → a caixa volta com "Opa!…" → missão;
+  - durante a cena, tocar não avança (`acaoIntro`), e "Pular abertura" continua funcionando;
+  - para caber no celular em pé, a exploradora para em x 58, o cesto fica em x 112 e a capivara chega de x 178 (câmera 0 a ~150);
+  - os frascos que voam incluem o Capim-Limão.
+- **Tenda:**
+  - placa com a **logo original** ("logo em alta resolução.png", marca branca no vermelho) e pano com o **selo de revendedor original** em disco vermelho e arte branca, como o Pedro pediu;
+  - as duas são recortadas e reduzidas sem deformar por `ferramentas/preparar_logos.py` (`public/assets/showroom/logo-tenda.png`, `selo-tenda.png`), e os arquivos fonte foram preservados;
+  - no balcão, os três frascos menores com a mesma altura visível, a sacola e a caixa de presente;
+  - proporção compacta da tenda atual: a textura só cresceu para cima, para a placa caber, e o toldo e o balcão ficaram na mesma altura do mundo (colisão e quique iguais).
+- **Produtos na cidade:**
+  - 9 Caju, 9 Romã e 9 Capim-Limão: 12 no chão alternando os três, 6 nos cestos alternando e 9 no alto das tendas;
+  - cada tenda tem um ou dois produtos no alto, alternados, nunca os três;
+  - no mundo, o Capim-Limão também fica 67/78 menor, para ter a altura aparente dos outros;
+  - a receita dos kits continua Caju, Romã e caixa.
+
+### Testado de verdade
+
+- `npm test` passou (57 de 57) e `npm run build` também. Testes novos:
+  - páginas das falas;
+  - a abertura esconde a caixa durante a cena, não avança no meio dela e pode ser pulada;
+  - quantidades iguais e um ou dois produtos por tenda;
+  - a conversa do Pedro em duas páginas;
+  - contadores com ícone real.
+- Chromium (Playwright), 390×844 com toque emulado:
+  - digitação, 1º toque completa, páginas;
+  - a cena da capivara aparece inteira na tela, com a caixa e o AVANÇAR escondidos, e tocar durante a cena não avança;
+  - HUD transparente, sem rolagem e com botões de 44 px;
+  - contadores aparecendo no 1º Caju e no 1º Capim-Limão;
+  - corações esvaziando com o dano;
+  - tenda com as logos;
+  - conversa do Pedro fechada com Espaço sem a exploradora pular;
+  - caixa da Karina sem cobri-la;
+  - pausa e retomada;
+  - sem erros nem 4xx/5xx.
+- 412×915 e computador 1280×800: o mesmo roteiro (resultado abaixo).
+
+### Não feito nesta rodada
+
+- **Loader do Caju** (`public/assets/carregamento/`): o README pede para normalizar as margens e limpar o halo antes de integrar. Ficou para outra rodada.
+- **Cards de 3% e 5%:** pendentes de decisão do Pedro. A oferta continua desativada e o teto de 10% não mudou.
+- **Sem deploy:** como pede o handoff, o trabalho foi para a branch `claude/modest-hamilton-dqefs6` e não para a `dev`, que publica sozinha no Netlify.

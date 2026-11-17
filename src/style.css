@@ -10,12 +10,9 @@
 #loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#304f3d;z-index:9;color:#fff1d5}#tentar-carga{padding:12px 18px;background:#942c39;color:#fff1d5;border:1px solid #dcb66e;border-radius:4px}
 
 /* Abertura encenada e passagem para o showroom. */
-.acoes-dialogo{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.acoes-dialogo #pular-intro{font:inherit;font-size:12px;cursor:pointer;border:1px solid #b18b4588;background:transparent;color:var(--verde);border-radius:4px;padding:10px 14px}
-#dialogo-titulo{color:var(--vermelho)}
 #transicao{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff1d5;text-align:center;pointer-events:none;animation:transicao .9s ease both}
 #transicao p{margin:0;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#e6b84a}#transicao strong{font:400 clamp(24px,4vw,40px) Georgia,serif}#transicao span{font-size:11px;letter-spacing:.2em;text-transform:uppercase}
 @keyframes transicao{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-#dialogo.no-alto{top:12px;bottom:auto}
 
 /* ===== Partida em coluna, pensada para o celular em pé =====
    HUD no alto, tela do jogo 4:3 e, embaixo, um painel próprio com as falas, as dicas e os botões grandes.
@@ -25,27 +22,12 @@ body.jogando main{padding:0;max-width:none}
 body.jogando{background:#20301f}
 #partida{--painel-min:190px;--hud:76px}
 body.jogando #partida{display:flex;flex-direction:column;height:100dvh;max-width:760px;margin:0 auto;background:var(--verde);padding-top:env(safe-area-inset-top,0px)}
-#partida #hud{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;border-radius:0;padding:8px 12px;font-size:13px;height:auto}
-#partida #hud #local{display:none}
-#partida #hud #presentes{grid-column:2;justify-self:start;display:flex;align-items:center;gap:12px;font-weight:700;min-height:28px}
-/* contadores de coleta: ícone do produto e número; aparecem no primeiro item de cada tipo */
-#hud .contador{display:inline-flex;align-items:center;gap:4px;font-size:15px;font-variant-numeric:tabular-nums}
-#hud .contador img{height:24px;width:auto;image-rendering:pixelated;filter:drop-shadow(0 1px 0 #0006)}
-#hud .contador[data-tipo=caixa] img{height:20px}
-#hud .contador.ganhou{animation:ganhou .35s ease-out}
-@keyframes ganhou{40%{transform:scale(1.3)}}
-@media(prefers-reduced-motion:reduce){#hud .contador.ganhou{animation:none}}
-#partida #hud #vida{grid-column:1;grid-row:1}
-#partida #objetivo-panel{border-radius:0;padding:6px 12px;font-size:12px}
 #partida #palco{position:relative;width:100%;flex:1;min-height:0;margin:0 auto}
 #partida #jogo{position:absolute;inset:0;width:auto;aspect-ratio:auto}
 #partida #painel{position:relative;flex:none;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;
   padding:12px max(12px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));background:linear-gradient(#304f3d,#26402f)}
 body.com-selo #partida #painel{padding-bottom:calc(82px + env(safe-area-inset-bottom,0px))}
 /* falas da abertura e do Pedro: no painel, no lugar dos botões */
-#partida #dialogo{position:absolute;z-index:8;top:10px;left:10px;right:10px;bottom:auto;margin:0;max-width:560px;margin-inline:auto;padding:14px 16px;text-align:left;box-shadow:0 8px 24px #20151a66}
-#partida #dialogo p{font-size:15px;line-height:1.5;margin:4px 0 12px}#partida #dialogo .eyebrow{font-size:11px}
-#partida #dialogo .acoes-dialogo{justify-content:flex-start}#partida #dialogo .principal{font-size:14px;min-height:48px}
 /* botões */
 #partida #controles{position:static;display:flex;flex-direction:column;gap:10px;padding:0;background:none;pointer-events:auto}
 #partida #controles .botoes{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
@@ -69,9 +51,48 @@ body.com-selo #partida #painel{padding-bottom:calc(82px + env(safe-area-inset-bo
 @media(prefers-reduced-motion:reduce){#dica::after,#partida #controles button.destaque{animation:none}}
 /* computador: coluna mais estreita, botões menores (o teclado é o principal) */
 @media(pointer:fine){#partida{--painel-min:150px}#partida #controles [data-controle=esquerda],#partida #controles [data-controle=direita],#partida #controles .caju{width:64px;height:64px}#partida #controles .pular{width:80px;height:80px}}
-/* botão de som no HUD: sempre visível durante a partida; a escolha fica guardada no aparelho */
-#hud #som-hud{grid-row:1;grid-column:3;background:#f4eddb1a;color:var(--creme);border:1px solid #f4eddb66;min-width:40px;min-height:30px;border-radius:4px;padding:3px 8px;display:grid;place-items:center}
-#hud #som-hud svg{width:20px;height:20px;display:block}
+
+/* ===== HUD sobre o céu (docs/HANDOFF-CLAUDE.md): sem faixa verde nem barra bege ===== */
+body.jogando #partida{padding-top:0}
+#partida #palco{position:relative;overflow:hidden}
+#partida #hud{position:absolute;z-index:6;top:0;left:0;right:0;display:grid;grid-template-columns:1fr auto;grid-template-areas:"vida botoes" "produtos botoes" "aviso aviso";align-items:start;gap:6px 10px;padding:calc(env(safe-area-inset-top,0px) + 8px) max(10px,env(safe-area-inset-right,0px)) 0 max(10px,env(safe-area-inset-left,0px));background:none;border-radius:0;font-size:inherit;pointer-events:none;color:#fff4df}
+#partida #hud button{pointer-events:auto}
+/* vida: cinco corações pixel art, cheios ou vazios */
+#partida #hud #vida{grid-area:vida;display:flex;gap:4px;padding-top:4px}
+#hud .coracao{width:22px;height:20px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 8' shape-rendering='crispEdges'%3E%3Cpath fill='%233b1d1c' d='M1 0h3v1h1V0h3v1h1v3H8v1H7v1H6v1H5v1H4V7H3V6H2V5H1V4H0V1h1z'/%3E%3Cpath fill='%23e0475a' d='M1 1h3v1h1V1h3v3H7v1H6v1H5v1H4V6H3V5H2V4H1z'/%3E%3Cpath fill='%23ffc2c8' d='M2 2h1v1H2z'/%3E%3C/svg%3E") center/contain no-repeat;image-rendering:pixelated;filter:drop-shadow(1px 1px 0 #3b1d1c80)}
+#hud .coracao.vazio{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 8' shape-rendering='crispEdges'%3E%3Cpath fill='%233b1d1c' d='M1 0h3v1h1V0h3v1h1v3H8v1H7v1H6v1H5v1H4V7H3V6H2V5H1V4H0V1h1z'/%3E%3Cpath fill='%23f4eddb40' d='M1 1h3v1h1V1h3v3H7v1H6v1H5v1H4V6H3V5H2V4H1z'/%3E%3C/svg%3E");}
+/* contadores: o próprio frasco e a quantidade; cada um aparece no primeiro item daquele tipo */
+#partida #hud #presentes{grid-area:produtos;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;min-height:0}
+#hud .contador{display:inline-flex;align-items:center;gap:5px;font-family:Pixel,monospace;font-size:16px;color:#fff4df;text-shadow:2px 2px 0 #3b1d1c,-1px 0 0 #3b1d1c,0 -1px 0 #3b1d1c}
+#hud .frasco{position:relative;display:inline-block;width:18px;height:44px;flex:none}
+#hud .frasco img{position:absolute;left:0;top:0;height:44px;width:auto;image-rendering:pixelated;filter:drop-shadow(1px 1px 0 #3b1d1c99)}
+#hud .frasco.roma img{top:-.56px}
+#hud .frasco.capim img{top:2.26px;height:37.79px} /* 67/78 da altura: mesma altura visível de Caju e Romã */
+#hud .frasco.caixa{width:30px;height:30px}#hud .frasco.caixa img{height:30px}
+#hud .contador.ganhou{animation:ganhou .35s steps(3)}
+@keyframes ganhou{40%{transform:translateY(-4px) scale(1.15)}}
+/* som e pausa: símbolos translúcidos, alvo de toque de 44 px */
+#partida #hud .hud-botoes{grid-area:botoes;display:flex;gap:8px}
+#partida #hud #som-hud,#partida #hud #pausar{width:44px;height:44px;min-width:44px;min-height:44px;padding:0;display:grid;place-items:center;background:#1e101633;color:#fff4df;border:2px solid #fff4df8c;border-radius:0;clip-path:polygon(3px 0,calc(100% - 3px) 0,calc(100% - 3px) 3px,100% 3px,100% calc(100% - 3px),calc(100% - 3px) calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,3px calc(100% - 3px),0 calc(100% - 3px),0 3px,3px 3px)}
+#partida #hud #pausar[hidden]{display:none}
+#hud .hud-botoes svg{width:22px;height:22px;display:block;filter:drop-shadow(1px 1px 0 #3b1d1c)}
 #hud #som-hud[aria-pressed=true] .mudo,#hud #som-hud[aria-pressed=false] .ondas{display:none}
 #hud #som-hud[aria-pressed=false]{opacity:.75}
-#hud #pausar{grid-row:1;grid-column:4}
+/* objetivo: aviso curto e pontual em creme e vinho, some depois de alguns segundos */
+#partida #hud #objetivo-aviso{grid-area:aviso;justify-self:start;margin:2px 0 0;max-width:min(100%,420px);padding:6px 9px;background:#f4eddbeb;color:#942c39;border:2px solid #942c39;font-family:Pixel,monospace;font-size:8px;line-height:1.8;opacity:0;transform:translateY(-4px);transition:opacity .3s,transform .3s}
+#partida #hud #objetivo-aviso.visivel{opacity:1;transform:none}
+/* ===== Diálogo creme e vinho, compacto, texto revelado aos poucos ===== */
+#partida #dialogo{position:absolute;z-index:8;top:calc(env(safe-area-inset-top,0px) + 112px);left:10px;right:10px;bottom:auto;max-width:520px;margin:0 auto;padding:9px 12px 11px;background:#f4eddb;color:#3a2620;border:3px solid #942c39;border-radius:0;box-shadow:none;text-align:left;cursor:pointer;clip-path:polygon(4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px),0 4px,4px 4px)}
+#partida #dialogo #dialogo-titulo{margin:0 0 8px;padding-top:2px;line-height:1.6;color:#942c39;font-family:Pixel,monospace;font-size:8px;letter-spacing:.04em;font-weight:400;text-transform:none}
+#partida #dialogo #dialogo-texto{margin:0;min-height:3.6em;font-family:Pixel,monospace;font-size:11px;line-height:1.8;color:#3a2620}
+#partida #dialogo .dialogo-mais{position:absolute;right:10px;bottom:6px;width:0;height:0;border:5px solid transparent;border-top:6px solid #942c39;opacity:0}
+#partida #dialogo.pronto .dialogo-mais{opacity:1;animation:pisca .8s steps(2) infinite}
+@keyframes pisca{50%{opacity:0}}
+#partida #dialogo #pular-intro{position:absolute;top:6px;right:8px;padding:4px 2px;background:none;border:0;color:#942c39;font-family:Pixel,monospace;font-size:8px;text-decoration:underline;cursor:pointer}
+/* AVANÇAR: separado da caixa, acima dos botões Caju e Pular, só durante o diálogo */
+#partida #controles #fechar-dialogo{position:absolute;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(100% + 8px);z-index:7;width:auto;height:auto;min-height:44px;min-width:0;padding:12px 30px 12px 16px;background:#942c39;color:#f4eddb;border:3px solid #6e1f2a;border-radius:0;font-family:Pixel,monospace;font-size:12px;font-weight:400;letter-spacing:.04em;box-shadow:3px 3px 0 #3b1d1c;touch-action:manipulation}
+#partida #controles #fechar-dialogo::after{content:"";position:absolute;right:12px;top:50%;margin-top:-6px;border:6px solid transparent;border-left:8px solid #f4eddb;border-right:0}
+#partida #controles #fechar-dialogo[hidden]{display:none}
+#partida #controles #fechar-dialogo:focus-visible{outline:3px solid #f4eddb;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#hud .contador.ganhou,#partida #dialogo.pronto .dialogo-mais{animation:none}#partida #hud #objetivo-aviso{transition:none}}
+@media(max-width:360px){#hud .coracao{width:18px;height:16px}#partida #dialogo #dialogo-texto{font-size:10px}}
