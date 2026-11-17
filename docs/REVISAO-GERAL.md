@@ -251,3 +251,11 @@ Relato do Pedro no Android: depois do final, em "Jogar novamente", as tendas sum
 - As dicas de primeira partida não aparecem no "Jogar novamente", como antes: são só para a primeira partida da visita.
 
 `npm test` passou (57 de 57) e `npm run build` também. Chromium em 390×844: botões lado a lado (Pular abertura 156×44, AVANÇAR 139×44), o botão some da caixa e encerra a abertura; sem erros.
+
+## Música mais alta e mais rápida (mesmo dia)
+
+Pedido do Pedro. Em `src/services/som.js`:
+- **Volume:** `VOLUME_MUSICA` subiu de 0,10 para 0,14. O pico medido renderizando a música inteira no Chromium foi de 0,083 para 0,132, ainda abaixo do limiar do compressor.
+- **Velocidade:** `VELOCIDADE_MUSICA` = 1,12. A música toca 12% mais rápida (cerca de 1 min 33 s por volta, antes 1 min 44 s). O tom das notas não muda, porque o sintetizador toca nota a nota.
+
+Conferido no Chromium: nenhum som antes do toque, 70 notas em 4 s na rua, nada durante a pausa, sem erros. Ninguém ouviu: a máquina de teste não tem saída de áudio.
