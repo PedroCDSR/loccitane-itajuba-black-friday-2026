@@ -22,3 +22,7 @@ Leia README.md, docs/DIRECAO-CRIATIVA.md, docs/HANDOFF-FABLE-5.2.md e references
 - Direção atual aprovada: manter cidade em SHOWROOM.x=5216, mundo5856, SEM limite de tempo (pedido atualizado). Modo fácil tem5 corações, sem encurtar percurso. Intro explica missão fictícia de reunir Caju/Romã para três kits no showroom. Leia docs/EVOLUCAO-MISSAO.md e docs/HANDOFF-CLAUDE.md antes de retomar.
 
 - Direção visual aprovada e handoff atual em docs/HANDOFF-CLAUDE.md: creme/vinho, HUD sobre o céu, corações individuais, contadores somente após coleta com sprites PEQUENOS originais e alturas visuais iguais; Avançar acima de Caju/Pular. Não implementar a prancha antiga rejeitada. Conferir dev e site publicado antes de editar; esta rodada adicionou propostas/documentação, sem implementar essas mudanças no runtime.
+
+## Estado atual e revisão de polimento (precedência sobre histórico)
+
+Ler docs/HANDOFF-CLAUDE.md e docs/REVISAO-GERAL-OPUS.md antes da próxima rodada. Implementação atual já está na dev e publicada. Pedido do usuário: polir arestas e corrigir bugs, sem recriar partes importantes. Karina recebe na porta, pede caixas dentro e agradece após a última caixa; não exigir receita de cosméticos nem saída para concluir. Preservar pontuação e restrições de vida/extras em src/data/recompensas.js. Trilha instrumental0,8. Reinício destrói e recria o Phaser.Game; não restaurar reaproveitamento quebrado. Documentos de propostas e relatos de75s são históricos. Não sobrescrever dev com main. Revisão/publicação na dev; promoção à main depende de instrução do usuário.

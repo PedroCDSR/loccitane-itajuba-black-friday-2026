@@ -1,3 +1,5 @@
+> **Estado atual (17/11/2026):** jogo implementado e publicado na branch **dev**: https://dev--loccitane-itajuba.netlify.app/ . Para continuar, leia [o handoff atual](docs/HANDOFF-CLAUDE.md) e [a revisão de polimento](docs/REVISAO-GERAL-OPUS.md). Os relatos abaixo documentam etapas anteriores; menções a75s, receita obrigatória de produtos, saída ou implementações pendentes não descrevem o runtime atual.
+
 # A Última Aventura — Black Friday L’Occitane Itajubá 2026
 
 Base independente de um jogo promocional de plataforma 2D, mobile-first, com Phaser 4.2.1 e Vite 8.3.5. Desenvolvida para continuação com Fable 5.2. **Não é a versão final de campanha nem está publicada.**

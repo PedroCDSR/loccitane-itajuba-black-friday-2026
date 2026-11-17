@@ -1,87 +1,52 @@
-# Continuação para o Claude — decisões consolidadas em 17/11/2026
+# Handoff atual — revisão e polimento
 
-Este documento é a direção atual do usuário. Substitui os pedidos antigos de duração de 75s, HUD em faixa verde e propostas genéricas de arte. O handoff anterior está em HANDOFF-CLAUDE-HISTORICO.md apenas para histórico técnico, não como especificação atual.
+Atualizado em17/11/2026. Este documento substitui a direção histórica de HANDOFF-ANTES-DO-POLIMENTO.md, HANDOFF-CLAUDE-HISTORICO.md e HANDOFF-FABLE-5.2.md quando houver conflito. A implementação existe: não reconstruir o jogo a partir das propostas antigas.
 
-## Primeiro: conferir o jogo real e as branches
+## Base e limite da próxima rodada
 
-1. Ler AGENTS.md, README.md, este handoff e docs/DIRECAO-CRIATIVA.md.
-2. Atualizar refs Git, verificar mudanças locais e comparar main/dev. Em 17/11, a dev contém evolução de gameplay/Karina/Capim que não está toda na main. Não substituir src da dev pelo da main. Preservar contribuições e integrar apenas com comparação consciente; não usar force push.
-3. Abrir https://dev--loccitane-itajuba.netlify.app/ no navegador em celular e desktop. As capturas do usuário mostram a implementação atual. Antes de propor UI, verificar esse enquadramento e seus assets reais.
-4. Esta rodada do Codex entregou design/documentação, NÃO implementou as mudanças abaixo. Um estudo renderizado em HTML não é o HUD final nem uma alteração no jogo.
+- Repositório PedroCDSR/loccitane-itajuba-black-friday-2026, branch **dev**. Base de implementação desta entrega:5e5499d. Main tem histórico antigo; não copiá-la sobre dev nem fazer merge automático para produção.
+- Ambiente publicado: https://dev--loccitane-itajuba.netlify.app/ . Atualizações da branch dev disparam publicação no Netlify.
+- Pedido atual: revisão geral com esforço extra, corrigindo bugs e polindo arestas. Preservar identidade, artes, mapa, personagens, história, mecânica e estrutura. Sem redesenho amplo, migração de framework ou reescrita arquitetural. Ajustes maiores exigem proposta separada.
+- Ler AGENTS.md, este handoff e REVISAO-GERAL-OPUS.md antes de editar. Arquivos antigos são referência histórica, não backlog atual.
 
-## Decisões aprovadas
+## Experiência implementada
 
-### Tempo e percurso
+- Loading Caju0/20/50/70/100 com progresso real de arquivos e nova tentativa em falha; depois pergaminho curto sobre família itajubense em2023 e capítulo final. Sem título grande nem botão de teste no produto. Frase final em negrito e vinho, Jogar como foco, alvo: caber na primeira dobra móvel.
+- Cidade completa, sem limite de tempo; exploradora, capivaras não violentas, coleta, showroom em duas telas. Preservar percurso, teclado, multitoque e pausa.
+- Pedro na praça com fala afetiva. Mariana em x2650, pouco antes da igreja em x2750; fala menciona showroom uma vez e incentiva seguir. Marcela em x4200, com fala criativa. Não inserir “irmã/noiva do Pedro” nas falas.
+- Alturas visíveis: exploradora64, Marcela64, Mariana57, Karina55. Mariana e Marcela possuem poses e fundo recortado. Ferramenta de preparo em ferramentas/preparar_convidadas.py; não reintroduzir preenchimento global de buracos da máscara, que criava manchas brancas nos braços.
+- Mariana: prancha aprovada preservada. Marcela: runtime usa uma nova exportação baseada na folha aprovada, porque o arquivo original exibido no chat não ficou disponível; essa diferença está documentada em references/personagens/README.md.
+- Karina acolhe na porta. Ao entrar, espera perto da entrada e pede ajuda com caixas nas prateleiras. Depois segue à bancada. A exploradora pega3 caixas, Karina monta kits automaticamente. Cosméticos não são consumidos. Última caixa inicia agradecimento com caixa de diálogo padrão dentro do showroom; último avanço revela prêmio.
+- Não existe placa/objetivo de saída nem obrigação de caminhar até saída para concluir. Manter retorno à cidade durante a exploração.
+- Final: cupom quadrado como recompensa, breve comemoração, resgate abaixo da imagem em destaque. Desconto explicitamente em toda a loja. Placar detalhado e ações Compartilhe, Instagram, WhatsApp são secundários. Nenhum envio automático de mensagem.
 
-- Sem limite de tempo: deixar jogar o quanto quiser. Retirar relógio, timeout como fim de partida, alertas de urgência e textos que prometem 75s. Atualizar testes que ainda exigem isso.
-- Preservar a cidade, sua extensão e os marcos. Não encurtar trajeto. Manter modo fácil, teclado, multitoque, pausa, áudio e reinício.
-- A missão e conclusão pela vitrine/showroom permanecem; remover timeout não significa encerrar automaticamente ou bloquear exploração. Preservar retorno à cidade que já existe na dev.
+## Pontuação atual
 
-### HUD
+10 pontos por Caju, Romã ou Capim-Limão coletado. Caixas e kits obrigatórios rendem0 pontos.
 
-- Remover faixa verde superior e barra bege de objetivo: HUD sobre o céu, ampliando a área visível de mapa conforme layout responsivo real. Não redesenhar cenário nem trocar personagem.
-- Vida com cinco corações pixel art individuais cheios/vazios, sem “5 ♥”. Nome acessível informa vida atual.
-- Cada produto revela seu contador somente após a primeira coleta daquele tipo. Mostrar apenas a quantidade coletada, nunca 0/3 ou total disponível. Não deduzir critérios de recompensa dessas contagens.
-- Usar EXATAMENTE os pequenos sprites existentes: Caju `public/assets/showroom/caju.png` (32×78), Romã `public/assets/showroom/roma.png` (31×78), Capim `public/assets/produtos/capim-limao-colonia-sprite.png` (32×78). Não regenerar frascos, não usar artes grandes como ícones e não substituir por fruta/folha.
-- Altura visual e base iguais: Caju tem conteúdo alfa em (4,4)-(27,71), Romã (4,5)-(24,72): ambos 67px visíveis; Capim (2,0)-(30,78): 78px visíveis. Portanto diminuir proporcionalmente Capim, em vez de igualar altura dos arquivos. Exemplo conferido em proposta05: Caju/Romã em caixas78px, Romã deslocado−1px; Capim altura67px, topo4px. Adaptar escala final mantendo essa relação.
-- Pausa/som com símbolos discretos transparentes/translúcidos, contraste sobre céu e alvos touch de pelo menos44px. Preservar aria-label e aria-pressed.
-- Mensagens de objetivo curtas e pontuais em creme/vinho. Evitar barra persistente e revelação de totais; não mostrar “Kits3/3” como contador de produtos.
+| Cupom | Regra |
+| --- | --- |
+| ROMA-W3F ·5% | Concluir, sem atingir as condições superiores |
+| CAJU-K8R ·7% |150+ pontos e vida final >=3 |
+| BRESIL-N6X ·10% |250+ pontos, vida mínima durante a partida >=4 e os2 cosméticos externos da fachada |
 
-### Diálogos
+Mínimo de vida é registrado antes de reposicionar a exploradora, evitando contornar a regra por recuperação. Extras externos são os dois cosméticos da fachada além da porta; cada tipo conta uma vez. Regras em src/data/recompensas.js. Auditar passagem das métricas até o final e não alterar critérios silenciosamente.
 
-- Paleta escolhida explicitamente: CREME E VINHO. Fundo #F4EDDB, borda #942C39, texto marrom escuro; botão vinho com letras creme. Sem moldura dourada. Cantos em degraus e fonte pixel local com acentos.
-- Texto curto em páginas; caixa menor. Revelação progressiva: primeiro toque completa texto, seguinte avança; teclado equivalente. Respeitar prefers-reduced-motion.
-- AVANÇAR separado da caixa, acima dos botões Caju/Pular, aparece durante diálogo. Caixa não deve cobrir Karina, porta ou animação. Personagens aprovados preservados; não recortar retratos inventados das pranchas.
-- Texto real no DOM ou mecanismo acessível, não rasterizado dentro da imagem. Ajustar tamanho de fonte ao celular antes de perseguir densidade de pixels.
+## Áudio e resgate
 
-### Abertura
+- Instrumental enviado pelo usuário, MP3 192kbps,104,64s, em loop, **volume0,8**. Substituiu MIDI sintetizado. Efeitos curtos continuam em Web Audio.
+- Música tenta tocar já na abertura; navegador pode exigir primeiro gesto. Não contornar política de autoplay. Pausa, foco e som desligado devem suspender e retomar coerentemente.
+- WhatsApp da loja:553598137549, exatamente o número fornecido. Instagram: https://www.instagram.com/loccitane.itajuba/ . Não inventar outro contato.
+- Resgate abre conversa com código e link da página do cupom. Open Graph estático nas páginas /recompensas/roma/, /caju/, /bresil/. Usuário confirmou prévia ao colar manualmente; preenchimento via wa.me pode não gerar prévia automaticamente. Não prometer anexo automático.
+- Compartilhe usa menu nativo com imagem real do jogo e convite, quando suportado. Instagram pode ou não aparecer como destino no dispositivo. Fallback: WhatsApp por texto e download da imagem. Botão Instagram abre perfil da loja.
+- Cupons são fixos; não há antifraude, banco, CRM ou uso único. Validade26/11/26 é ilustrativa nas artes. Condições oficiais ainda pendentes e oferta.ativa permanece false para o fluxo comercial antigo. Fluxo de demonstração dos cupons já funciona em dev; isto não valida campanha para lançamento.
 
-- Sequência: fala curta → avanço oculta caixa → capivara anda e derruba cesto → reaparece continuação.
-- No celular atual, capivara/cesto ficam fora do enquadramento. Ajustar câmera e/ou posições: exploradora um pouco à esquerda, cesto mais perto. Não basta esconder texto.
-- Durante ação, evitar avanço duplicado; manter opção pular abertura e recuperação ao pausar. Fruta oferecida à capivara não é cosmético ingerido.
+## Reinício — regressão prioritária
 
-### Produtos na cidade
+Antes, a cena reiniciava no mesmo Phaser.Game e podia mostrar apenas fundo/HUD. Agora cada início após uma partida destrói o motor anterior, aguarda evento destroy e cria motor novo. Não restaurar reaproveitamento da instância sem prova de correção. Bloqueio de início simultâneo em src/main.js. Voltar ao início também restaura interface e música.
 
-- Quantidades de Caju, Romã e Capim-Limão aproximadamente equilibradas pelo percurso; mais Capim em locais diferentes.
-- Não obrigar os três juntos sobre toda tenda: alternar individuais/pares e distribuir entre rua, cestos e tendas.
-- Alturas aparentes coerentes também no mundo. Não trocar a silhueta original do Capim por outro frasco.
-- Não alterar silenciosamente ingredientes/regras dos kits: conferir a dev e preservar o objetivo existente.
+Última checagem:63 testes Node e build passaram. Chrome local com página auxiliar fora do produto: primeira partida → conclusão simulada e scene.stop → final → voltar → segunda partida. Screenshot confirmou cenário, exploradora, capivara e diálogo na segunda abertura. Isto não substitui duas partidas completas em celular físico.
 
-### Tenda e marca
+## O que falta
 
-- Proporções compactas da primeira tenda são preferidas à versão alargada. Produtos menores no balcão; exploradora ao lado serve para avaliar escala.
-- Referência mais recente: references/propostas/rodada-hud-tenda/03-tenda-exploradora-produtos-menores.png. É estudo recriado, não sprite runtime homologado; preservar sprites atuais da exploradora e dos produtos na integração.
-- Reutilizar acabamento de madeira/toldo da proposta, preparar sprite final independente ou adaptar o desenho atual. Se alterar geometria visual, verificar colisão/quique do toldo em vez de assumir que tudo encaixa.
-- Aplicar os logos ORIGINAIS de public/assets/showroom: `logo em alta resolução.png` e `SELO_REVENDEDOR.pdf.png`. Marca branca no vermelho, selo circular vermelho e marca branca, sem distorcer. Não usar as letras/emblemas regenerados nas imagens como fonte final. Preservar arquivos fonte.
-
-## Quais estudos aproveitar
-
-- `references/propostas/rodada-hud-tenda/05-hud-sprites-originais.html` + PNG: referência atual dos contadores com sprites pequenos e alturas aprovadas; HTML confere posicionamento e fontes em navegador. É estudo isolado, ainda precisa de layout real mobile e botão acima das ações.
-- `04-estudo-ui-creme-vinho.png`: aproveitar caixa/paleta; IGNORAR os frascos incorretos desenhados nessa prancha.
-- `03-tenda-exploradora-produtos-menores.png`: escala/composição compacta recente, não novo sprite de exploradora.
-- `01-tenda-compacta-estudo.png`: proporção; seus produtos são antigos/genéricos.
-- `02-tenda-larga-produtos.png`: estudo de embalagem; largura não escolhida.
-- `references/propostas/ui/hud-dialogos-abertura-proposta.png`: REJEITADA como distante do jogo real; não implementar a partir dela.
-- Não reconstruir gameplay a partir das pranchas: usar o código atual e os assets existentes.
-
-## Outros assets/decisões preservados
-
-- Nome correto: KARINA. Referências aprovadas em references/karina, coleção e helper existentes. Pedro continua funcionário/NPC; manter os papéis que a dev já implementou.
-- Loader Caju em0/20/50/70/100 está em public/assets/carregamento com limitações no README: normalizar margens, limpar halo da folha e dirigir por progresso real. Essa porcentagem é carregamento de assets, não tempo de jogo.
-- Card10% em public/assets/recompensas. Cards3%/5% ainda pendentes: usuário indicou3% para terminar sem coletar nada; critérios5%/10% não definidos. Não inventar faixas nem ativar oferta. Teto10%, contato/validade/condições configuráveis, sem cupom único no cliente.
-
-## Ordem de execução sugerida
-
-1. Conferir dev/site e capturar estado inicial em390×844,412×915 e desktop.
-2. Remover limite de tempo/textos/testes antigos; preservar conclusão e passeio.
-3. Refazer HUD com sprites originais e mostrar/ocultar cada contador por coleta.
-4. Diálogo creme/vinho compacto e Avançar acima das ações; rever abertura/câmera.
-5. Tenda com logos originais; equilibrar distribuição de produtos sem refatoração desnecessária.
-6. Testar e documentar antes/depois, commitar e subir no GitHub. Sem deploy automático nesta tarefa.
-
-## Validação exigida
-
-- npm test e npm run build; testes significativos para ausência de timeout, revelação dos contadores e fluxo de avanço, sem testes que apenas dupliquem CSS.
-- Conferir console e assets em navegador; touch e teclado, dois toques simultâneos, pausa/retomada, texto com acentos, avanço sem acionar pulo, abertura pulada e completa.
-- Verificar HUD sobre céu/cenário escuro, safe areas, ausência de sobreposição na Karina e tela pequena. Contadores zero ocultos; três tipos ao coletar, altura visual igual.
-- Confirmar que a pessoa pode continuar explorando além do limite antigo. Registrar o que foi de fato testado; não alegar homologação de aparelho real por screenshot headless.
+Ver REVISAO-GERAL-OPUS.md: jornada completa real, sequência de Karina, três faixas, reinícios repetidos, celulares, áudio, compartilhamento e performance. Registrar navegador, resolução, ações e falhas realmente observadas. Não apresentar mockups como screenshots do jogo. Manter correções na dev, commits pequenos, testes/build e confirmação da publicação.
