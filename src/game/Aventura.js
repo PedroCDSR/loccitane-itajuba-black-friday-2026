@@ -43,7 +43,7 @@ const CALCADA = { esquerda: 255, direita: 241, degrau: 4 };
 const chaoFachada = x => CALCADA.esquerda + (CALCADA.direita - CALCADA.esquerda) * Math.min(1, Math.max(0, (x - FACHADA) / SHOWROOM.largura));
 // Pedro recebe a exploradora na praça (ao lado da fonte) e conta como a L’Occitane chegou a Itajubá.
 // Karina (assets em personagens/karina/), a dona, atende no showroom: na porta e depois na bancada.
-const PEDRO_ESCALA = .41, KARINA_ESCALA = 52 / 180; // alturas visíveis: exploradora 64, Karina 52 (boca), Pedro 78
+const PEDRO_ESCALA = .41, KARINA_ESCALA = 55 / 180; // alturas visíveis: exploradora 64, Karina 55, Pedro 78
 const PEDRO_PRACA = 1330;
 const DESENHADAS = ['tenda', 'placa', 'brilho', 'bandeira', 'capivara-dormindo', 'zzz'];
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura

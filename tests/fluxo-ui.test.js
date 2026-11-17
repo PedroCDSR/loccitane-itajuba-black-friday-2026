@@ -15,7 +15,7 @@ function executarUI() {
   class Game {
     constructor(config){this.config=config;this.events=new EventEmitter();this.starts=0;this.cleans=0;this.pauses=0;this.resumes=0;this.destroyed=false;
       this.registry=new Map();this.scene={start:()=>this.starts++,pause:()=>this.pauses++,resume:()=>this.resumes++,getScene:()=>({entrada:{limpar:()=>this.cleans++}})};games.push(this);}
-    destroy(){this.destroyed=true;}
+    destroy(){this.destroyed=true;this.events.emit('destroy');}
   }
   const context={document:{getElementById:id=>{assert.ok(elements[id],id);return elements[id];},body:{classList:{add(){},remove(){},toggle(){}}},addEventListener(){}},
     window:{addEventListener(){},location:{href:'https://example.com/jogo/',assign(){throw new Error('Contato externo indevido');}}},
@@ -25,14 +25,14 @@ function executarUI() {
   vm.runInNewContext(source,context);
   return {elements,games,events,audio};
 }
-test('começar abre a partida com a abertura encenada; jogar de novo reaproveita a instância sem abertura',async()=>{
+test('começar abre a partida com a abertura encenada; jogar de novo destrói o motor anterior e cria um novo sem abertura',async()=>{
   const {elements:e,games,events}=executarUI();
   await e.jogar.onclick();assert.equal(games.length,1);assert.equal(games[0].registry.get('comIntro'),true);
   assert.equal(e.inicio.hidden,true);assert.equal(e.partida.hidden,false);
   assert.equal(events.filter(n=>n==='inicio').length,1);
   games[0].events.emit('conclusao',{presentes:12,caju:6,roma:6,kits:3,motivo:'vitrine'});
   assert.match(e.resultado.textContent,/Vitrine pronta/);assert.equal(e.final.hidden,false);
-  await e.novamente.onclick();assert.equal(games.length,1);assert.equal(games[0].starts,1);assert.equal(games[0].registry.get('comIntro'),false);assert.equal(e.final.hidden,true);
+  await e.novamente.onclick();assert.equal(games.length,2);assert.equal(games[0].destroyed,true);assert.equal(games[1].registry.get('comIntro'),false);assert.equal(e.final.hidden,true);
 });
 test('final é sempre o da vitrine, com o tempo de passeio como lembrança, e a configuração entregue bloqueia o resgate',async()=>{
   const {elements:e,games}=executarUI();await e.jogar.onclick();

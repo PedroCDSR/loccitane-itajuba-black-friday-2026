@@ -1,3 +1,4 @@
+import './compartilhar-jogo.js';
 import { CAMPANHA } from './data/campanha.js';
 import { RECOMPENSAS, RECOMPENSA_FINAL, FAIXAS, desempenho } from './data/recompensas.js';
 import { linkCupomWhatsApp } from './services/cupom.js';
@@ -67,6 +68,7 @@ $('voltar-inicio').onclick = () => {
   sessao++;
   $('final').hidden = true;
   $('inicio').hidden = false;
+  window.dispatchEvent(new CustomEvent('aventura:voltar-inicio'));
   $('jogar').focus();
 };
 window.addEventListener('aventura:encerramento', e => abrirFinal(e.detail));

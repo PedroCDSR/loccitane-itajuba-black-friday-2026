@@ -29,3 +29,13 @@ Mariana agora referencia explicitamente o showroom da L’Occitane e convida a s
 Pontuação:10 por produto cosmético; kits e caixas obrigatórios não rendem pontos. 10% requer250+ pontos, vida mínima na partida >=4 e os dois produtos externos da fachada. 7% requer150+ pontos e vida final >=3; demais resultados liberam5%. A menor vida é registrada antes de qualquer reposicionamento, para que perder vidas e recuperar a personagem não permita contornar a regra. Os dois itens extras usam marca própria e conjunto por tipo, evitando contar um mesmo item duas vezes. Valores configurados em src/data/recompensas.js. Placar final mostra pontos, vida atual/mínima e coleta externa0/2. Faixas são condicionais, não apenas números.
 
 Testes cobrem término após caixas sem saída e sem consumir produtos da cidade, agradecimento antes da recompensa, limites de pontos e bloqueio de10% por vida/extra faltante. Esta rodada não homologou nova partida completa em navegador.
+
+## Reinício e ações secundárias
+
+Mariana mudou para x2650, antes da igreja em x2750. Sua fala menciona o showroom uma vez, mantendo o convite para continuar. Karina passa de52 para55 unidades de altura visível.
+
+O reinício agora destrói a instância anterior do Phaser e aguarda seu evento destroy antes de criar outra. Não reutiliza mundo pausado, caches de textura ou renderer da conclusão. O retorno ao início restaura estado da interface e música; cliques duplicados de início são bloqueados enquanto o motor está sendo criado. Tentativa após falha de assets segue o mesmo ciclo.
+
+CTA principal “Resgatar meu prêmio” preservado. Abaixo dele: Compartilhe, Instagram e WhatsApp. Compartilhe usa o menu nativo com uma imagem real do jogo e convite quando o navegador aceita arquivos; a disponibilidade do Instagram nesse menu depende do celular/aplicativo. Sem Web Share, abre convite de WhatsApp e permite salvar a imagem. Instagram abre o perfil da loja, WhatsApp abre a conversa da loja. Nenhuma publicação ou mensagem enviada automaticamente.
+
+63 testes e build passaram. Teste de regressão em Chrome local com página auxiliar não publicada: iniciou a primeira partida, simulou o evento de conclusão e parada da cena, verificou os novos botões finais, voltou ao início e iniciou a segunda partida. Screenshot confirmou cenário, exploradora, capivara e caixa de diálogo renderizados na segunda abertura. Não foi uma segunda partida completa nem teste em aparelho físico. A página auxiliar permanece apenas em work/ e não integra o build.

@@ -1,5 +1,5 @@
 export const CONVIDADAS = [
-  { nome: 'mariana', altura: 57, x: 1530, espera: [0,0,3,0], aceno: [0,1,1,6,1], conversa: [2,3,2,5], fim: 4 },
+  { nome: 'mariana', altura: 57, x: 2650, espera: [0,0,3,0], aceno: [0,1,1,6,1], conversa: [2,3,2,5], fim: 4 },
   { nome: 'marcela', altura: 64, x: 4200, espera: [0,1,2,3], aceno: [4,5,6,7], conversa: [8,9,8,9], fim: 10 },
 ];
 export function carregarConvidadas(scene) {
