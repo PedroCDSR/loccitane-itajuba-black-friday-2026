@@ -1,0 +1,50 @@
+{
+  "texture": "pedro-npc",
+  "origin": {
+    "x": 0.5,
+    "y": 1
+  },
+  "animations": [
+    {
+      "key": "pedro-parado",
+      "frames": [
+        "parado-0",
+        "parado-1",
+        "parado-2",
+        "parado-3"
+      ],
+      "frameRate": 3,
+      "repeat": -1
+    },
+    {
+      "key": "pedro-aceno",
+      "frames": [
+        "aceno-0",
+        "aceno-1",
+        "aceno-2",
+        "aceno-3",
+        "aceno-4",
+        "aceno-5"
+      ],
+      "frameRate": 6,
+      "repeat": 0
+    },
+    {
+      "key": "pedro-conversa",
+      "frames": [
+        "conversa-0",
+        "conversa-1",
+        "conversa-2",
+        "conversa-3"
+      ],
+      "frameRate": 5,
+      "repeat": -1
+    }
+  ],
+  "nativeLogicalFrame": {
+    "width": 256,
+    "height": 400
+  },
+  "suggestedDisplayScale": 0.2,
+  "sha256": "c01f8b40552e3542596202455cd4d472f8445b5ef42aacf9ec543849f2eeffa8"
+}

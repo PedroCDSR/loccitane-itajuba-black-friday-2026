@@ -63,3 +63,9 @@ Execute npm ci se necessário, npm test e npm run build. Quando houver navegador
 Salve no repositório uma captura REAL da cena implementada, não a proposta original apresentada como screenshot. Documente em docs/ o que foi reutilizado, adaptado/criado, acesso à cena e limitações.
 
 Faça commit e push sem sobrescrever alterações existentes. Retorne link do commit, link da captura real e instruções curtas de teste. Conduza decisões rotineiras com autonomia até a cena funcionar, sem parar só em plano.
+
+## Atualização: Pedro possui folha de animações
+
+Além da pose original, foram adicionados `pedro-spritesheet.png`, `pedro-atlas.json`, `pedro-animacoes.json` e `pedro-preview.html` em `public/assets/personagens/`. Leia o README dessa pasta. Existem 14 quadros para parado/aceno/conversa e um helper opcional em `src/game/pedro-animacoes.js`.
+
+Use `load.atlas`: a imagem não deve ser dividida por uma grade uniforme. Respeite offsets e tamanho lógico do atlas para alinhar pés/âncora. O helper toca aceno uma vez e retorna ao idle; conversa é um loop gestual simples. Não apresentar como sincronização labial ou animação já homologada. Priorize testar e reutilizar esses quadros antes de gerar outros; mantenha a pose original como referência. Não há integração automática na fase nesta entrega.
