@@ -5,12 +5,12 @@ import { SHOWROOM, MUNDO, JOGADOR, MODO_FACIL } from '../src/game/config.js';
 
 test('uma nova partida começa sem itens, kits ou estado reaproveitado', () => {
   const a = criarMissao(), b = criarMissao(); coletarProduto(a, 'caju'); a.estacoes.push(0);
-  assert.deepEqual(b.coletados, { caju: 0, roma: 0, caixa: 0 }); assert.deepEqual(b.estacoes, []); assert.equal(b.fase, 'cidade');
+  assert.deepEqual(b.coletados, { caju: 0, capim: 0, roma: 0, caixa: 0 }); assert.deepEqual(b.estacoes, []); assert.equal(b.fase, 'cidade');
 });
 test('somente os produtos da missão alteram estoque e coleta', () => {
   const m = criarMissao(); assert.equal(coletarProduto(m, 'fruta'), false);
   assert.equal(coletarProduto(m, 'caju'), true); coletarProduto(m, 'roma'); coletarProduto(m, 'caixa');
-  assert.deepEqual(m.coletados, { caju: 1, roma: 1, caixa: 1 }); assert.deepEqual(m.estoque, m.coletados);
+  assert.deepEqual(m.coletados, { caju: 1, capim: 0, roma: 1, caixa: 1 }); assert.deepEqual(m.estoque, m.coletados);
 });
 test('kits só podem ser montados no showroom com Caju, Romã e caixa de presente', () => {
   const m = criarMissao(); coletarProduto(m, 'caju'); coletarProduto(m, 'roma');
@@ -18,9 +18,18 @@ test('kits só podem ser montados no showroom com Caju, Romã e caixa de present
   assert.equal(montarKit(m, 0), false, 'sem caixa de presente não monta');
   coletarProduto(m, 'caixa');
   assert.equal(montarKit(m, 0), true); assert.equal(m.kits, 1);
-  assert.deepEqual(m.estoque, { caju: 0, roma: 0, caixa: 0 });
-  assert.deepEqual(m.coletados, { caju: 1, roma: 1, caixa: 1 });
+  assert.deepEqual(m.estoque, { caju: 0, capim: 0, roma: 0, caixa: 0 });
+  assert.deepEqual(m.coletados, { caju: 1, capim: 0, roma: 1, caixa: 1 });
   assert.equal(montarKit(m, 1), false); assert.equal(m.kits, 1);
+});
+test('Capim-Limão: conta na coleta e nos contadores, mas não entra na receita dos kits', () => {
+  const m = criarMissao(); m.fase = 'showroom';
+  for (let i = 0; i < 3; i++) assert.equal(coletarProduto(m, 'capim'), true);
+  assert.equal(m.coletados.capim, 3); assert.equal(montarKit(m, 0), false, 'só capim não monta kit');
+  coletarProduto(m, 'caju'); coletarProduto(m, 'roma'); coletarProduto(m, 'caixa');
+  assert.equal(montarKit(m, 0), true); assert.equal(m.estoque.capim, 3, 'o kit não gasta capim');
+  const itens = criarProdutosCidade({ chao: 240, tendas: [870, 1630], cestos: [[1065, 1]], topoToldo: 168 });
+  assert.ok(itens.filter(i => i.tipo === 'capim' && i.lugar === 'chao').length >= 4); assert.ok(itens.some(i => i.tipo === 'capim' && i.lugar === 'alto'));
 });
 test('segurar ou repetir interação não duplica kits nem produz estoque negativo', () => {
   const m = criarMissao(); m.fase = 'showroom';
@@ -28,7 +37,7 @@ test('segurar ou repetir interação não duplica kits nem produz estoque negati
   assert.equal(montarKit(m, -1), false); assert.equal(montarKit(m, 3), false); assert.equal(montarKit(m, 0.5), false);
   assert.equal(montarKit(m, 0), true); assert.equal(montarKit(m, 0), false);
   assert.equal(montarKit(m, 1), true); assert.equal(montarKit(m, 2), true);
-  assert.equal(m.kits, META_KITS); assert.deepEqual(m.estoque, { caju: 0, roma: 0, caixa: 0 });
+  assert.equal(m.kits, META_KITS); assert.deepEqual(m.estoque, { caju: 0, capim: 0, roma: 0, caixa: 0 });
   assert.match(objetivoMissao(m), /Vitrine pronta/);
 });
 test('a cidade garante a missão pelo chão e guarda o resto para saltos e tendas', () => {
@@ -52,6 +61,6 @@ test('de volta à cidade, o objetivo convida a passear sem perder a missão', ()
   m.kits = META_KITS; assert.match(objetivoMissao(m, 'cidade'), /Vitrine pronta! Passeie/);
   assert.match(objetivoMissao(criarMissao(), 'cidade'), /Recupere os produtos e siga em frente até o showroom/, 'antes do showroom, o objetivo é o de sempre');
   const f = criarMissao(); f.fase = 'fachada'; assert.match(objetivoMissao(f), /Fale com a Karina/);
-  f.conversouCarina = true; assert.match(objetivoMissao(f), /porta/, 'quem volta à fachada não é mandado falar com a Karina de novo');
+  f.conversouKarina = true; assert.match(objetivoMissao(f), /porta/, 'quem volta à fachada não é mandado falar com a Karina de novo');
   for (const fase of ['cidade', 'fachada', 'showroom']) { const n = criarMissao(); n.fase = fase; assert.doesNotMatch(objetivoMissao(n, 'cidade') + objetivoMissao(n), /segundo|tempo|rápido/i); }
 });

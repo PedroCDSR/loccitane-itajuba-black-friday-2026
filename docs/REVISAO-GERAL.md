@@ -117,7 +117,7 @@ Pedidos do Pedro depois de jogar no celular:
   - topo das duas partes em 150;
   - estante da direita: tábua em 185 (antes 183, acima da tábua) e topo em 150.
 - **Personagem na bancada no chão.** O sprite não tem espaço vazio embaixo: parecia flutuar porque ficava exatamente na linha da parede, com o piso inteiro na frente. Na bancada, a Karina agora fica 9 unidades à frente, sobre o piso (y 250).
-- **Karina com K** em todos os textos do jogo: conversa, abertura ("MENSAGEM DA KARINA"), objetivo, botão "Conversar com a Karina", tela inicial e final. Arquivos e nomes internos seguem como `carina`, igual à coleção de sprites (`public/assets/personagens/carina/`).
+- **Karina com K** em todos os textos do jogo: conversa, abertura ("MENSAGEM DA KARINA"), objetivo, botão "Conversar com a Karina", tela inicial e final. Os arquivos da coleção foram renomeados para `karina` na `main` (`723a7cf`) e o código passou a usar esses nomes.
 
 Testado no Chromium em 390×844:
 - do chão para a tábua do meio (168) e para o topo (150);
@@ -152,3 +152,21 @@ Testado no Chromium em 390×844:
 - sem erros nem 4xx/5xx.
 
 `npm test` passou (52 de 52, com o teste dos textos refeito para "instruções aos poucos") e `npm run build` também. Capturas: `revisao-ritmo-*.png` e `revisao-pedro-pes.png`.
+
+## Contadores no HUD e Capim-Limão (mesmo dia)
+
+Pedido do Pedro: contadores com o ícone do próprio produto no canto superior esquerdo, um por produto, que só aparecem quando o primeiro item daquele tipo é pego; e espalhar a colônia Capim-Limão pela cidade.
+
+- **Merge da `main` na `dev`** (`723a7cf`): a coleção da Karina foi renomeada para `karina` (arquivos, `src/game/karina-animacoes.js`, animações `karina-*`) e chegou o sprite `public/assets/produtos/capim-limao-colonia-sprite.png` (32×78, mesmo formato do Caju e da Romã). O código da dev passou a usar os nomes `karina` em tudo.
+- **Contadores** (`#presentes` em `index.html`, atualizados em `atualizarHUD`): Caju, Capim-Limão, Romã e caixas de presente, nessa ordem, à esquerda logo depois dos corações. Cada um tem o ícone do frasco ou da caixa e o número. Começam escondidos, aparecem no primeiro item e dão um pulinho a cada novo item (sem animação para quem pede menos movimento). O texto "Caju 0 · Romã 0 · Caixas 0" saiu. Para leitor de tela, o grupo tem um `aria-label` com o resumo ("2 Caju, 1 Capim-Limão…").
+- **Capim-Limão na cidade:** 10 frascos, 4 no chão entre os marcos (x 610, 1900, 3250, 4250) e 1 no alto de cada uma das 6 tendinhas, entre o Caju e a Romã (pega-se com o quique). Tem aviso "+1 Capim-Limão", sininho próprio e entra no texto do final ("Você reuniu 2 Caju, 2 Capim-Limão, 1 Romã…").
+- **Fora da receita dos kits:** cada kit continua com Caju, Romã e caixa, como diz o README do sprite ("a missão continua Caju/Romã"). O Capim-Limão é coleção. Se o Pedro quiser, dá para colocá-lo nos kits.
+
+Testado no Chromium em 390×844:
+- no começo nenhum contador aparece; depois do 1º Caju aparece só o dele; depois do 1º Capim-Limão, os dois;
+- um quique no toldo da 1ª tendinha pegou o Caju, o Capim-Limão e a Romã do alto, e o contador da Romã apareceu;
+- os ícones carregam e o HUD cabe na largura;
+- o final cita o Capim-Limão;
+- sem erros nem 4xx/5xx.
+
+`npm test` passou (54 de 54; novos: Capim-Limão fora da receita e contadores com ícone real) e `npm run build` também. Capturas: `revisao-contadores-0.png`, `-1.png` e `revisao-contadores-tenda.png`.

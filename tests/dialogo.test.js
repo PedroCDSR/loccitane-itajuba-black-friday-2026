@@ -12,22 +12,22 @@ test('conversa interrompe física/cronômetro e retoma uma vez descartando o inp
   const source=readFileSync(new URL('../src/game/Aventura.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/gm,'').replace('export class Aventura','class Aventura');
   const Klass=vm.runInNewContext(source+'\nAventura;',{Phaser:{Scene:class{}},CAMPANHA,SHOWROOM,tocar(){},document:{getElementById:id=>elements[id]}});
   const s=new Klass();let pauses=0,resumes=0,discard=0,velocity;
-  let entrou=0;Object.assign(s,{tempo:22,fim:false,missao:{conversouCarina:false},tweens:{add(){entrou++;}},carinaBancada:{},entrada:{limpar(){},ignorarAteSoltar(){discard++;},atualizar(){},interagirApertou:false},jogador:{body:{setVelocity(...v){velocity=v;}},play(){}},carina:{play(){},disableInteractive(){}},physics:{world:{pause(){pauses++;},resume(){resumes++;}}}});
+  let entrou=0;Object.assign(s,{tempo:22,fim:false,missao:{conversouKarina:false},tweens:{add(){entrou++;}},karinaBancada:{},entrada:{limpar(){},ignorarAteSoltar(){discard++;},atualizar(){},interagirApertou:false},jogador:{body:{setVelocity(...v){velocity=v;}},play(){}},karina:{play(){},disableInteractive(){}},physics:{world:{pause(){pauses++;},resume(){resumes++;}}}});
   s.abrirDialogo();assert.equal(elements.controles.hidden,false,'os botões ficam: esconder mudaria o tamanho da tela do jogo');assert.deepEqual(velocity,[0,0]);assert.equal(pauses,1);assert.equal(elements.dialogo.hidden,false);
   s.update(999999,2000);assert.equal(s.tempo,22);
-  s.fecharDialogo();s.fecharDialogo();assert.equal(resumes,1);assert.equal(entrou,2,'Carina sai da porta e aparece na bancada uma vez só');assert.equal(s.missao.conversouCarina,true);assert.equal(elements.dialogo.hidden,true);assert.equal(discard,2);
+  s.fecharDialogo();s.fecharDialogo();assert.equal(resumes,1);assert.equal(entrou,2,'Karina sai da porta e aparece na bancada uma vez só');assert.equal(s.missao.conversouKarina,true);assert.equal(elements.dialogo.hidden,true);assert.equal(discard,2);
 });
 test('Pedro na praça: conta a chegada da L’Occitane a Itajubá e não mexe na missão do showroom',()=>{
   const elements={dialogo:{hidden:true},'dialogo-texto':{},'dialogo-titulo':{},'fechar-dialogo':{focus(){}},controles:{hidden:false},interagir:{hidden:false}};
   const source=readFileSync(new URL('../src/game/Aventura.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/gm,'').replace('export class Aventura','class Aventura');
   const Klass=vm.runInNewContext(source+'\nAventura;',{Phaser:{Scene:class{}},CAMPANHA,SHOWROOM,tocar(){},document:{getElementById:id=>elements[id]}});
   const s=new Klass();const tocadas=[];let entrou=0;
-  Object.assign(s,{tempo:5,fim:false,missao:{conversouCarina:false},tweens:{add(){entrou++;}},entrada:{ignorarAteSoltar(){}},jogador:{body:{setVelocity(){}},play(){}},pedro:{play:a=>tocadas.push(a),disableInteractive(){}},carina:{play(){}},physics:{world:{pause(){},resume(){}}}});
+  Object.assign(s,{tempo:5,fim:false,missao:{conversouKarina:false},tweens:{add(){entrou++;}},entrada:{ignorarAteSoltar(){}},jogador:{body:{setVelocity(){}},play(){}},pedro:{play:a=>tocadas.push(a),disableInteractive(){}},karina:{play(){}},physics:{world:{pause(){},resume(){}}}});
   s.abrirDialogo('pedro');
   assert.match(elements['dialogo-titulo'].textContent,/PEDRO/);
   assert.match(elements['dialogo-texto'].textContent,/janeiro de 2023/);assert.match(elements['dialogo-texto'].textContent,/autocuidado/);
   s.fecharDialogo();
-  assert.equal(s.pedroConversou,true);assert.equal(s.missao.conversouCarina,false);assert.equal(entrou,0,'a Carina continua na porta do showroom');
+  assert.equal(s.pedroConversou,true);assert.equal(s.missao.conversouKarina,false);assert.equal(entrou,0,'a Karina continua na porta do showroom');
   assert.deepEqual(tocadas,['pedro-conversa','pedro-parado']);
 });
 test('animações usam somente quadros disponíveis nas folhas novas e não são duplicadas no reinício',()=>{

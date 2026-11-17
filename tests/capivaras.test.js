@@ -71,7 +71,7 @@ test('instruções aos poucos: abertura curta, regras da rua nas dicas e do show
   for (const l of CAMPANHA.introCena) assert.ok(l.texto.length <= 140, `fala curta: ${l.titulo}`);
   const dicasRua = [PASSOS.toldo, PASSOS.pisao, PASSOS.caju, PASSOS.dano].map(p => p.toque).join(' ');
   for (const termo of [/toldo/, /em cima da capivara/, /CAJU/, /pule por cima/, /tira 1 ♥/]) assert.match(dicasRua, termo);
-  const karina = CAMPANHA.conversas.carina.texto;
+  const karina = CAMPANHA.conversas.karina.texto;
   for (const termo of [/Caju/, /Romã/, /caixa/, /no alto das estantes/, /bancada/]) assert.match(karina, termo);
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(html, /Recupere os produtos espalhados pela cidade/); assert.doesNotMatch(html, /tira 1 coração/, 'a tela inicial não adianta as regras');

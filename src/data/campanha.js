@@ -7,7 +7,7 @@ export const CAMPANHA = {
   // Conversas do jogo. Pedro: texto dele mesmo (17/11/2026). Karina: texto ditado pelo Pedro (pedido de ajuda com os kits).
   conversas: {
     pedro: { titulo: 'PEDRO · L’OCCITANE ITAJUBÁ', texto: 'Oi! Eu sou o Pedro. Em janeiro de 2023 nós trouxemos a L’Occitane para Itajubá, com o objetivo de trazer uma nova forma de autocuidado para a cidade.', botao: 'Continuar →' },
-    carina: { titulo: 'KARINA · SHOWROOM ITAJUBÁ', botao: 'Vamos montar os kits →', texto: 'Que bom que você chegou! Preciso da sua ajuda para montar os kits de presente: cada um leva um Caju, uma Romã e uma caixa. As caixas estão no alto das estantes, lá dentro. Você consegue pegar para mim, por favor? Depois é só passar na bancada.' },
+    karina: { titulo: 'KARINA · SHOWROOM ITAJUBÁ', botao: 'Vamos montar os kits →', texto: 'Que bom que você chegou! Preciso da sua ajuda para montar os kits de presente: cada um leva um Caju, uma Romã e uma caixa. As caixas estão no alto das estantes, lá dentro. Você consegue pegar para mim, por favor? Depois é só passar na bancada.' },
   },
   // Abertura encenada no jogo. Ficção de jogo: não descreve um incidente real da loja.
   // A abertura só conta a história e dá a missão da rua. As instruções aparecem ao longo da jornada, na hora de usar:

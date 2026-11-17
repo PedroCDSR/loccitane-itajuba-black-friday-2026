@@ -8,7 +8,7 @@ import { Tutorial } from './Tutorial.js';
 import { GuiaShowroom } from './guiaShowroom.js';
 import { carregarArte } from './assets.js';
 import { carregarPedro, criarPedro } from './pedro-animacoes.js';
-import { carregarCarina, criarCarina } from './carina-animacoes.js';
+import { carregarKarina, criarKarina } from './karina-animacoes.js';
 import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, faltaParaKit, META_KITS } from './missao.js';
 import { ALTURA, MUNDO, SHOWROOM, ALTURA_CIDADE, MODO_FACIL } from './config.js';
 import { CAMPANHA } from '../data/campanha.js';
@@ -39,8 +39,8 @@ const TRECHO = { fachada: FACHADA, interior: INTERIOR };
 const CALCADA = { esquerda: 255, direita: 241, degrau: 4 };
 const chaoFachada = x => CALCADA.esquerda + (CALCADA.direita - CALCADA.esquerda) * Math.min(1, Math.max(0, (x - FACHADA) / SHOWROOM.largura));
 // Pedro recebe a exploradora na praça (ao lado da fonte) e conta como a L’Occitane chegou a Itajubá.
-// Karina (assets em personagens/carina/), a dona, atende no showroom: na porta e depois na bancada.
-const PEDRO_ESCALA = .41, CARINA_ESCALA = .39; // alturas: exploradora 64, Karina 70, Pedro 78
+// Karina (assets em personagens/karina/), a dona, atende no showroom: na porta e depois na bancada.
+const PEDRO_ESCALA = .41, KARINA_ESCALA = .39; // alturas: exploradora 64, Karina 70, Pedro 78
 const PEDRO_PRACA = 1330;
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
@@ -56,7 +56,8 @@ export class Aventura extends Phaser.Scene {
     this.events.once('shutdown', () => { this.load.off('progress', progresso); this.load.off('loaderror', falhou); });
     carregarArte(this);
     for (const n of ['fachada', 'interior', 'caju', 'roma', 'bandeira-jardim']) this.load.image(n, `assets/showroom/${n}.png`);
-    carregarPedro(this); carregarCarina(this);
+    this.load.image('capim', 'assets/produtos/capim-limao-colonia-sprite.png');
+    carregarPedro(this); carregarKarina(this);
   }
 
   create() {
@@ -66,7 +67,7 @@ export class Aventura extends Phaser.Scene {
     for (const texture of this.textures.getTextureKeys()) this.textures.get(texture).setFilter(Phaser.Textures.FilterMode.NEAREST);
     this.fim = false; this.presentes = 0; this.tempo = 0; this.checkpoint = 80;
     this.proximoArremesso = 0; this.missao = criarMissao(); this.dialogoAberto = false; this.capivaraDoPisao = null;
-    this.pedroPerto = false; this.pedroConversou = false; this.carinaPerto = false; this.carinaConversou = false; this.pedidoInteracao = false;
+    this.pedroPerto = false; this.pedroConversou = false; this.karinaPerto = false; this.karinaConversou = false; this.pedidoInteracao = false;
     this.estacoes = []; this.ultimoHUD = ''; this.avisoFaltaAte = 0;
     this.uiAbort = new AbortController();
     $('fechar-dialogo').addEventListener('click', () => this.avancarDialogo(), { signal: this.uiAbort.signal });
@@ -225,14 +226,14 @@ export class Aventura extends Phaser.Scene {
       ['caju', FACHADA + 238, chaoFachada(FACHADA + 238) - 18], ['roma', FACHADA + 262, chaoFachada(FACHADA + 262) - 18],
     ];
     // Karina recebe na porta; depois da conversa ela entra e espera ao lado da bancada.
-    this.carinaX = FACHADA + 122; // ao lado da porta, na frente do pilar de pedra
-    this.carina = criarCarina(this, this.carinaX, chaoFachada(this.carinaX), CARINA_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
-    this.carina.off('animationcomplete-carina-aceno');
-    this.carina.on('animationcomplete-carina-aceno', () => this.carina.play(this.dialogoAberto ? 'carina-conversa' : 'carina-parada'));
-    this.carina.on('pointerup', () => { if (this.carinaPerto) this.pedidoInteracao = true; });
+    this.karinaX = FACHADA + 122; // ao lado da porta, na frente do pilar de pedra
+    this.karina = criarKarina(this, this.karinaX, chaoFachada(this.karinaX), KARINA_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
+    this.karina.off('animationcomplete-karina-aceno');
+    this.karina.on('animationcomplete-karina-aceno', () => this.karina.play(this.dialogoAberto ? 'karina-conversa' : 'karina-parada'));
+    this.karina.on('pointerup', () => { if (this.karinaPerto) this.pedidoInteracao = true; });
     // na bancada ela fica uns passos à frente da parede, já sobre o piso (na linha da parede parecia flutuar)
-    this.carinaBancada = criarCarina(this, INTERIOR + 229, CHAO + 10, CARINA_ESCALA).setDepth(3).setAlpha(0);
-    this.carinaBancada.on('animationcomplete-carina-aceno', () => this.carinaBancada.play('carina-parada'));
+    this.karinaBancada = criarKarina(this, INTERIOR + 229, CHAO + 10, KARINA_ESCALA).setDepth(3).setAlpha(0);
+    this.karinaBancada.on('animationcomplete-karina-aceno', () => this.karinaBancada.play('karina-parada'));
     // Bancada: três lugares marcados; o kit se monta ao passar com os três itens.
     for (let i = 0; i < META_KITS; i++) {
       const x = INTERIOR + 160 + i * 20;
@@ -263,7 +264,7 @@ export class Aventura extends Phaser.Scene {
     item.getData('sinal')?.destroy(); item.destroy();
     coletarProduto(this.missao, tipo); this.presentes++; tocar(tipo);
     if (tipo === 'caixa') this.tutorial?.concluir('caixas');
-    this.aviso({ caju: '+1 Caju', roma: '+1 Romã', caixa: '+1 caixa de presente' }[tipo], { caju: '#f5cc73', roma: '#ffa5c0', caixa: '#fff1d5' }[tipo]);
+    this.aviso({ caju: '+1 Caju', capim: '+1 Capim-Limão', roma: '+1 Romã', caixa: '+1 caixa de presente' }[tipo], { caju: '#f5cc73', capim: '#dbe9a6', roma: '#ffa5c0', caixa: '#fff1d5' }[tipo]);
     this.atualizarHUD();
   }
   aviso(texto, cor = '#fff1d5') {
@@ -372,7 +373,7 @@ export class Aventura extends Phaser.Scene {
         const [trecho, chegada, direita] = { showroom: ['fachada', CHEGADA_SHOWROOM, true], interior: ['interior', CHEGADA_INTERIOR, true], jardim: ['fachada', CHEGADA_JARDIM, true] }[destino];
         this.trecho = trecho;
         if (trecho === 'interior') {
-          if (!this.carinaConversou) this.carinaEntra();
+          if (!this.karinaConversou) this.karinaEntra();
           if (this.missao.fase !== 'showroom') { this.missao.fase = 'showroom'; this.time.delayedCall(900, () => this.aviso('Caixas no alto das estantes!')); }
         }
         this.physics.world.setBounds(TRECHO[trecho], 0, SHOWROOM.largura, ALTURA);
@@ -396,9 +397,9 @@ export class Aventura extends Phaser.Scene {
   voltarAoJardim() { this.trocarSala('jardim'); }
   voltarParaCidade() { this.trocarSala('cidade'); }
 
-  // ---------- Conversas: Pedro na praça, Carina no showroom ----------
-  // quem: 'pedro' ou 'carina'. Textos em CAMPANHA.conversas.
-  abrirDialogo(quem = 'carina') {
+  // ---------- Conversas: Pedro na praça, Karina no showroom ----------
+  // quem: 'pedro' ou 'karina'. Textos em CAMPANHA.conversas.
+  abrirDialogo(quem = 'karina') {
     this.dialogoAberto = quem; this.entrada.ignorarAteSoltar();
     this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
     this[quem].play(`${quem}-conversa`); tocar('conversa');
@@ -413,14 +414,14 @@ export class Aventura extends Phaser.Scene {
     if (!quem) return;
     this.dialogoAberto = false; $('dialogo').hidden = true;
     this.entrada.ignorarAteSoltar(); this.physics.world.resume(); this[quem].play(`${quem}-${quem === 'pedro' ? 'parado' : 'parada'}`);
-    if (quem === 'pedro') { this.pedroConversou = true; this.pedro.disableInteractive(); } else this.carinaEntra();
+    if (quem === 'pedro') { this.pedroConversou = true; this.pedro.disableInteractive(); } else this.karinaEntra();
   }
-  // Carina sai da porta e aparece ao lado da bancada.
-  carinaEntra() {
-    if (this.carinaConversou) return;
-    this.carinaConversou = true; this.missao.conversouCarina = true; this.ultimoHUD = '';
-    this.tweens.add({ targets: this.carina, alpha: 0, duration: 350, onComplete: () => this.carina.disableInteractive() });
-    this.tweens.add({ targets: this.carinaBancada, alpha: 1, duration: 350 });
+  // Karina sai da porta e aparece ao lado da bancada.
+  karinaEntra() {
+    if (this.karinaConversou) return;
+    this.karinaConversou = true; this.missao.conversouKarina = true; this.ultimoHUD = '';
+    this.tweens.add({ targets: this.karina, alpha: 0, duration: 350, onComplete: () => this.karina.disableInteractive() });
+    this.tweens.add({ targets: this.karinaBancada, alpha: 1, duration: 350 });
   }
 
   // ---------- Bancada ----------
@@ -452,7 +453,7 @@ export class Aventura extends Phaser.Scene {
         const b = this.add.image(estacao.x, py(646) - 8, 'brilho').setScale(.5).setDepth(8), a = k / 7 * Math.PI * 2;
         this.tweens.add({ targets: b, x: b.x + Math.cos(a) * 16, y: b.y + Math.sin(a) * 12 - 6, alpha: 0, duration: 520, onComplete: () => b.destroy() });
       }
-      this.carinaBancada.play('carina-aceno');
+      this.karinaBancada.play('karina-aceno');
       this.aviso(pronto ? 'Vitrine pronta! Obrigado pela ajuda!' : `Kit ${numero} pronto!`, '#ffe7a6');
       if (pronto) { tocar('vitrine'); this.tweens.add({ targets: this.saida, alpha: 1, duration: 400 }); }
     });
@@ -460,12 +461,12 @@ export class Aventura extends Phaser.Scene {
 
   contextoInteracao() {
     if (this.sala === 'cidade' && this.pedroPerto && !this.pedroConversou && !this.dialogoAberto) return { tipo: 'pedro', texto: 'Conversar com Pedro' };
-    if (this.sala === 'showroom' && this.carinaPerto && !this.carinaConversou && !this.dialogoAberto) return { tipo: 'carina', texto: 'Conversar com a Karina' };
+    if (this.sala === 'showroom' && this.karinaPerto && !this.karinaConversou && !this.dialogoAberto) return { tipo: 'karina', texto: 'Conversar com a Karina' };
     if (this.sala === 'showroom' && this.trecho === 'fachada' && Math.abs(this.jogador.x - PORTA) < 20 && this.jogador.y > chaoFachada(this.jogador.x) - 6) return { tipo: 'porta', texto: 'Entrar no showroom' };
     return null;
   }
   interagir(contexto) {
-    if (contexto?.tipo === 'pedro' || contexto?.tipo === 'carina') this.abrirDialogo(contexto.tipo);
+    if (contexto?.tipo === 'pedro' || contexto?.tipo === 'karina') this.abrirDialogo(contexto.tipo);
     if (contexto?.tipo === 'porta') this.entrarNoInterior();
   }
 
@@ -494,10 +495,20 @@ export class Aventura extends Phaser.Scene {
   }
   // Sem relógio no HUD: a partida não tem limite de tempo (pedido do Pedro). O tempo de passeio aparece só no final.
   atualizarHUD() {
-    const m = this.missao, assinatura = [m.coletados.caju, m.coletados.roma, m.estoque.caixa, this.jogador?.vida, m.fase, m.kits, this.sala, this.estado].join('|');
+    const m = this.missao, assinatura = [m.coletados.caju, m.coletados.capim, m.coletados.roma, m.coletados.caixa, this.jogador?.vida, m.fase, m.kits, this.sala, this.estado].join('|');
     if (assinatura === this.ultimoHUD) return;
     this.ultimoHUD = assinatura;
-    $('presentes').textContent = `Caju ${m.coletados.caju} · Romã ${m.coletados.roma} · Caixas ${m.estoque.caixa}`;
+    // Contadores no canto superior esquerdo: ícone do produto e número. Cada um aparece ao pegar o primeiro item
+    // daquele tipo e dá um pulinho a cada novo item.
+    for (const c of $('presentes').querySelectorAll?.('[data-tipo]') ?? []) {
+      const n = m.coletados[c.dataset.tipo] ?? 0, numero = c.querySelector('b');
+      c.hidden = n === 0;
+      if (numero.textContent !== String(n)) {
+        numero.textContent = n; c.classList.remove('ganhou'); void c.offsetWidth; if (n > 0) c.classList.add('ganhou');
+      }
+    }
+    const nomes = { caju: 'Caju', capim: 'Capim-Limão', roma: 'Romã', caixa: 'caixas' };
+    $('presentes').setAttribute?.('aria-label', Object.entries(nomes).filter(([t]) => m.coletados[t]).map(([t, nome]) => `${m.coletados[t]} ${nome}`).join(', ') || 'Nenhum produto ainda');
     $('vida').textContent = `${this.jogador?.vida ?? 5} ♥`;
     $('objetivo').textContent = this.estado === 'intro' ? 'A aventura vai começar…' : objetivoMissao(m, this.sala);
     $('kits').textContent = `Kits ${m.kits}/${META_KITS}`;
@@ -507,7 +518,7 @@ export class Aventura extends Phaser.Scene {
     this.fim = true;
     registrar('conclusao', { presentes: this.presentes });
     this.game.events.emit('conclusao', { presentes: this.presentes, tempo: Math.round(this.tempo), motivo,
-      caju: this.missao.coletados.caju, roma: this.missao.coletados.roma, kits: this.missao.kits });
+      caju: this.missao.coletados.caju, capim: this.missao.coletados.capim, roma: this.missao.coletados.roma, kits: this.missao.kits });
     this.scene.stop();
   }
   // Cidade: zoom pela altura da tela. Showroom no celular em pé: zoom limitado para mostrar ao menos
@@ -522,9 +533,9 @@ export class Aventura extends Phaser.Scene {
     if (b.x !== limites[0] || Math.abs(b.height - limites[3]) > .01 || b.width !== limites[2]) cam.setBounds(...limites);
     return zoom;
   }
-  // Para onde ir no showroom: Carina, caixas, produtos de reserva, o próximo lugar livre da bancada e a saída.
+  // Para onde ir no showroom: Karina, caixas, produtos de reserva, o próximo lugar livre da bancada e a saída.
   alvosShowroom() {
-    if (!this.carinaConversou) return [{ x: this.carinaX, y: this.carina.getTopCenter().y + 6, icone: 'carina-parada', frame: 0, escala: .08 }];
+    if (!this.karinaConversou) return [{ x: this.karinaX, y: this.karina.getTopCenter().y + 6, icone: 'karina-parada', frame: 0, escala: .08 }];
     if (this.missao.kits >= META_KITS) return this.alvosNestaTela([{ x: MUNDO - 22, y: 200, icone: 'sacola', escala: .22 }]);
     const alvos = [];
     const falta = faltaParaKit(this.missao);
@@ -599,11 +610,11 @@ export class Aventura extends Phaser.Scene {
       // andando para a esquerda no começo da fachada, volta para a rua
       if (this.trecho !== 'interior' && x < VOLTA && this.entrada.esquerda) { this.voltarParaCidade(); return; }
       if (this.trecho === 'interior' && x < INTERIOR + PASSAGEM && this.entrada.esquerda) { this.voltarAoJardim(); return; }
-      const perto = !this.carinaConversou && Math.abs(x - this.carinaX) < 45;
-      if (perto !== this.carinaPerto) { this.carinaPerto = perto; this.carina.play(perto ? 'carina-aceno' : 'carina-parada'); }
+      const perto = !this.karinaConversou && Math.abs(x - this.karinaX) < 45;
+      if (perto !== this.karinaPerto) { this.karinaPerto = perto; this.karina.play(perto ? 'karina-aceno' : 'karina-parada'); }
       // a primeira passagem pela porta abre a conversa sozinha: é ela que explica as caixas de presente
-      if (perto && !this.carinaConversou && Math.abs(x - this.carinaX) < 30) { this.abrirDialogo('carina'); return; }
-      if (x > PORTA + 30 && !this.carinaConversou) this.carinaEntra();
+      if (perto && !this.karinaConversou && Math.abs(x - this.karinaX) < 30) { this.abrirDialogo('karina'); return; }
+      if (x > PORTA + 30 && !this.karinaConversou) this.karinaEntra();
       if (this.missao.fase === 'showroom') this.verificarBancada();
       this.guia.atualizar(this.alvosShowroom(), this.jogador, agora);
     }

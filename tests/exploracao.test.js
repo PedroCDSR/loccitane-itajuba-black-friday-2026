@@ -24,12 +24,12 @@ function cena() {
   const cam = { fadeOut() {}, fadeIn() {}, once(_e, f) { f(); }, setZoom(z) { cam.zoom = z; }, setBounds(...b) { cam.bounds = b; }, getBounds: () => ({ x: cam.bounds?.[0], width: cam.bounds?.[2], height: cam.bounds?.[3] }), height: 960, centerOn() {}, setFollowOffset() {}, zoom: 1, scrollX: 0 };
   Object.assign(s, {
     fim: false, tempo: 0, estado: 'jogo', sala: 'cidade', checkpoint: 80, presentes: 0, proximoArremesso: 0, missao: criarMissao(),
-    dialogoAberto: false, pedroPerto: false, pedroConversou: true, carinaPerto: false, carinaConversou: true, pedidoInteracao: false, ultimoHUD: '', jogador,
+    dialogoAberto: false, pedroPerto: false, pedroConversou: true, karinaPerto: false, karinaConversou: true, pedidoInteracao: false, ultimoHUD: '', jogador,
     entrada: { esquerda: false, atualizar() {}, limpar() {}, ignorarAteSoltar() {} },
     physics: { world: { setBounds(...b) { mundo.bounds = b; }, pause() { mundo.pausado++; }, resume() { mundo.retomado++; } } },
     solidos: { contains: p => pisos.has(p), add: p => pisos.add(p) }, pisoShowroom: [{ piso: 'interior' }, { piso: 'calcada' }],
     cameras: { main: cam }, scale: { width: 960, height: 960 }, time: { delayedCall(_ms, f) { f(); } },
-    capivaras: { getChildren: () => s.listaCapivaras }, listaCapivaras: [], morros: {}, casas: {}, carinaX: SHOWROOM.x + 129, estacoes: [], faltaParaKit: () => [],
+    capivaras: { getChildren: () => s.listaCapivaras }, listaCapivaras: [], morros: {}, casas: {}, karinaX: SHOWROOM.x + 129, estacoes: [], faltaParaKit: () => [],
     game: { events: { emit: (...a) => s.emitidos.push(a) } }, itens: { getChildren: () => [] },
     guia: { esconder() {}, atualizar() {}, soNaPrincipal: o => o, layout: ativo => (ativo ? enquadramento(960, 960).zoom : 0) }, emitidos: [], scene: { stop() {} },
   });
@@ -86,7 +86,7 @@ test('voltar à cidade e retornar ao showroom preserva missão, itens e capivara
 
 test('fachada e interior são duas telas: entra pela porta, volta pela esquerda do interior, sem loop', () => {
   const { s, elements, mundo, cam } = cena();
-  s.aviso = () => {}; s.carinaEntra = () => { s.carinaConversou = true; };
+  s.aviso = () => {}; s.karinaEntra = () => { s.karinaConversou = true; };
   s.jogador.x = SHOWROOM.x - 30; s.update(0, 16);
   assert.equal(s.trecho, 'fachada'); assert.deepEqual(mundo.bounds, [SHOWROOM.x, 0, SHOWROOM.largura, ALTURA]);
   assert.equal(cam.bounds[0], SHOWROOM.x); assert.equal(cam.bounds[2], SHOWROOM.largura, 'a câmera não mostra o interior junto da fachada');

@@ -63,6 +63,7 @@ export const SONS = {
   },
   caju: (c, s, t) => { sino(c, s, t, 84, .12); sino(c, s, t + .07, 88, .3); },
   roma: (c, s, t) => { sino(c, s, t, 81, .12); sino(c, s, t + .07, 88, .3); },
+  capim: (c, s, t) => { sino(c, s, t, 79, .12); sino(c, s, t + .07, 86, .3); }, // Capim-Limão: outro sininho, um tom abaixo
   caixa: (c, s, t) => { [79, 83, 86].forEach((n, i) => sino(c, s, t + i * .06, n, i === 2 ? .35 : .12, .14)); },
   kit: (c, s, t) => {
     [72, 76, 79, 84].forEach((n, i) => sino(c, s, t + i * .07, n, i === 3 ? .5 : .14, .1));

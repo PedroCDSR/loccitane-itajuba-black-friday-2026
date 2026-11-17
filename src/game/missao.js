@@ -1,11 +1,13 @@
 export const META_KITS = 3;
 // Cada kit leva 1 Caju, 1 Romã e 1 caixa de presente. As três caixas ficam no alto das estantes do interior.
 export const ITENS_MISSAO = ['caju', 'roma', 'caixa'];
+// Tudo o que se coleta e aparece nos contadores do HUD. Capim-Limão é coleção: não entra na receita dos kits.
+export const PRODUTOS = ['caju', 'capim', 'roma', 'caixa'];
 export function criarMissao() {
-  return { coletados: { caju: 0, roma: 0, caixa: 0 }, estoque: { caju: 0, roma: 0, caixa: 0 }, kits: 0, estacoes: [], fase: 'cidade', conversouCarina: false };
+  return { coletados: { caju: 0, capim: 0, roma: 0, caixa: 0 }, estoque: { caju: 0, capim: 0, roma: 0, caixa: 0 }, kits: 0, estacoes: [], fase: 'cidade', conversouKarina: false };
 }
 export function coletarProduto(missao, tipo) {
-  if (!ITENS_MISSAO.includes(tipo)) return false;
+  if (!PRODUTOS.includes(tipo)) return false;
   missao.coletados[tipo]++; missao.estoque[tipo]++; return true;
 }
 export function faltaParaKit(missao) {
@@ -31,7 +33,7 @@ export function objetivoMissao(missao, sala) {
     return `Leve tudo à bancada para montar os kits · ${missao.kits}/${META_KITS}`;
   }
   if (missao.fase === 'fachada') {
-    if (!missao.conversouCarina) return 'Fale com a Karina na porta do showroom →';
+    if (!missao.conversouKarina) return 'Fale com a Karina na porta do showroom →';
     return 'Entre no showroom pela porta: as caixas estão no alto das estantes';
   }
   return 'Recupere os produtos e siga em frente até o showroom →';
@@ -47,7 +49,10 @@ export function criarProdutosCidade({ chao, tendas, cestos, alturaCesto = 20, to
   cestos.forEach(([x, n], i) => produtos.push({ tipo: tipo(i + 1), x, y: chao - alturaCesto * n - 18, lugar: 'cesto' }));
   for (const x of tendas) {
     produtos.push({ tipo: 'caju', x: x - 10, y: topoToldo - 86, lugar: 'alto' });
+    produtos.push({ tipo: 'capim', x: x + 6, y: topoToldo - 92, lugar: 'alto' });
     produtos.push({ tipo: 'roma', x: x + 22, y: topoToldo - 80, lugar: 'alto' });
   }
+  // Capim-Limão também pelo chão, entre os marcos (coleção, fora da receita dos kits)
+  [610, 1900, 3250, 4250].forEach(x => produtos.push({ tipo: 'capim', x, y: chao - 30, lugar: 'chao' }));
   return produtos;
 }

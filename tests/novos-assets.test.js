@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { CIDADE, FOLHAS, OBJETOS } from '../src/game/assets.js';
 const root = new URL('../public/assets/', import.meta.url);
 function png(path) { const b = readFileSync(new URL(path, root)); assert.equal(b.subarray(0,8).toString('hex'), '89504e470d0a1a0a'); return [b.readUInt32BE(16), b.readUInt32BE(20)]; }
@@ -30,4 +30,11 @@ test('versões runtime mantêm as dimensões dos 25 PNGs entregues',()=>{
   const manifest=JSON.parse(readFileSync(new URL('../docs/pacotes/runtime.json',import.meta.url),'utf8'));
   assert.equal(manifest.files.length,25);
   for(const f of manifest.files)assert.deepEqual(dimensoesWebp(f.runtime),png(f.source));
+});
+
+test('contadores do HUD: um por produto, com ícone, escondidos até o primeiro item', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const tipos = [...html.matchAll(/class="contador" data-tipo="(\w+)" hidden><img src="([^"]+)"/g)].map(m => [m[1], m[2]]);
+  assert.deepEqual(tipos.map(t => t[0]), ['caju', 'capim', 'roma', 'caixa']);
+  for (const [, src] of tipos) assert.ok(existsSync(new URL(`../public/${src}`, import.meta.url)), src);
 });
