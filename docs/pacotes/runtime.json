@@ -1,0 +1,180 @@
+{
+  "format": "WebP lossless; cidade quantizada sem dithering para 128 cores, sprites sem redução de cores",
+  "files": [
+    {
+      "source": "cidade-entardecer/02-serra-mantiqueira.png",
+      "runtime": "runtime-cidade/02-serra-mantiqueira.webp",
+      "palette": 128,
+      "sourceBytes": 1753192,
+      "runtimeBytes": 433752
+    },
+    {
+      "source": "cidade-entardecer/12-ipe-amarelo.png",
+      "runtime": "runtime-cidade/12-ipe-amarelo.webp",
+      "palette": 128,
+      "sourceBytes": 131304,
+      "runtimeBytes": 34792
+    },
+    {
+      "source": "cidade-entardecer/08-posto-esso.png",
+      "runtime": "runtime-cidade/08-posto-esso.webp",
+      "palette": 128,
+      "sourceBytes": 207439,
+      "runtimeBytes": 38386
+    },
+    {
+      "source": "cidade-entardecer/03-casario.png",
+      "runtime": "runtime-cidade/03-casario.webp",
+      "palette": 128,
+      "sourceBytes": 1609074,
+      "runtimeBytes": 365036
+    },
+    {
+      "source": "cidade-entardecer/04-clube-itajubense.png",
+      "runtime": "runtime-cidade/04-clube-itajubense.webp",
+      "palette": 128,
+      "sourceBytes": 615584,
+      "runtimeBytes": 131350
+    },
+    {
+      "source": "cidade-entardecer/09-monumento-soldado.png",
+      "runtime": "runtime-cidade/09-monumento-soldado.webp",
+      "palette": 128,
+      "sourceBytes": 88876,
+      "runtimeBytes": 23618
+    },
+    {
+      "source": "cidade-entardecer/05-fonte-praca.png",
+      "runtime": "runtime-cidade/05-fonte-praca.webp",
+      "palette": 128,
+      "sourceBytes": 164404,
+      "runtimeBytes": 36122
+    },
+    {
+      "source": "cidade-entardecer/01-ceu.png",
+      "runtime": "runtime-cidade/01-ceu.webp",
+      "palette": 128,
+      "sourceBytes": 816581,
+      "runtimeBytes": 112154
+    },
+    {
+      "source": "cidade-entardecer/10-helicoptero.png",
+      "runtime": "runtime-cidade/10-helicoptero.webp",
+      "palette": 128,
+      "sourceBytes": 186739,
+      "runtimeBytes": 41484
+    },
+    {
+      "source": "cidade-entardecer/13-calcamento.png",
+      "runtime": "runtime-cidade/13-calcamento.webp",
+      "palette": 128,
+      "sourceBytes": 171586,
+      "runtimeBytes": 52146
+    },
+    {
+      "source": "cidade-entardecer/06-cafe-vadinho.png",
+      "runtime": "runtime-cidade/06-cafe-vadinho.webp",
+      "palette": 128,
+      "sourceBytes": 509699,
+      "runtimeBytes": 96054
+    },
+    {
+      "source": "cidade-entardecer/11-arvore-praca.png",
+      "runtime": "runtime-cidade/11-arvore-praca.webp",
+      "palette": 128,
+      "sourceBytes": 274371,
+      "runtimeBytes": 71856
+    },
+    {
+      "source": "cidade-entardecer/07-igreja-matriz.png",
+      "runtime": "runtime-cidade/07-igreja-matriz.webp",
+      "palette": 128,
+      "sourceBytes": 526652,
+      "runtimeBytes": 107718
+    },
+    {
+      "source": "sprites-nativos/kit-presente.png",
+      "runtime": "runtime-sprites/kit-presente.webp",
+      "palette": "original",
+      "sourceBytes": 7580,
+      "runtimeBytes": 5920
+    },
+    {
+      "source": "sprites-nativos/sacola-vermelha.png",
+      "runtime": "runtime-sprites/sacola-vermelha.webp",
+      "palette": "original",
+      "sourceBytes": 7579,
+      "runtimeBytes": 5966
+    },
+    {
+      "source": "sprites-nativos/capivara-comendo.png",
+      "runtime": "runtime-sprites/capivara-comendo.webp",
+      "palette": "original",
+      "sourceBytes": 33907,
+      "runtimeBytes": 23770
+    },
+    {
+      "source": "sprites-nativos/exploradora-susto.png",
+      "runtime": "runtime-sprites/exploradora-susto.webp",
+      "palette": "original",
+      "sourceBytes": 22107,
+      "runtimeBytes": 16334
+    },
+    {
+      "source": "sprites-nativos/caixa-presente.png",
+      "runtime": "runtime-sprites/caixa-presente.webp",
+      "palette": "original",
+      "sourceBytes": 9048,
+      "runtimeBytes": 7476
+    },
+    {
+      "source": "sprites-nativos/exploradora-parada.png",
+      "runtime": "runtime-sprites/exploradora-parada.webp",
+      "palette": "original",
+      "sourceBytes": 70934,
+      "runtimeBytes": 52028
+    },
+    {
+      "source": "sprites-nativos/exploradora-corrida.png",
+      "runtime": "runtime-sprites/exploradora-corrida.webp",
+      "palette": "original",
+      "sourceBytes": 182568,
+      "runtimeBytes": 134646
+    },
+    {
+      "source": "sprites-nativos/cesto-palha.png",
+      "runtime": "runtime-sprites/cesto-palha.webp",
+      "palette": "original",
+      "sourceBytes": 16516,
+      "runtimeBytes": 12776
+    },
+    {
+      "source": "sprites-nativos/exploradora-salto.png",
+      "runtime": "runtime-sprites/exploradora-salto.webp",
+      "palette": "original",
+      "sourceBytes": 105437,
+      "runtimeBytes": 74342
+    },
+    {
+      "source": "sprites-nativos/caju-fruta.png",
+      "runtime": "runtime-sprites/caju-fruta.webp",
+      "palette": "original",
+      "sourceBytes": 4073,
+      "runtimeBytes": 3318
+    },
+    {
+      "source": "sprites-nativos/exploradora-fruta.png",
+      "runtime": "runtime-sprites/exploradora-fruta.webp",
+      "palette": "original",
+      "sourceBytes": 58489,
+      "runtimeBytes": 43224
+    },
+    {
+      "source": "sprites-nativos/capivara-andando.png",
+      "runtime": "runtime-sprites/capivara-andando.webp",
+      "palette": "original",
+      "sourceBytes": 38123,
+      "runtimeBytes": 28166
+    }
+  ]
+}

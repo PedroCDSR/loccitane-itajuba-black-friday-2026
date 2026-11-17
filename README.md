@@ -2,6 +2,12 @@
 
 Base independente de um jogo promocional de plataforma 2D, mobile-first, com Phaser 4.2.1 e Vite 8.3.5. Desenvolvida para continuação com Fable 5.2. **Não é a versão final de campanha nem está publicada.**
 
+## Atualização: missão de Caju e Romã
+
+O jogo agora inclui intro em três etapas, coleta dos produtos Caju/Romã pela cidade, modo fácil com cinco corações e montagem de três kits no showroom. Cidade, sprites e objetos novos integrados; duração75s, posições dos marcos e extensão do percurso preservadas. Pedro possui interação por E/Enter ou toque, com conversa sem consumir tempo. As conversas e o relógio de invencibilidade usam tempo de jogo ativo.
+
+Veja `docs/EVOLUCAO-MISSAO.md` e `docs/HANDOFF-CLAUDE.md` para a rodada atual. Build/testes Node passaram; esta rodada ainda precisa de teste completo em navegador. As capturas anteriores documentam a versão anterior. Assets originais e ZIPs preservados; versões de carregamento em WebP com manifesto em `docs/pacotes/runtime.json`.
+
 ## Executar
 
 Node 22.12+ (ou Node 24). Use `npm ci`, `npm run dev` e abra o endereço informado pelo Vite. No celular na mesma rede, use o endereço Network. `npm test` executa verificações de oferta/privacidade e integridade dos assets. `npm run build` gera `dist/`; `npm run preview` permite conferir o build.

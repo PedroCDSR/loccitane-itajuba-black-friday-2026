@@ -1,41 +1,64 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-    <link rel="icon" href="data:," /><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#942c39"><meta name="description" content="Uma última aventura por Itajubá. Jogo da última Black Friday L’Occitane Itajubá, novembro de 2026."><title>A Última Aventura • L’Occitane Itajubá</title></head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <link rel="icon" href="data:,"><meta name="theme-color" content="#942c39">
+  <meta name="description" content="Reúna Caju e Romã por Itajubá e ajude Pedro a preparar os kits da última Black Friday do showroom.">
+  <title>A Última Aventura • L’Occitane Itajubá</title>
+</head>
 <body>
-<header><a class="marca" href="#">L’OCCITANE <span>AU BRÉSIL · ITAJUBÁ</span></a><div><button id="som" aria-pressed="false">Som: desligado</button><button id="pausar" hidden>Pausar</button></div></header>
+<header><a class="marca" href="#">L’OCCITANE <span>AU BRÉSIL · ITAJUBÁ</span></a><button id="som" aria-pressed="false">Som: desligado</button></header>
 <main>
-<section id="inicio" class="cartao">
-<p class="eyebrow">NOVEMBRO DE 2026 · UMA HISTÓRIA PARA GUARDAR</p>
-<h1>A Última<br><em>Aventura</em></h1>
-<p class="subtitulo">Última Black Friday L’Occitane Itajubá</p>
-<p id="despedida"></p>
-<div class="convite"><span>01 · Explore Itajubá</span><span>02 · Reúna presentes</span><span>03 · Visite o showroom</span></div>
-<button id="jogar" class="principal">Começar aventura <span aria-hidden="true">→</span></button>
-<p class="ajuda">Uma jornada de até 75 segundos. Setas ou A/D para andar, espaço para saltar e X para oferecer caju. No celular, use os botões.</p>
-<p class="nota">Base em desenvolvimento · arte e condições comerciais em preparação.</p>
-</section>
-<section id="partida" hidden aria-label="Jogo de plataforma">
-<div id="hud"><span id="local">Itajubá</span><span id="presentes" aria-live="off">0 presentes</span><span id="vida">3 ♥</span><span id="tempo">75s</span></div>
-<div id="jogo"></div>
-<div id="controles" hidden aria-label="Controles de toque"><div><button data-controle="esquerda" aria-label="Andar para esquerda">←</button><button data-controle="direita" aria-label="Andar para direita">→</button></div><div><button data-controle="fruta">Caju</button><button data-controle="pular">Pular</button></div></div>
-<p class="ajuda">Reúna os presentes e chegue ao showroom. Ofereça caju às capivaras para abrir caminho.</p>
-</section>
-<section id="final" class="cartao" hidden>
-<p class="eyebrow">ITAJUBÁ, OBRIGADA POR CADA ENCONTRO</p><h1>O melhor<br><em>é compartilhar.</em></h1>
-<p id="resultado"></p><p id="beneficio"></p><p id="condicoes" class="nota"></p>
-<button id="ver-oferta" class="principal">Ver meu benefício</button>
-<form id="resgate" hidden>
-<h2>Vamos conversar?</h2><p>Seu nome será incluído em uma mensagem para a loja. O envio acontece no WhatsApp, depois da sua confirmação.</p>
-<label for="nome">Primeiro nome</label><input id="nome" name="nome" autocomplete="given-name" minlength="2" maxlength="60" required>
-<label class="check"><input type="checkbox" id="atendimento" required> Quero solicitar o resgate e entendi o aviso de privacidade abaixo.</label>
-<label class="check"><input type="checkbox" id="marketing"> Também quero receber novidades da loja pelo WhatsApp (opcional).</label>
-<p id="privacidade" class="nota"></p><p id="pendencia" role="status"></p>
-<button id="enviar" type="submit" class="principal">Continuar no WhatsApp</button>
-</form>
-<div class="acoes"><a id="compartilhar" target="_blank" rel="noopener noreferrer">Compartilhar no WhatsApp</a><button id="novamente">Jogar novamente</button></div>
-</section>
-<div id="pausa" class="modal" hidden><div><h2>Respire um pouquinho.</h2><p>A aventura está pausada.</p><button id="continuar" class="principal">Continuar</button></div></div>
-</main><footer>Uma aventura de presentes, brasilidade e boas lembranças.<br><a href="https://www.instagram.com/loccitane.itajuba/" target="_blank" rel="noopener noreferrer">@loccitane.itajuba</a></footer>
+  <section id="inicio" class="cartao">
+    <p class="eyebrow">NOVEMBRO DE 2026 · UMA HISTÓRIA PARA GUARDAR</p>
+    <h1>A Última<br><em>Aventura</em></h1>
+    <p class="subtitulo">Última Black Friday L’Occitane Itajubá</p><p id="despedida"></p>
+    <div class="convite"><span>01 · Reúna Caju e Romã</span><span>02 · Encontre Pedro</span><span>03 · Monte os kits</span></div>
+    <button id="jogar" class="principal">Conhecer a missão <span aria-hidden="true">→</span></button>
+    <p class="ajuda">Modo fácil · 75 segundos de jogo ativo · cinco corações.<br>Teclado e controles de toque. As conversas não gastam tempo.</p>
+    <p class="nota">Campanha em preparação · condições do benefício ainda serão definidas pela loja.</p>
+  </section>
+  <section id="intro" class="cartao" hidden aria-labelledby="intro-titulo">
+    <p class="eyebrow" id="intro-etapa">SUA MISSÃO · 1/3</p>
+    <div class="intro-arte" aria-hidden="true"><img src="/assets/showroom/caju.png" alt=""><img class="pedro-intro" src="/assets/showroom/pedro.png" alt=""><img src="/assets/showroom/roma.png" alt=""></div>
+    <h2 id="intro-titulo" tabindex="-1"></h2><p id="intro-texto"></p>
+    <div class="acoes"><button id="intro-proximo" class="principal">Continuar →</button><button id="intro-pular">Ir direto para a cidade</button></div>
+    <p class="ajuda">Andar: ← → ou A/D · Saltar: espaço/W · Oferecer fruta: X/J<br>Conversar e montar kits: E/Enter ou botão na tela.</p>
+    <p id="carregamento" role="status"></p>
+  </section>
+  <section id="partida" hidden aria-label="Jogo de plataforma">
+    <div id="hud"><span id="local">Itajubá</span><span id="presentes">Caju 0 · Romã 0</span><span id="vida">5 ♥</span><span id="tempo">75s</span><button id="pausar" hidden aria-label="Pausar aventura">Ⅱ</button></div>
+    <div id="objetivo-panel"><span id="objetivo">Reúna os produtos</span><span id="kits">Kits 0/3</span></div>
+    <div id="palco">
+      <div id="jogo"></div>
+      <div id="loading" hidden role="status"><p id="loading-texto">Preparando a aventura…</p><button id="tentar-carga" hidden>Tentar novamente</button></div>
+      <div id="controles" hidden aria-label="Controles de toque">
+        <div><button data-controle="esquerda" aria-label="Andar para esquerda">←</button><button data-controle="direita" aria-label="Andar para direita">→</button></div>
+        <div class="interacao"><button id="interagir" data-controle="interagir" hidden>Conversar</button></div>
+        <div><button data-controle="fruta">Caju</button><button data-controle="pular">Pular</button></div>
+      </div>
+      <section id="dialogo" hidden role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
+        <p class="eyebrow" id="dialogo-titulo">PEDRO · SHOWROOM ITAJUBÁ</p><p id="dialogo-texto"></p><button id="fechar-dialogo" class="principal">Vamos montar os kits →</button>
+      </section>
+    </div>
+    <p class="ajuda">Caju e Romã são os produtos da missão. O botão Caju oferece a fruta às capivaras e não gasta os produtos coletados.</p>
+  </section>
+  <section id="final" class="cartao" hidden>
+    <p class="eyebrow">ITAJUBÁ, OBRIGADA POR CADA ENCONTRO</p><h1 id="final-titulo">O melhor<br><em>é compartilhar.</em></h1>
+    <p id="resultado"></p><p id="beneficio"></p><p id="condicoes" class="nota"></p>
+    <button id="ver-oferta" class="principal">Ver meu benefício</button>
+    <form id="resgate" hidden>
+      <h2>Vamos conversar?</h2><p>Seu nome será incluído em uma mensagem para a loja. O envio acontece no WhatsApp, depois da sua confirmação.</p>
+      <label for="nome">Primeiro nome</label><input id="nome" name="nome" autocomplete="given-name" minlength="2" maxlength="60" required>
+      <label class="check"><input type="checkbox" id="atendimento" required> Quero solicitar o resgate e entendi o aviso de privacidade abaixo.</label>
+      <label class="check"><input type="checkbox" id="marketing"> Também quero receber novidades da loja pelo WhatsApp (opcional).</label>
+      <p id="privacidade" class="nota"></p><p id="pendencia" role="status"></p>
+      <button id="enviar" type="submit" class="principal">Continuar no WhatsApp</button>
+    </form>
+    <div class="acoes"><a id="compartilhar" target="_blank" rel="noopener noreferrer">Compartilhar no WhatsApp</a><button id="novamente">Jogar novamente</button></div>
+  </section>
+  <div id="pausa" class="modal" hidden><div><h2>Respire um pouquinho.</h2><p>A aventura está pausada.</p><button id="continuar" class="principal">Continuar</button></div></div>
+</main>
+<footer>Uma aventura de presentes, brasilidade e boas lembranças.<br><a href="https://www.instagram.com/loccitane.itajuba/" target="_blank" rel="noopener noreferrer">@loccitane.itajuba</a></footer>
 <script type="module" src="/src/main.js"></script>
 </body></html>

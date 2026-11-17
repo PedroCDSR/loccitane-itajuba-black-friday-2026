@@ -27,3 +27,5 @@ Spritesheet de Pedro: 14 poses geradas a partir da arte-base, com atlas de recor
 ## Pacotes de sprites e cidade ao entardecer
 
 Artes geradas com a ferramenta de imagens e referências visuais do showroom, exploradora e fotos dos marcos de Itajubá já presentes no projeto-base. Exportação técnica por recorte, nearest-neighbor, alfa binário, centralização e repetição por espelhamento. Fontes em references/gerados-pacote; medidas exatas em public/assets/sprites-nativos e public/assets/cidade-entardecer. Identificação Esso adicionada por pedido posterior do usuário. Pedro preservado. Não se afirma homologação de animações ou fidelidade arquitetônica/lettering perfeita.
+
+Runtime integrado: versões WebP dos assets novos, sprites sem redução de cores e cidade quantizada para128 cores sem dithering antes da codificação lossless. Os PNGs entregues permanecem intactos. Física/estrutura reaproveitadas; modo fácil conserva os cinco corações do ajuste do projeto-base, sem copiar seu mapa curto ou dados do espetáculo.

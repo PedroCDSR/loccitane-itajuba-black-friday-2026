@@ -2,7 +2,7 @@
 export class Entrada {
   constructor(scene) {
     this.scene = scene; this.toques = new Map(); this.antes = {};
-    this.keys = scene.input.keyboard.addKeys({ esquerda: 'LEFT', direita: 'RIGHT', pular: 'SPACE', fruta: 'X', a: 'A', d: 'D', w: 'W', cima: 'UP', j: 'J' });
+    this.keys = scene.input.keyboard.addKeys({ esquerda: 'LEFT', direita: 'RIGHT', pular: 'SPACE', fruta: 'X', a: 'A', d: 'D', w: 'W', cima: 'UP', j: 'J', interagir: 'E', confirmar: 'ENTER' });
     this.abort = new AbortController();
     const signal = this.abort.signal;
     document.querySelectorAll('[data-controle]').forEach(b => {
@@ -14,6 +14,11 @@ export class Entrada {
     scene.events.once('shutdown', () => { this.abort.abort(); this.limpar(); });
   }
   limpar() { this.toques.clear(); this.scene.input.keyboard.resetKeys(); this.antes = {}; document.querySelectorAll('.pressed').forEach(b => b.classList.remove('pressed')); }
+  ignorarAteSoltar() {
+    this.antes = { pular: true, fruta: true, interagir: true };
+    this.scene.input.keyboard.resetKeys();
+    this.toques.clear();
+  }
   atualizar() {
     const t = new Set(this.toques.values()), k = this.keys;
     this.esquerda = t.has('esquerda') || k.esquerda.isDown || k.a.isDown;
@@ -23,6 +28,8 @@ export class Entrada {
     this.fruta = t.has('fruta') || k.fruta.isDown || k.j.isDown;
     this.pularApertou = this.pular && !this.antes.pular;
     this.frutaApertou = this.fruta && !this.antes.fruta;
-    this.antes = { pular: this.pular, fruta: this.fruta };
+    this.interagir = t.has('interagir') || k.interagir.isDown || k.confirmar.isDown;
+    this.interagirApertou = this.interagir && !this.antes.interagir;
+    this.antes = { pular: this.pular, fruta: this.fruta, interagir: this.interagir };
   }
 }

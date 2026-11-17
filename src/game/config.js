@@ -10,9 +10,12 @@ export const MUNDO = SHOWROOM.x + SHOWROOM.largura * 2;
 export const ARTE_JOGADOR = 3; // pixels de textura por unidade do mundo no sprite da exploradora
 export const JOGADOR = {
   velocidade: 140, aceleracaoChao: 1400, aceleracaoAr: 900, freio: 1800,
-  aterrissagemMs: 90, gravidade: 900, gravidadeQuedaExtra: 500, quedaMaxima: 520,
-  forcaPulo: 380, cortePulo: 0.45, coyoteMs: 100, bufferPuloMs: 100,
-  recuoDano: { x: 110, y: 170 }, atordoadoMs: 220, coracoes: 3, invencivelMs: 1200,
-  corpo: { largura: 18, altura: 46, x: 15, y: 17 },
-  antecipacaoFrutaMs: 60, arremessoMs: 190,
+  aterrissagemMs: 145, gravidade: 900, gravidadeQuedaExtra: 500, quedaMaxima: 520,
+  forcaPulo: 380, cortePulo: 0.45, coyoteMs: 160, bufferPuloMs: 160,
+  recuoDano: { x: 75, y: 140 }, atordoadoMs: 180, coracoes: 5, invencivelMs: 1800,
+  corpo: { largura: 18, altura: 46, x: 15, y: 18 },
+  antecipacaoFrutaMs: 100, arremessoMs: 250,
 };
+
+// Reaproveita os cinco corações do modo fácil original, sem encurtar o mapa.
+export const MODO_FACIL = { capivaraVelocidade: 10, checkpointDistancia: 400 };

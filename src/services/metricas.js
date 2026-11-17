@@ -1,5 +1,5 @@
 // Sem rede por padrão. Integre um provedor anônimo aqui; nunca inclua nome ou mensagem.
-const PERMITIDOS = new Set(['inicio', 'conclusao', 'clique_oferta', 'clique_compartilhar', 'encaminhamento_whatsapp']);
+const PERMITIDOS = new Set(['inicio', 'conclusao', 'clique_oferta', 'clique_compartilhar', 'encaminhamento_whatsapp', 'chegada_showroom']);
 export function registrar(nome, dados = {}) {
   if (!PERMITIDOS.has(nome)) return;
   const detail = { evento: nome, presentes: Number.isFinite(dados.presentes) ? dados.presentes : undefined };
