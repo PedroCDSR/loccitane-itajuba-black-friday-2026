@@ -3,12 +3,12 @@
 // - O contexto de áudio só nasce no primeiro toque ou tecla (exigência do iPhone/Safari) e é retomado a cada gesto.
 // - A escolha liga/desliga fica no localStorage ('aventura-som'); se o navegador bloquear o armazenamento, vale "ligado".
 // - definirAtivo(false) suspende tudo (pausa, aba escondida, janela sem foco); definirAtivo(true) retoma.
-// - Volumes: efeitos num barramento a 0,5 e música a 0,14 (pedido do Pedro: um pouco mais alta), com um compressor no fim para segurar picos.
+// - Volumes: efeitos num barramento a 0,5 e música a 0,161 (pedido do Pedro: mais alta), com um compressor no fim para segurar picos.
 
 import { MUSICA } from '../data/musica.js';
 
 const CHAVE = 'aventura-som';
-export const VOLUME_MUSICA = .14;
+export const VOLUME_MUSICA = .161; // 0,14 + 15% (pedido do Pedro)
 const N = m => 440 * 2 ** ((m - 69) / 12); // nota MIDI → Hz
 
 let ctx = null, efeitos = null, trilha = null, ruidoBuffer = null;
@@ -155,8 +155,8 @@ export function tocar(nome) {
 // ---------- Música de fundo: "Espalhe Amor" (L’Occitane), enviada pelo Pedro em MIDI ----------
 // O MIDI vira uma lista de notas em src/data/musica.js (ferramentas/converter_midi.py) e toca neste sintetizador,
 // com timbre de piano macio, em loop. Sem arquivo de áudio nem biblioteca de MIDI.
-// VELOCIDADE: a música toca 12% mais rápida que o MIDI (pedido do Pedro); o tom das notas não muda.
-export const VELOCIDADE_MUSICA = 1.12;
+// VELOCIDADE: 1 = andamento original do MIDI (o Pedro testou 12% mais rápida e preferiu o original).
+export const VELOCIDADE_MUSICA = 1;
 const SEG_POR_TICK = 60 / (MUSICA.bpm * VELOCIDADE_MUSICA) / MUSICA.divisao, FIM_MUSICA = MUSICA.fim * SEG_POR_TICK + .6; // pausa curta antes de repetir
 const TOTAL_NOTAS = MUSICA.notas.length / 4;
 export function tocarNota(c, saida, t, nota, vel, dur) { // uma nota de piano (exportado para conferência)

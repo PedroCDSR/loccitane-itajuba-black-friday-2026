@@ -259,3 +259,4 @@ Pedido do Pedro. Em `src/services/som.js`:
 - **Velocidade:** `VELOCIDADE_MUSICA` = 1,12. A música toca 12% mais rápida (cerca de 1 min 33 s por volta, antes 1 min 44 s). O tom das notas não muda, porque o sintetizador toca nota a nota.
 
 Conferido no Chromium: nenhum som antes do toque, 70 notas em 4 s na rua, nada durante a pausa, sem erros. Ninguém ouviu: a máquina de teste não tem saída de áudio.
+- **Ajuste seguinte:** o Pedro preferiu o andamento original (`VELOCIDADE_MUSICA` = 1, cerca de 1 min 44 s por volta) e pediu a música 15% mais alta: `VOLUME_MUSICA` = 0,161. Medido renderizando a música inteira: pico 0,133 e volume médio (RMS) 0,0107, contra 0,009 da versão anterior.
