@@ -6,15 +6,27 @@
   <meta name="description" content="Reúna Caju e Romã por Itajubá e ajude a Karina a preparar os kits da última Black Friday do showroom.">
   <title>A Última Aventura • L’Occitane Itajubá</title>
 </head>
-<body>
+<body class="preparando">
 <header><a class="marca" href="#">L’OCCITANE <span>AU BRÉSIL · ITAJUBÁ</span></a><button id="som" class="som-alternar" aria-pressed="true">Som: ligado</button></header>
 <main>
-  <section id="inicio" class="cartao">
-    <p class="eyebrow">NOVEMBRO DE 2026 · UMA HISTÓRIA PARA GUARDAR</p>
+  <section id="abertura-loading" class="abertura-loading" aria-label="Carregando a aventura">
+    <p class="eyebrow">L’OCCITANE AU BRÉSIL · ITAJUBÁ</p>
+    <img id="caju-loading" src="assets/carregamento/caju-000.png" alt="Frasco de Caju indicando o carregamento" width="160" height="300">
+    <p id="texto-abertura" role="status">Preparando sua aventura… 0%</p>
+    <progress id="progresso-abertura" max="100" value="0" aria-label="Progresso do carregamento"></progress>
+    <button id="tentar-abertura" class="principal" hidden>Tentar novamente</button>
+  </section>
+  <section id="inicio" class="cartao pergaminho" hidden>
+    <p class="eyebrow">ITAJUBÁ · O ÚLTIMO CAPÍTULO</p>
+    <p class="era-uma-vez">Era uma vez…</p>
     <h1>A Última<br><em>Aventura</em></h1>
-    <p class="subtitulo">Última Black Friday L’Occitane Itajubá</p><p id="despedida"></p>
-    <div class="convite"><span>01 · Recupere os produtos espalhados pela cidade</span><span>02 · Leve tudo ao showroom</span><span>03 · Ajude a Karina a montar os kits</span></div>
-    <button id="jogar" class="principal">Começar a aventura <span aria-hidden="true">→</span></button>
+    <div class="historia-abertura"><p>Em 2023, uma família itajubense decidiu empreender e abrir um espaço dedicado ao autocuidado.</p>
+    <p>De lá para cá, foram muitas histórias, encontros e presentes. Agora, a L’Occitane Itajubá se prepara para escrever seu capítulo final.</p>
+    <p>Antes de fechar este livro, temos uma última aventura para viver com você.</p></div>
+    <p id="despedida" hidden></p>
+    <p class="missao-abertura">Recupere os produtos espalhados pela cidade e ajude a Karina a preparar os últimos kits do showroom.</p>
+    <button id="jogar" class="principal">Jogar <span aria-hidden="true">▶</span></button>
+    <p class="nota audio-abertura">Toque no pergaminho para ouvir a trilha. Você pode desligar o som a qualquer momento.</p>
     <div class="teste-recompensa">
       <button id="testar-recompensa" class="principal" type="button">Testar final e recompensa</button>
       <label for="cupom-teste">Cupom para o teste</label><select id="cupom-teste"><option value="bresil">Brésil · 10%</option><option value="caju">Caju · 7%</option><option value="roma">Romã · 5%</option></select>
@@ -36,7 +48,7 @@
         <p class="eyebrow" id="dialogo-titulo">Karina · Showroom Itajubá</p><p id="dialogo-texto"></p><span class="dialogo-mais" aria-hidden="true"></span>
       </section>
       <div id="transicao" hidden aria-live="polite"><p id="transicao-titulo">Showroom</p><strong id="transicao-nome">L’Occitane au Brésil</strong><span id="transicao-sub">Itajubá</span></div>
-      <div id="loading" hidden role="status"><p id="loading-texto">Preparando a aventura…</p><button id="tentar-carga" hidden>Tentar novamente</button></div>
+      <div id="loading" hidden role="status"><img id="caju-partida" src="assets/carregamento/caju-000.png" alt="Carregando a aventura com Caju" width="100" height="200"><p id="loading-texto">Preparando a aventura…</p><button id="tentar-carga" hidden>Tentar novamente</button></div>
     </div>
     <div id="painel">
       <div id="dica" hidden role="status"><p id="dica-texto"></p></div>
@@ -63,7 +75,7 @@
       <div id="premio-final" hidden>
         <p class="selo-conquista">✦ RECOMPENSA DESBLOQUEADA ✦</p>
         <h3 id="titulo-premio"></h3>
-        <p>Um carinho da nossa loja para você.</p>
+        <p>Para escolher seu próximo cuidado em toda a loja.</p>
 
         <div class="cupom-palco"><div id="confetes" aria-hidden="true"></div><img id="imagem-premio" alt="" hidden width="1254" height="1254"></div>
         <p id="estado-premio" role="status">Preparando sua recompensa…</p>
@@ -95,6 +107,5 @@
   <div id="pausa" class="modal" hidden><div><h2>Respire um pouquinho.</h2><p>A aventura está pausada.</p><button id="continuar" class="principal">Continuar</button></div></div>
 </main>
 <footer>Uma aventura de presentes, brasilidade e boas lembranças.<br><a href="https://www.instagram.com/loccitane.itajuba/" target="_blank" rel="noopener noreferrer">@loccitane.itajuba</a></footer>
-<script type="module" src="/src/main.js"></script>
-<script type="module" src="/src/teste-recompensa.js"></script>
+<script type="module" src="/src/abertura.js"></script>
 </body></html>

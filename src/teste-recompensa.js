@@ -26,7 +26,7 @@ function prepararImagem() {
     $('estado-premio').textContent = 'Sua recompensa está guardada. Não foi possível carregar a imagem.';
     $('recarregar-premio').hidden = false;
   };
-  img.alt = `Cupom ${atual.codigo}: ${atual.percentual}% de desconto, ${atual.nome}. Validade ilustrativa: 26/11/26.`;
+  img.alt = `Cupom ${atual.codigo}: ${atual.percentual}% de desconto em toda a loja. Validade ilustrativa: 26/11/26.`;
   img.src = `${base}assets/recompensas/${encodeURIComponent(atual.imagem)}`;
 }
 function mostrarFala() {
@@ -50,7 +50,7 @@ function abrirFinal(resultado = {}, teste = false) {
   falas = [
     'Olha só como nossa vitrine ficou linda! Obrigada por reunir os produtos e ajudar a preparar os kits.',
     'Cada presente carrega um pouquinho dos encontros e das boas lembranças que vivemos aqui em Itajubá. Você agora faz parte dessa história!',
-    `Você conquistou ${placar.total} pontos! Seu cuidado merece uma recompensa especial. Vamos descobrir qual cupom você desbloqueou?`,
+    `Você conquistou ${placar.total} pontos! Seu cuidado merece uma recompensa para usar em toda a loja. Vamos descobrir qual cupom você desbloqueou?`,
   ];
   $('inicio').hidden = true;
   $('partida').hidden = true;
@@ -64,7 +64,7 @@ function abrirFinal(resultado = {}, teste = false) {
   $('premio-final').hidden = true;
   $('premio-final').classList.remove('revelado');
   $('codigo-premio').textContent = `Seu código: ${atual.codigo}`;
-  $('titulo-premio').textContent = `Você ganhou ${atual.percentual}% de desconto!`;
+  $('titulo-premio').textContent = `Você ganhou ${atual.percentual}% de desconto em toda a loja!`;
   const url = new URL(`${base}recompensas/${chave}/`, window.location.href);
   $('resgatar-premio').href = linkCupomWhatsApp(CAMPANHA.whatsapp, url.href, atual);
   $('voltar-inicio').textContent = teste ? 'Voltar ao início · testar outro cupom' : 'Voltar ao início';

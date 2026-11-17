@@ -52,7 +52,7 @@ export class Aventura extends Phaser.Scene {
   constructor() { super('Aventura'); }
   preload() {
     this.falhas = [];
-    const progresso = valor => { $('loading-texto').textContent = `Preparando a aventura · ${Math.round(valor * 100)}%`; };
+    const progresso = valor => { $('loading-texto').textContent = `Preparando a aventura · ${Math.round(valor * 100)}%`; const img = $('caju-partida'); if(img) { const n = [0,20,50,70,100].filter(n=>n<=valor*100).at(-1); img.src = `assets/carregamento/caju-${String(n).padStart(3,'0')}.png`; } };
     const falhou = arquivo => this.falhas.push(arquivo.key);
     this.load.on('progress', progresso); this.load.on('loaderror', falhou);
     this.events.once('shutdown', () => { this.load.off('progress', progresso); this.load.off('loaderror', falhou); });

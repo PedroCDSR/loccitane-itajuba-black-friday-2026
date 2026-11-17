@@ -12,6 +12,8 @@ $('despedida').textContent=CAMPANHA.despedida;
 // Som: um botão no cabeçalho (tela inicial) e outro no HUD (partida), sempre sincronizados.
 function mostrarSom(ligado){$('som').textContent=`Som: ${ligado?'ligado':'desligado'}`;for(const id of ['som','som-hud'])$(id).setAttribute('aria-pressed',String(ligado));$('som-hud').setAttribute('aria-label',ligado?'Som ligado. Tocar para desligar':'Som desligado. Tocar para ligar');}
 prepararSom();aoMudarSom(mostrarSom);mostrarSom(somLigado());
+// A trilha é agendada na história e começa quando o navegador libera áudio no primeiro gesto.
+if (typeof window.dispatchEvent === 'function') musica(true);
 $('som').onclick=$('som-hud').onclick=()=>alternarSom();
 function pausar(){if(!emPartida||pausado||!jogo)return;const cena=jogo.scene.getScene('Aventura');if(!cena?.entrada)return;pausado=true;cena.entrada.limpar();jogo.scene.pause('Aventura');definirAtivo(false);$('pausa').hidden=false;}
 $('pausar').onclick=pausar;
