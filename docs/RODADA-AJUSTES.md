@@ -51,3 +51,23 @@ Pedido: o jogo estava pensado para tela deitada e cheia; no celular em pé ficav
 Testado no Chromium com toque emulado em 390×844 e 412×915: sem rolagem, sem erros, setas + pular com dois dedos, dicas na ordem, altura do jogo fixa do começo à conversa com o Pedro. A partida completa por teclado continua passando (vitrine em cerca de 57 s).
 
 Atenção: com o zoom, o showroom mostra só cerca de 110 unidades de largura no celular em pé; vale conferir com gente jogando se a escalada das estantes fica confortável.
+
+# Pisão na capivara e dicas mais claras (17/11/2026, terceira rodada)
+
+Pedido: cair em cima da capivara deve fazê-la dormir, com quique e "zzz"; dar mais ênfase ao que é possível fazer.
+
+- **Três formas de lidar com a capivara:** cair em cima (ela dorme), dar caju (ela come feliz) ou pular por cima. Encostar de lado numa capivara acordada e com fome continua tirando 1 coração. Dormindo ou alimentada, ela fica inofensiva até o fim da partida e o caju passa direto.
+- **Pisão:** vale quando a exploradora está caindo e os pés estavam acima do topo da capivara no quadro anterior (folga de 8 unidades). O quique é 260 (340 segurando Pular), menor que o do toldo (360/430). O pisão funciona mesmo durante a invencibilidade depois de um dano. Regras em `src/game/capivaras.js`, sem Phaser.
+- **Capivara dormindo:** usa o primeiro quadro de `capivara-andando` com o olho redesenhado fechado em código (`criarCapivaraDormindo` em `src/game/arte.js`); os quadros de olhos fechados de `capivara-comendo` seguram um caju e confundiriam com "alimentada". Ela amassa ao ser pisada, respira devagar e solta "Z" em pixel art desenhados em código (`criarZ`), que sobem, crescem e somem.
+- **Dicas da primeira partida** (`src/game/Tutorial.js`): andar → pular → toldo na 1ª tendinha → **"Pule em cima da capivara para ela dormir!"** na 1ª capivara → caju na 2ª capivara. Na primeira vez que uma capivara empurra de lado aparece "Encostar de lado tira 1 ♥. Pise nela, dê caju ou pule por cima!". No showroom: caixas no alto → passar pela bancada → saída. As dicas da rua somem na transição.
+- **Abertura:** a antiga fala "COMO JOGAR" virou três falas curtas: NA RUA (produtos e toldo), CAPIVARAS (pisar, caju, pular por cima, não encostar de lado) e NO SHOWROOM (Pedro, caixas, bancada, 75 s). Na fala das capivaras a exploradora demonstra o pisão e a capivara dorme com "zzz".
+- **Tela inicial:** quatro passos (Caju e Romã, toldo, capivara, kits) e o aviso de que encostar de lado tira 1 coração. O texto abaixo do jogo também cita as três formas.
+
+## Testado de verdade
+
+- `npm test` 33 de 33 (6 novos em `tests/capivaras.test.js`: pisão, dano de lado, inofensiva, força do quique, `Aventura.adormecer` e textos de dicas, abertura e tela inicial) e `npm run build`.
+- **Celular em pé emulado (Chromium, 390×844, toque por CDP):** seis falas da abertura com a demonstração do pisão; dicas na ordem andar, pular, toldo, pisão, caju e dano com toques reais nos botões; pisão posicionando a exploradora em queda sobre a 1ª capivara: dormiu, quique para cima, 5 corações; atravessar a capivara dormindo não tirou coração; botão Caju alimentou a 2ª; encostar de lado na 3ª tirou 1 coração e mostrou a dica; no showroom, dicas das caixas e da bancada (estoque ajustado pelo script para checar a dica). Sem rolagem, sem erros no console nem respostas 4xx/5xx.
+- **Computador 1280×860, teclado real:** abertura pulada pelo botão e a cidade percorrida segurando → e pulando com Espaço perto das capivaras: 2 capivaras dormiram por pisão natural, nenhum dano, chegada ao showroom em 37,6 s de jogo.
+- Não refeita nesta rodada: a partida completa até a vitrine. Nada testado em aparelho real.
+
+Capturas: `docs/capturas/v4-*.png`.
