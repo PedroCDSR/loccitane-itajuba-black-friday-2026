@@ -101,9 +101,10 @@ Capturas reais do antes: `docs/capturas/v5-antes-fachada.png`, `v5-antes-pedro.p
 - Botão "Vamos montar os kits" tocado no diálogo do Pedro.
 - 412×915: zoom 6,4, 150 de largura, 224 de altura visível.
 - Celular deitado 844×390: sem mapa, zoom 3 (320 de largura), como antes.
+- Link de testes no ar (dev--loccitane-itajuba.netlify.app) em 390×844: cidade jogada até a bandeira, transição e fachada com mapa e marcador; sem erros nem 4xx/5xx.
 - Computador 1280×800: sem mapa, zoom pela altura (220 de largura); setas aparecem e têm o mesmo tamanho na tela. Volta à cidade pela esquerda da fachada: zoom da cidade restaurado e mapa escondido.
 
-Capturas reais do depois: `docs/capturas/v5-depois-pedro.png`, `v5-depois-dialogo.png`, `v5-depois-fachada-setas.png`, `v5-depois-fachada-caixa.png`, `v5-depois-interior.png`, `v5-depois-estante.png`, `v5-depois-bancada.png`, `v5-depois-saida.png`, `v5-depois-412x915.png`, `v5-depois-deitado-844x390.png`, `v5-depois-computador.png`.
+Capturas reais do depois: `docs/capturas/v5-depois-chegada.png` (marcador acima da cabeça do Pedro, ajustado depois de conferir o link no ar), `v5-depois-pedro.png`, `v5-depois-dialogo.png`, `v5-depois-fachada-setas.png`, `v5-depois-fachada-caixa.png`, `v5-depois-interior.png`, `v5-depois-estante.png`, `v5-depois-bancada.png`, `v5-depois-saida.png`, `v5-depois-412x915.png`, `v5-depois-deitado-844x390.png`, `v5-depois-computador.png`.
 
 ## Não testado e pendências
 

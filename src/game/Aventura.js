@@ -431,7 +431,7 @@ export class Aventura extends Phaser.Scene {
   }
   // Para onde ir no showroom: Pedro, caixas, produtos de reserva, o próximo lugar livre da bancada e a saída.
   alvosShowroom() {
-    if (!this.pedroConversou) return [{ x: this.pedroX, y: py(792) - 34, icone: 'pedro-npc', frame: 'parado-0', escala: .075 }];
+    if (!this.pedroConversou) return [{ x: this.pedroX, y: py(792) - 58, icone: 'pedro-npc', frame: 'parado-0', escala: .075 }];
     if (this.missao.kits >= META_KITS) return [{ x: MUNDO - 22, y: 200, icone: 'sacola', escala: .22 }];
     const alvos = [];
     const falta = faltaParaKit(this.missao);
