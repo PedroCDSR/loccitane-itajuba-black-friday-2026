@@ -7,3 +7,9 @@ Falas aprovadas sem mencionar parentesco. Pedro usa a opção afetiva aprovada. 
 Instrumental enviado em WAV convertido para MP3 192kbps,104,64s, sem mudança de andamento. Reprodução em loop por HTMLAudioElement com volume0,9. MIDI antigo deixou de tocar; os efeitos curtos do jogo permanecem. Som desligado, perda de foco e pausa suspendem a reprodução, retomando do ponto anterior. Autoplay depende do navegador e tenta novamente no primeiro gesto.
 
 Validação: testes Node de aproximação/despedida, áudio e regressão; build Vite. Chrome local: loader terminou, jogo iniciou, coleta e conversa do Pedro funcionaram. Sprites derivados inspecionados visualmente em arquivo. Não foi concluído o percurso inteiro até Marcela no navegador; não foi homologado em celular físico nem avaliada auditivamente a mixagem final.
+
+## Revisão de recorte, altura e som
+
+Correção do recorte: removido preenchimento global de buracos que recolocava fundo entre braços e corpo. Novo preparo reproduzível em ferramentas/preparar_convidadas.py, fontes preservadas. Conferidos todos os quadros sobre fundo verde escuro, com fundo realmente transparente nas aberturas. Células e índices das animações preservados.
+
+Alturas calibradas pelo alfa: exploradora192px / 3 =64 unidades; Marcela170px ×64/170 =64; Mariana170px ×57/170 =57 (região dos olhos); Karina180px ×52/180 =52 (região da boca). Origem dos pés preservada nas duas instâncias da Karina e nas convidadas. Volume do instrumental atualizado a0,8 conforme pedido posterior.

@@ -8,7 +8,7 @@
 
 
 const CHAVE = 'aventura-som';
-export const VOLUME_MUSICA = .9; // Volume solicitado pelo usuário.
+export const VOLUME_MUSICA = .8; // Volume solicitado pelo usuário.
 const N = m => 440 * 2 ** ((m - 69) / 12); // nota MIDI → Hz
 
 let ctx = null, efeitos = null, trilha = null, ruidoBuffer = null;

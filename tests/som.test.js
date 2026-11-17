@@ -26,8 +26,8 @@ test('sem gesto da pessoa nenhum contexto de áudio é criado e tocar não quebr
   assert.deepEqual(som.historico, []);
 });
 
-test('instrumental local substitui a trilha antiga, com volume 0,9', () => {
- assert.equal(som.VOLUME_MUSICA,.9);
+test('instrumental local substitui a trilha antiga, com volume 0,8', () => {
+ assert.equal(som.VOLUME_MUSICA,.8);
  assert.equal(som.ARQUIVO_MUSICA,'assets/audio/instrumental.mp3');
  assert.ok(readFileSync(new URL('../public/assets/audio/instrumental.mp3',import.meta.url)).length>1000);
 });
