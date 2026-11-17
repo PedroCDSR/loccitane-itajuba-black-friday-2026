@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { JOGADOR as J } from './config.js';
+import { JOGADOR as J, ARTE_JOGADOR as K } from './config.js';
 
 // Exploradora original. Movimento adaptado da base técnica, sem sua arte.
 //
@@ -15,7 +15,8 @@ export class Jogador extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setOrigin(0.5, 1); // x,y = pé do personagem
-    this.body.setSize(J.corpo.largura, J.corpo.altura).setOffset(J.corpo.x, J.corpo.y);
+    this.setScale(1 / K); // a textura tem K pixels por unidade; a caixa de colisão é dada em pixels da textura
+    this.body.setSize(J.corpo.largura * K, J.corpo.altura * K).setOffset(J.corpo.x * K, J.corpo.y * K);
     this.body.setMaxVelocity(1000, J.quedaMaxima);
     this.body.setCollideWorldBounds(true);
 

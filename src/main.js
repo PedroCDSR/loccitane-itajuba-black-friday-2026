@@ -26,7 +26,7 @@ async function iniciar(){
   $('inicio').hidden=true;$('final').hidden=true;$('resgate').hidden=true;$('resgate').reset();$('partida').hidden=false;$('controles').hidden=false;$('pausar').hidden=false;document.body.classList.add('jogando');emPartida=true;pausado=false;
   registrar('inicio');
   if(jogo){jogo.scene.start('Aventura');return;}
-  jogo=new Phaser.Game({type:Phaser.AUTO,parent:'jogo',width:LARGURA,height:ALTURA,pixelArt:true,roundPixels:true,backgroundColor:'#cdd7b0',scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},input:{activePointers:4},audio:{noAudio:true},physics:{default:'arcade',arcade:{gravity:{x:0,y:JOGADOR.gravidade},debug:false}},scene:[Aventura]});
+  jogo=new Phaser.Game({type:Phaser.AUTO,parent:'jogo',width:LARGURA*2,height:ALTURA*2,pixelArt:true,roundPixels:true,backgroundColor:'#cdd7b0',scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},input:{activePointers:4},audio:{noAudio:true},physics:{default:'arcade',arcade:{gravity:{x:0,y:JOGADOR.gravidade},debug:false}},scene:[Aventura]});
   jogo.events.on('conclusao',concluir);
   if(import.meta.env.DEV)window.jogo=jogo;
 }

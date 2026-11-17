@@ -8,7 +8,7 @@ Node 22.12+ (ou Node 24). Use `npm ci`, `npm run dev` e abra o endereço informa
 
 ## O que já existe
 
-- Percurso único por Itajubá com câmera e parallax, chegada à fachada e interior do showroom.
+- Percurso único por Itajubá com câmera e parallax e cena jogável do showroom (jardim, fachada, Pedro na porta, interior com mesa e produtos Caju e Romã). Ver `docs/SHOWROOM-JOGAVEL.md`.
 - Exploradora original provisória; controles touch e teclado: setas/A/D, espaço/W/cima, X/J para caju.
 - Pulo variável, aceleração, tolerância na borda, antecipação do pulo e recuperação após colisões.
 - Presentes, frascos, capivaras alimentadas com caju, contador e duração máxima de 75 segundos de jogo ativo.

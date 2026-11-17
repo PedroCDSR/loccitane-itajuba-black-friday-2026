@@ -1,7 +1,13 @@
 export const LARGURA = 480;
 export const ALTURA = 270;
 export const DURACAO_SEGUNDOS = 75;
-export const MUNDO = 8800;
+// O mundo é medido em unidades de 480x270. O canvas tem o dobro (960x540) e a câmera usa zoom 2 na
+// cidade e zoom 3 no showroom, onde os fundos têm 3 pixels de textura por unidade.
+export const ZOOM_CIDADE = 2;
+export const ZOOM_SHOWROOM = 3;
+export const SHOWROOM = { x: 5216, largura: 320, topo: 90, altura: 180 }; // cada um dos dois fundos (fachada, interior)
+export const MUNDO = SHOWROOM.x + SHOWROOM.largura * 2;
+export const ARTE_JOGADOR = 3; // pixels de textura por unidade do mundo no sprite da exploradora
 export const JOGADOR = {
   velocidade: 140, aceleracaoChao: 1400, aceleracaoAr: 900, freio: 1800,
   aterrissagemMs: 90, gravidade: 900, gravidadeQuedaExtra: 500, quedaMaxima: 520,
