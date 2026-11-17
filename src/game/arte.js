@@ -12,4 +12,6 @@ export function criarArte(scene) {
   anim('dano', 'exploradora-susto', [0], 1, 0);
   anim('capivara-andar', 'capivara', [0, 1, 2, 3], 5);
   anim('capivara-comer', 'capivara-comendo', [0, 1, 2, 3], 4);
+  // dormindo: só os quadros de olhos fechados, bem devagar (a respiração é uma escala leve na cena)
+  anim('capivara-dormir', 'capivara-comendo', [1, 2], 1.2);
 }

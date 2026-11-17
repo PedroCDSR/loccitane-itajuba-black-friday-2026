@@ -6,6 +6,7 @@ import { criarCenario, TENDA } from './cenario.js';
 import { Tutorial } from './Tutorial.js';
 import { carregarArte } from './assets.js';
 import { carregarPedro, criarPedro } from './pedro-animacoes.js';
+import { decidirContato, QUIQUE_PISAO } from './pisao.js';
 import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, faltaParaKit, META_KITS } from './missao.js';
 import { ALTURA, MUNDO, SHOWROOM, ALTURA_CIDADE, ALTURA_SHOWROOM, MODO_FACIL } from './config.js';
 import { CAMPANHA } from '../data/campanha.js';
@@ -28,6 +29,7 @@ const VOLTA = FACHADA + 12, CHEGADA_SHOWROOM = FACHADA + 24, CHEGADA_CIDADE = PO
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
+const capivaraAcordada = c => !c.getData('alimentada') && !c.getData('dormindo');
 
 export class Aventura extends Phaser.Scene {
   constructor() { super('Aventura'); }
@@ -79,16 +81,11 @@ export class Aventura extends Phaser.Scene {
       c.body.setSize(72, 48).setOffset(12, 24); c.setData('origem', x); c.play('capivara-andar');
     }
     this.physics.add.collider(this.capivaras, this.solidos);
-    this.physics.add.overlap(this.jogador, this.capivaras, (j, c) => {
-      if (c.getData('alimentada') || j.estaInvencivel(this.tempo * 1000)) return;
-      const vida = j.levarDano(c.x, this.tempo * 1000);
-      this.aviso('Ai! Seus produtos estão guardados.', '#fff0d2');
-      if (vida === 0) j.reposicionar(this.checkpoint, 200, this.tempo * 1000);
-      this.atualizarHUD();
-    });
+    // Pisão (cair por cima) faz a capivara dormir; encostar de lado numa capivara acordada tira 1 coração.
+    this.physics.add.overlap(this.jogador, this.capivaras, (j, c) => this.tocarCapivara(j, c));
     this.frutas = this.physics.add.group();
     this.physics.add.overlap(this.frutas, this.capivaras, (f, c) => {
-      if (c.getData('alimentada')) return;
+      if (!capivaraAcordada(c)) return;
       f.destroy(); c.setData('alimentada', true); c.setVelocityX(0); c.play('capivara-comer'); this.tutorial?.concluir('caju');
       this.aviso('A capivara gostou do caju!', '#f5c875');
     });
@@ -106,6 +103,39 @@ export class Aventura extends Phaser.Scene {
     });
     this.atualizarHUD();
     if (this.registry.get('comIntro')) this.comecarIntro(); else this.comecarJogo();
+  }
+
+  // ---------- Capivaras ----------
+  tocarCapivara(j, c) {
+    const agora = this.tempo * 1000;
+    const resultado = decidirContato({
+      pe: j.body.bottom, velocidadeY: j.body.velocity.y, meioCapivara: c.body.center.y,
+      dormindo: c.getData('dormindo'), alimentada: c.getData('alimentada'), invencivel: j.estaInvencivel(agora),
+    });
+    if (resultado === 'pisao') {
+      j.quicar(this.entrada.pular ? QUIQUE_PISAO.segurando : QUIQUE_PISAO.normal); tocar('pulo');
+      this.adormecer(c); this.tutorial?.concluir('pisao');
+      this.aviso('A capivara dormiu! zzz', '#d9e8ff');
+    } else if (resultado === 'dano') {
+      const vida = j.levarDano(c.x, agora);
+      this.aviso('Ai! Seus produtos estão guardados.', '#fff0d2');
+      if (vida === 0) j.reposicionar(this.checkpoint, 200, agora);
+      this.atualizarHUD();
+    }
+  }
+  // Para de andar, fecha os olhos, respira devagar e solta "z z z" subindo. Fica inofensiva.
+  adormecer(c) {
+    c.setData('dormindo', true); c.setVelocityX(0); c.play('capivara-dormir');
+    const escala = c.scaleY;
+    c.setData('respira', this.tweens.add({ targets: c, scaleY: escala * 1.05, scaleX: c.scaleX * 1.02, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' }));
+    const cabeca = () => c.x + (c.flipX ? -9 : 9);
+    let n = 0;
+    c.setData('zzz', this.time.addEvent({ delay: 650, loop: true, callback: () => {
+      const tam = 6 + (n++ % 3) * 2; // z pequeno, médio, grande
+      const z = this.add.text(cabeca(), c.y - 22, 'z', { fontFamily: 'Georgia, serif', fontSize: `${tam}px`, fontStyle: 'bold', color: '#eef4ff', stroke: '#35263b', strokeThickness: 2, resolution: 4 })
+        .setOrigin(.5).setDepth(6);
+      this.tweens.add({ targets: z, x: z.x + (c.flipX ? -6 : 6), y: z.y - 16, alpha: { from: 1, to: 0 }, duration: 1500, ease: 'Sine.out', onComplete: () => z.destroy() });
+    } }));
   }
 
   // ---------- Cidade ----------
@@ -200,6 +230,7 @@ export class Aventura extends Phaser.Scene {
     const tipo = item.getData('tipo');
     item.getData('sinal')?.destroy(); item.destroy();
     coletarProduto(this.missao, tipo); this.presentes++; tocar('coleta');
+    if (tipo === 'caixa') this.tutorial?.concluir('estante');
     this.aviso({ caju: '+1 Caju', roma: '+1 Romã', caixa: '+1 caixa de presente' }[tipo], { caju: '#f5cc73', roma: '#ffa5c0', caixa: '#fff1d5' }[tipo]);
     this.atualizarHUD();
   }
@@ -383,16 +414,27 @@ export class Aventura extends Phaser.Scene {
     if (contexto?.tipo === 'pedro') this.abrirDialogo();
   }
 
-  // Ordem das dicas: andar → pular → caju quando a primeira capivara aparece → toldo na primeira tendinha.
+  // Ordem das dicas na rua: andar → pular → toldo na primeira tendinha → pisão na primeira capivara →
+  // caju na capivara seguinte (as duas formas de lidar com elas). No showroom: subir nas estantes.
   atualizarTutorial(agora) {
-    const t = this.tutorial; if (!t?.ativo || this.sala !== 'cidade') return;
+    const t = this.tutorial; if (!t?.ativo) return;
     t.atualizar(agora);
+    if (this.sala !== 'cidade') {
+      if (this.pedroConversou && !this.dialogoAberto && this.missao.coletados.caixa === 0) t.mostrar('estante', agora);
+      return;
+    }
     const x = this.jogador.x;
     if (x > 125) t.concluir('andar');
     if (t.feitos.has('andar')) t.mostrar('pular', agora);
-    const capivara = this.capivaras.getChildren().find(c => !c.getData('alimentada') && c.x - x > 0 && c.x - x < 170);
-    if (capivara && t.feitos.has('pular')) t.mostrar('caju', agora);
-    if (TENDAS.some(tx => tx - x > 0 && tx - x < 150) && t.feitos.has('pular')) t.mostrar('toldo', agora);
+    if (!t.feitos.has('pular')) return;
+    if (TENDAS.some(tx => tx - x > 0 && tx - x < 150)) t.mostrar('toldo', agora);
+    const perto = c => capivaraAcordada(c) && c.x - x > 0 && c.x - x < 170;
+    // a dica do pisão segue a sua capivara: se ela comeu um caju antes, a dica sai e volta na próxima
+    if (t.atual === 'pisao' && this.capivaraDoPisao && !capivaraAcordada(this.capivaraDoPisao)) t.esconder();
+    const capivara = this.capivaras.getChildren().find(perto);
+    if (!capivara) return;
+    if (!t.feitos.has('pisao')) { if (!t.atual) this.capivaraDoPisao = capivara; t.mostrar('pisao', agora); }
+    else if (capivara !== this.capivaraDoPisao) t.mostrar('caju', agora);
   }
   // Sem relógio no HUD: a partida não tem limite de tempo (pedido do Pedro). O tempo de passeio aparece só no final.
   atualizarHUD() {
@@ -444,7 +486,7 @@ export class Aventura extends Phaser.Scene {
       f.body.setAllowGravity(false); f.setVelocityX(dir * 260);
       this.time.delayedCall(1500, () => { if (f.active) f.destroy(); });
     }
-    for (const c of this.capivaras.getChildren()) if (!c.getData('alimentada')) {
+    for (const c of this.capivaras.getChildren()) if (capivaraAcordada(c)) {
       const dir = Math.sin(agora / 1800 + c.getData('origem')) > 0 ? 1 : -1;
       c.setVelocityX(dir * MODO_FACIL.capivaraVelocidade); c.setFlipX(dir < 0);
     }

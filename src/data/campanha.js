@@ -10,7 +10,8 @@ export const CAMPANHA = {
     { titulo: 'ITAJUBÁ · NOVEMBRO DE 2026', texto: 'Fim de tarde em Itajubá. Hoje é a última Black Friday do showroom L’Occitane au Brésil, e a entrega de Caju e Romã acabou de chegar!' },
     { titulo: 'OPA!', texto: 'Uma capivara curiosa sentiu o cheirinho de caju e derrubou a entrega. Os frascos voaram pela cidade!' },
     { titulo: 'MENSAGEM DO PEDRO', texto: '“Preciso de você! Traga Caju e Romã até o showroom e me ajude a montar três kits para a vitrine.”' },
-    { titulo: 'COMO JOGAR', texto: 'Pule nas tendinhas para pegar o que voou alto e ofereça caju às capivaras. Sem pressa: passeie pela cidade à vontade!' },
+    { titulo: 'COMO JOGAR', texto: 'Pule nos toldos das tendinhas para quicar até os frascos no alto. Capivara no caminho? Pule em cima e ela dorme, ou dê um caju!' },
+    { titulo: 'NO SHOWROOM', texto: 'Suba pelas prateleiras das estantes para pegar as caixas de presente. Sem pressa: passeie pela cidade à vontade!' },
   ],
   instagram: 'https://www.instagram.com/loccitane.itajuba/',
   whatsapp: '', // DDI + DDD + número. Nunca usar o contato do espetáculo anterior.

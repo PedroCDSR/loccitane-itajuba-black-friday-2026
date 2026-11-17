@@ -1,12 +1,15 @@
 // Dicas da primeira partida, no estilo do jogo do Aladdin: um balão com seta aponta o botão certo e some quando
 // a pessoa faz a ação (ou depois de alguns segundos). No computador, o texto mostra as teclas.
+// Ordem: andar, pular, toldo, pisão na 1ª capivara, caju na seguinte e, no showroom, subir nas estantes.
 const $ = id => document.getElementById(id);
 const TOQUE = typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches;
 export const PASSOS = {
   andar: { alvo: 'direita', toque: 'Toque nas setas para andar', teclado: 'Use ← → (ou A/D) para andar', espera: 8000 },
   pular: { alvo: 'pular', toque: 'Toque em PULAR para saltar. Segure para ir mais alto!', teclado: 'Espaço (ou W) para saltar. Segure para ir mais alto!', espera: 8000 },
-  caju: { alvo: 'fruta', toque: 'Toque em CAJU para dar uma fruta à capivara!', teclado: 'Aperte X para dar um caju à capivara!', espera: 9000 },
-  toldo: { alvo: 'pular', toque: 'Pule no toldo da tendinha para quicar bem alto!', teclado: 'Pule no toldo da tendinha para quicar bem alto!', espera: 6000 },
+  toldo: { alvo: 'pular', toque: 'Pule no toldo da tendinha para quicar bem alto! O balcão também é degrau.', teclado: 'Pule no toldo da tendinha para quicar bem alto! O balcão também é degrau.', espera: 7000 },
+  pisao: { alvo: 'pular', toque: 'Pule em cima da capivara para ela dormir!', teclado: 'Pule (Espaço) em cima da capivara para ela dormir!', espera: 9000 },
+  caju: { alvo: 'fruta', toque: 'Outro jeito: toque em CAJU e a capivara come feliz!', teclado: 'Outro jeito: aperte X e a capivara come um caju feliz!', espera: 9000 },
+  estante: { alvo: 'pular', toque: 'Pule nas prateleiras das estantes para pegar as caixas lá no alto!', teclado: 'Pule nas prateleiras das estantes para pegar as caixas lá no alto!', espera: 9000 },
 };
 export class Tutorial {
   constructor(ativo) { this.ativo = ativo; this.feitos = new Set(); this.atual = null; this.ate = 0; }
