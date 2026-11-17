@@ -1,0 +1,138 @@
+{
+  "status": "exports_tecnicos",
+  "pedro": "mantido_sem_alteracoes",
+  "files": [
+    {
+      "file": "exploradora-parada.png",
+      "width": 576,
+      "height": 192,
+      "frames": 4,
+      "frameWidth": 144,
+      "frameHeight": 192,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "8b14de79709618529e482ac3bd4eb0d34847ae812c0b7ebcdb589066307ec05c"
+    },
+    {
+      "file": "exploradora-corrida.png",
+      "width": 1152,
+      "height": 192,
+      "frames": 8,
+      "frameWidth": 144,
+      "frameHeight": 192,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "60df60403bd8a2e60e8a8c39e2d90d12bace316cb831a916e7a41fc879e82932"
+    },
+    {
+      "file": "exploradora-salto.png",
+      "width": 864,
+      "height": 192,
+      "frames": 6,
+      "frameWidth": 144,
+      "frameHeight": 192,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "30ec80fd079a34a95eca5679a913339d9c7a3fe5fd2fcd73f72d5794c0f1a985"
+    },
+    {
+      "file": "exploradora-fruta.png",
+      "width": 432,
+      "height": 192,
+      "frames": 3,
+      "frameWidth": 144,
+      "frameHeight": 192,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "efb3c62df5b476555403d896be416c35931000ba52f3b2a254084a99ae729466"
+    },
+    {
+      "file": "exploradora-susto.png",
+      "width": 144,
+      "height": 192,
+      "frames": 1,
+      "frameWidth": 144,
+      "frameHeight": 192,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "f2442320440f34c0bdd4f6b69d1ac2d1b3aabc29b96c9f9190d0876f81eb5a76"
+    },
+    {
+      "file": "capivara-andando.png",
+      "width": 384,
+      "height": 72,
+      "frames": 4,
+      "frameWidth": 96,
+      "frameHeight": 72,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "e6b59dbec0ed2d199ee7159d38c4870061bffbb4edcfa0be1f180d01c459474a"
+    },
+    {
+      "file": "capivara-comendo.png",
+      "width": 384,
+      "height": 72,
+      "frames": 4,
+      "frameWidth": 96,
+      "frameHeight": 72,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "a7aa94b2183c378061f4dc56019aa1cb67ef2d51985ac9b2700088f6e7a9f05b"
+    },
+    {
+      "file": "kit-presente.png",
+      "width": 60,
+      "height": 72,
+      "frames": 1,
+      "frameWidth": 60,
+      "frameHeight": 72,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "b3c1629c311d54c7fa9cffe09c99ebdb0eb31101d1c3c77c49058bb4802308c4"
+    },
+    {
+      "file": "sacola-vermelha.png",
+      "width": 60,
+      "height": 72,
+      "frames": 1,
+      "frameWidth": 60,
+      "frameHeight": 72,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "5b907750d5f255141d8cafd1ed1193a66c07c9ca8b98e603cdc013a86581aa7f"
+    },
+    {
+      "file": "caixa-presente.png",
+      "width": 60,
+      "height": 60,
+      "frames": 1,
+      "frameWidth": 60,
+      "frameHeight": 60,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "0327e5f52d68fd8d88ebbdacd93627eb6a0f0197ffe927934310ebbe93a03457"
+    },
+    {
+      "file": "caju-fruta.png",
+      "width": 48,
+      "height": 54,
+      "frames": 1,
+      "frameWidth": 48,
+      "frameHeight": 54,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "ef07757fe951c4f32bb8318b93d43945b83f58dfd3a6949a11fc28c7b3fd0349"
+    },
+    {
+      "file": "cesto-palha.png",
+      "width": 96,
+      "height": 96,
+      "frames": 1,
+      "frameWidth": 96,
+      "frameHeight": 96,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "00e397444153f8f93a52298bb3033c528f8055fc633a49ae017dbb621d7ef1dc"
+    }
+  ]
+}

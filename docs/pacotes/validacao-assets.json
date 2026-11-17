@@ -1,0 +1,180 @@
+{
+  "passed": 25,
+  "files": [
+    {
+      "file": "sprites-nativos/exploradora-parada.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/exploradora-corrida.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/exploradora-salto.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/exploradora-fruta.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/exploradora-susto.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/capivara-andando.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/capivara-comendo.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/kit-presente.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/sacola-vermelha.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/caixa-presente.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/caju-fruta.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "sprites-nativos/cesto-palha.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/01-ceu.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/02-serra-mantiqueira.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": true
+    },
+    {
+      "file": "cidade-entardecer/03-casario.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": true
+    },
+    {
+      "file": "cidade-entardecer/04-clube-itajubense.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/05-fonte-praca.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/06-cafe-vadinho.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/07-igreja-matriz.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/08-posto-esso.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/09-monumento-soldado.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/10-helicoptero.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/11-arvore-praca.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/12-ipe-amarelo.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": false
+    },
+    {
+      "file": "cidade-entardecer/13-calcamento.png",
+      "dimensions": true,
+      "binaryAlpha": true,
+      "baselineOrOpacity": true,
+      "seamlessX": true
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "status": "exports_tecnicos",
+  "seamlessMethod": "metade_espelhada_sem_interpolacao",
+  "files": [
+    {
+      "file": "01-ceu.png",
+      "width": 1440,
+      "height": 810,
+      "frames": 1,
+      "frameWidth": 1440,
+      "frameHeight": 810,
+      "opaque": true,
+      "seamlessX": false,
+      "sha256": "5b9bf61922705fc7c165b7598fa772a89621c184efafc87517c3fe3b48ed8c1a"
+    },
+    {
+      "file": "02-serra-mantiqueira.png",
+      "width": 2880,
+      "height": 810,
+      "frames": 1,
+      "frameWidth": 2880,
+      "frameHeight": 810,
+      "opaque": false,
+      "seamlessX": true,
+      "sha256": "adfc1dbca1f8d0cd5e50d59b832b5ab3587880786218b2849c028f323b5be891"
+    },
+    {
+      "file": "03-casario.png",
+      "width": 2880,
+      "height": 810,
+      "frames": 1,
+      "frameWidth": 2880,
+      "frameHeight": 810,
+      "opaque": false,
+      "seamlessX": true,
+      "sha256": "7184d6c89b0c11c7d21293a890b575851afbf9b151b17f0019428664e68ece73"
+    },
+    {
+      "file": "04-clube-itajubense.png",
+      "width": 792,
+      "height": 534,
+      "frames": 1,
+      "frameWidth": 792,
+      "frameHeight": 534,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "0ca970695499cb8eae1a1cb47a51fb678115eb2b4ad5920952c979ff06f4c92f"
+    },
+    {
+      "file": "05-fonte-praca.png",
+      "width": 516,
+      "height": 348,
+      "frames": 1,
+      "frameWidth": 516,
+      "frameHeight": 348,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "26e4628d9749e77bb197e46d8a4acdf7b8dbb3ea661bfcd7db6a97a1a1bcc070"
+    },
+    {
+      "file": "06-cafe-vadinho.png",
+      "width": 564,
+      "height": 522,
+      "frames": 1,
+      "frameWidth": 564,
+      "frameHeight": 522,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "dc4c329c6339725543cb02a74eea4c9c48fa9231bdcccdcc7f960189aed41df3"
+    },
+    {
+      "file": "07-igreja-matriz.png",
+      "width": 612,
+      "height": 732,
+      "frames": 1,
+      "frameWidth": 612,
+      "frameHeight": 732,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "0103a0416e3ba3d14555a3c9bc68e15d03f094b856784969af922bf5fd1c4b01"
+    },
+    {
+      "file": "08-posto-esso.png",
+      "width": 348,
+      "height": 468,
+      "frames": 1,
+      "frameWidth": 348,
+      "frameHeight": 468,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "fedb52fa41d14067f11ab3a218e5b625677c436f317ec9d75a849fdc85577a79"
+    },
+    {
+      "file": "09-monumento-soldado.png",
+      "width": 222,
+      "height": 468,
+      "frames": 1,
+      "frameWidth": 222,
+      "frameHeight": 468,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "0766acdf05274857e831c6dc9a6e89e8adf258036a2682992a3ad45b0240bd7c"
+    },
+    {
+      "file": "10-helicoptero.png",
+      "width": 744,
+      "height": 336,
+      "frames": 1,
+      "frameWidth": 744,
+      "frameHeight": 336,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "7a5d1552dfd2623c8254f88e69114d3763a71e47f688c2b093fd39ed16f5e899"
+    },
+    {
+      "file": "11-arvore-praca.png",
+      "width": 384,
+      "height": 450,
+      "frames": 1,
+      "frameWidth": 384,
+      "frameHeight": 450,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "2e67636bcd8a9b7dc4edc727d224eb552abd35b27f23368821c622cb31929ebd"
+    },
+    {
+      "file": "12-ipe-amarelo.png",
+      "width": 330,
+      "height": 384,
+      "frames": 1,
+      "frameWidth": 330,
+      "frameHeight": 384,
+      "opaque": false,
+      "seamlessX": false,
+      "sha256": "948a5dfefc86a8493263003ef7005ec21e1fc0c8aacc13b24004090db7dac697"
+    },
+    {
+      "file": "13-calcamento.png",
+      "width": 960,
+      "height": 96,
+      "frames": 1,
+      "frameWidth": 960,
+      "frameHeight": 96,
+      "opaque": true,
+      "seamlessX": true,
+      "sha256": "435e9494e09bcc7a2c9571c7a38a909793aa501d60423c4a0ffc28693f9f2a68"
+    }
+  ]
+}

@@ -23,3 +23,7 @@ Não há assets do pacote 14collective, personagens Disney, músicas, fotos de p
 `public/assets/personagens/pedro-pixel-art.png`: arte em pixel art gerada a pedido do usuário com base na fotografia de Pedro, funcionário da loja, enviada na conversa. Uma pose com fundo transparente, sem integração ou animação automática. Foto original não incluída neste commit. Orientações em `public/assets/personagens/README.md` e handoff para Fable.
 
 Spritesheet de Pedro: 14 poses geradas a partir da arte-base, com atlas de recortes e parâmetros de animação. Mesma origem visual da pose original. Alinhamento por metadados, sem importação de assets de terceiros. Ainda requer revisão de continuidade no gameplay.
+
+## Pacotes de sprites e cidade ao entardecer
+
+Artes geradas com a ferramenta de imagens e referências visuais do showroom, exploradora e fotos dos marcos de Itajubá já presentes no projeto-base. Exportação técnica por recorte, nearest-neighbor, alfa binário, centralização e repetição por espelhamento. Fontes em references/gerados-pacote; medidas exatas em public/assets/sprites-nativos e public/assets/cidade-entardecer. Identificação Esso adicionada por pedido posterior do usuário. Pedro preservado. Não se afirma homologação de animações ou fidelidade arquitetônica/lettering perfeita.
