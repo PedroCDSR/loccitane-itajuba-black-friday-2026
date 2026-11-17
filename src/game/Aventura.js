@@ -28,7 +28,7 @@ const PORTAL = FACHADA - 46; // a bandeira do fim da rua: passou dela, a tela es
 // Volta ao showroom → cidade: andando para a esquerda no começo da fachada. As posições de chegada ficam longe
 // dos dois gatilhos (PORTAL + 8 na rua, VOLTA na fachada) para a passagem nunca disparar em seguida, em loop.
 const VOLTA = FACHADA + 12, CHEGADA_SHOWROOM = FACHADA + 34, CHEGADA_CIDADE = PORTAL - 40;
-// Fachada (jardim, porta e Carina) e interior são duas telas separadas, com transição entre elas: andando para a
+// Fachada (jardim, porta e Karina) e interior são duas telas separadas, com transição entre elas: andando para a
 // direita no fim da fachada entra no showroom; para a esquerda no começo do interior volta ao jardim.
 // A fachada nova é fechada: entra-se pela porta (botão "Entrar no showroom", E ou Enter), no centro da arte.
 const PORTA = FACHADA + 157, PASSAGEM = 14, CHEGADA_INTERIOR = INTERIOR + 34, CHEGADA_JARDIM = PORTA;
@@ -39,8 +39,8 @@ const TRECHO = { fachada: FACHADA, interior: INTERIOR };
 const CALCADA = { esquerda: 255, direita: 241, degrau: 4 };
 const chaoFachada = x => CALCADA.esquerda + (CALCADA.direita - CALCADA.esquerda) * Math.min(1, Math.max(0, (x - FACHADA) / SHOWROOM.largura));
 // Pedro recebe a exploradora na praça (ao lado da fonte) e conta como a L’Occitane chegou a Itajubá.
-// Carina, a dona, atende no showroom: na porta e depois na bancada.
-const PEDRO_ESCALA = .41, CARINA_ESCALA = .39; // alturas: exploradora 64, Carina 70, Pedro 78
+// Karina (assets em personagens/carina/), a dona, atende no showroom: na porta e depois na bancada.
+const PEDRO_ESCALA = .41, CARINA_ESCALA = .39; // alturas: exploradora 64, Karina 70, Pedro 78
 const PEDRO_PRACA = 1330;
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
@@ -55,7 +55,7 @@ export class Aventura extends Phaser.Scene {
     this.load.on('progress', progresso); this.load.on('loaderror', falhou);
     this.events.once('shutdown', () => { this.load.off('progress', progresso); this.load.off('loaderror', falhou); });
     carregarArte(this);
-    for (const n of ['fachada', 'interior', 'caju', 'roma']) this.load.image(n, `assets/showroom/${n}.png`);
+    for (const n of ['fachada', 'interior', 'caju', 'roma', 'bandeira-jardim']) this.load.image(n, `assets/showroom/${n}.png`);
     carregarPedro(this); carregarCarina(this);
   }
 
@@ -161,7 +161,8 @@ export class Aventura extends Phaser.Scene {
     this.pedro = criarPedro(this, PEDRO_PRACA, CHAO + 1, PEDRO_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
     this.pedro.on('pointerup', () => { if (this.pedroPerto) this.pedidoInteracao = true; });
     this.add.image(PORTAL - 70, CHAO, 'placa').setOrigin(.5, 1).setScale(1 / 3).setDepth(2);
-    this.add.image(PORTAL, CHAO, 'bandeira').setOrigin(.5, 1).setScale(1 / 3).setDepth(2);
+    // a mesma bandeira do jardim do showroom, recortada da arte da fachada (ferramentas/recortar_bandeira.py)
+    this.add.image(PORTAL, CHAO + 2, 'bandeira-jardim').setOrigin(.5, 1).setScale(1 / 3).setDepth(2);
   }
   // Plataforma que só segura quem cai por cima.
   umSentido(grupo, x, y, largura) {
@@ -209,23 +210,28 @@ export class Aventura extends Phaser.Scene {
       this.physics.add.existing(degrau, true); this.pisoShowroom.push(degrau);
     }
     const tampo = (x1, x2, y) => this.umSentido(this.plataformas, (x1 + x2) / 2, y + 3, x2 - x1);
-    // fachada fechada: só a calçada, a Carina e a porta (sem subir no toldo nem na marquise, pedido do Pedro)
-    // interior: mesa e duas prateleiras de cada estante (medidas sobre a arte, ver docs/SHOWROOM-JOGAVEL.md)
+    // fachada fechada: só a calçada, a Karina e a porta (sem subir no toldo nem na marquise, pedido do Pedro)
+    // interior: mesa e prateleiras só onde a arte tem tábua (medidas sobre interior.png, 17/11/2026).
+    // Estante da esquerda: parte da esquerda (52–97) com tábua em 183; parte do meio (105–152) com tábua em 168 e
+    // duas prateleirinhas de parede (129–152) em 209 e 190, que servem de degrau; topo das duas em 150.
+    // Estante da direita (234–314): tábua em 185 e topo em 150.
     tampo(px(INTERIOR, 745), px(INTERIOR, 1132), py(646));
-    for (const [x1, x2] of [[52, 153], [234, 314]]) for (const y of [183, 150]) tampo(INTERIOR + x1, INTERIOR + x2, y);
+    for (const [x1, x2, y] of [[52, 153, 150], [52, 97, 183], [105, 152, 168], [129, 152, 190], [129, 152, 209], [234, 314, 150], [234, 314, 185]])
+      tampo(INTERIOR + x1, INTERIOR + x2, y);
     // Itens do showroom: as três caixas no alto das estantes do interior (duas na da esquerda, uma na da direita)
     // e um par de reserva de Caju e Romã na calçada da fachada.
     this.itensShowroom = [
       ['caixa', INTERIOR + 72, 138], ['caixa', INTERIOR + 136, 138], ['caixa', INTERIOR + 296, 138],
       ['caju', FACHADA + 238, chaoFachada(FACHADA + 238) - 18], ['roma', FACHADA + 262, chaoFachada(FACHADA + 262) - 18],
     ];
-    // Carina recebe na porta; depois da conversa ela entra e espera ao lado da bancada.
+    // Karina recebe na porta; depois da conversa ela entra e espera ao lado da bancada.
     this.carinaX = FACHADA + 122; // ao lado da porta, na frente do pilar de pedra
     this.carina = criarCarina(this, this.carinaX, chaoFachada(this.carinaX) + 1, CARINA_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
     this.carina.off('animationcomplete-carina-aceno');
     this.carina.on('animationcomplete-carina-aceno', () => this.carina.play(this.dialogoAberto ? 'carina-conversa' : 'carina-parada'));
     this.carina.on('pointerup', () => { if (this.carinaPerto) this.pedidoInteracao = true; });
-    this.carinaBancada = criarCarina(this, INTERIOR + 229, CHAO + 1, CARINA_ESCALA).setDepth(3).setAlpha(0);
+    // na bancada ela fica uns passos à frente da parede, já sobre o piso (na linha da parede parecia flutuar)
+    this.carinaBancada = criarCarina(this, INTERIOR + 229, CHAO + 10, CARINA_ESCALA).setDepth(3).setAlpha(0);
     this.carinaBancada.on('animationcomplete-carina-aceno', () => this.carinaBancada.play('carina-parada'));
     // Bancada: três lugares marcados; o kit se monta ao passar com os três itens.
     for (let i = 0; i < META_KITS; i++) {
@@ -478,7 +484,7 @@ export class Aventura extends Phaser.Scene {
 
   contextoInteracao() {
     if (this.sala === 'cidade' && this.pedroPerto && !this.pedroConversou && !this.dialogoAberto) return { tipo: 'pedro', texto: 'Conversar com Pedro' };
-    if (this.sala === 'showroom' && this.carinaPerto && !this.carinaConversou && !this.dialogoAberto) return { tipo: 'carina', texto: 'Conversar com a Carina' };
+    if (this.sala === 'showroom' && this.carinaPerto && !this.carinaConversou && !this.dialogoAberto) return { tipo: 'carina', texto: 'Conversar com a Karina' };
     if (this.sala === 'showroom' && this.trecho === 'fachada' && Math.abs(this.jogador.x - PORTA) < 20 && this.jogador.y > chaoFachada(this.jogador.x) - 6) return { tipo: 'porta', texto: 'Entrar no showroom' };
     return null;
   }

@@ -105,3 +105,26 @@ Testado no Chromium em 390×844 com toque emulado:
 `npm test` passou (52 de 52, com um teste novo da conversa do Pedro) e `npm run build` também. Capturas: `revisao-pedro-praca-conversa.png`, `revisao-carina-conversa.png`, `revisao-carina-porta.png` e `revisao-carina-bancada.png`.
 
 Para confirmar com o Pedro: o nome no repositório é **Carina** (com C), como na coleção de sprites. Ele disse "Karina" na conversa.
+
+## Bandeira, estantes, bancada e nome da Karina (mesmo dia)
+
+Pedidos do Pedro depois de jogar no celular:
+
+- **Bandeira do fim da rua.** A bandeira desenhada em código saiu. Entrou a mesma bandeira do jardim do showroom, recortada da arte original da fachada por `ferramentas/recortar_bandeira.py` (tecido, mastro e base, alfa binário, 3 px por unidade) e salva em `public/assets/showroom/bandeira-jardim.png` (35×84 unidades).
+- **Exploradora "voando" na estante.** A plataforma de altura 183 ia até a parte do meio da estante esquerda, onde a arte não tem tábua nesse nível. Agora as plataformas seguem a arte (medidas sobre `interior.png`):
+  - parte esquerda (52–97): tábua em 183;
+  - parte do meio (105–152): tábua em 168, mais as prateleirinhas de parede (129–152) em 209 e 190, que servem de degrau;
+  - topo das duas partes em 150;
+  - estante da direita: tábua em 185 (antes 183, acima da tábua) e topo em 150.
+- **Personagem na bancada no chão.** O sprite não tem espaço vazio embaixo: parecia flutuar porque ficava exatamente na linha da parede, com o piso inteiro na frente. Na bancada, a Karina agora fica 9 unidades à frente, sobre o piso (y 250).
+- **Karina com K** em todos os textos do jogo: conversa, abertura ("MENSAGEM DA KARINA"), objetivo, botão "Conversar com a Karina", tela inicial e final. Arquivos e nomes internos seguem como `carina`, igual à coleção de sprites (`public/assets/personagens/carina/`).
+
+Testado no Chromium em 390×844:
+- do chão para a tábua do meio (168) e para o topo (150);
+- a parte esquerda (183 → 150) e a direita (185 → 150);
+- as três caixas;
+- solta onde antes ficava "voando" (x 120, altura 178): agora cai até o chão;
+- bandeira no fim da rua e Karina sobre o piso;
+- sem erros nem 4xx/5xx.
+
+`npm test` passou (52 de 52) e `npm run build` também. Capturas: `revisao-bandeira-rua.png`, `revisao-estante-meio.png` e `revisao-karina-bancada.png`.

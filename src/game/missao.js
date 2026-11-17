@@ -31,7 +31,7 @@ export function objetivoMissao(missao, sala) {
     return `Leve tudo à bancada para montar os kits · ${missao.kits}/${META_KITS}`;
   }
   if (missao.fase === 'fachada') {
-    if (!missao.conversouCarina) return 'Fale com a Carina na porta do showroom →';
+    if (!missao.conversouCarina) return 'Fale com a Karina na porta do showroom →';
     return 'Entre no showroom pela porta: as caixas estão no alto das estantes';
   }
   return 'Reúna Caju e Romã · pule nas tendinhas →';

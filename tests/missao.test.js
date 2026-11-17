@@ -51,7 +51,7 @@ test('de volta à cidade, o objetivo convida a passear sem perder a missão', ()
   m.estoque.roma = 1; assert.match(objetivoMissao(m, 'cidade'), /Reúna mais Caju e Romã/);
   m.kits = META_KITS; assert.match(objetivoMissao(m, 'cidade'), /Vitrine pronta! Passeie/);
   assert.match(objetivoMissao(criarMissao(), 'cidade'), /Reúna Caju e Romã/, 'antes do showroom, o objetivo é o de sempre');
-  const f = criarMissao(); f.fase = 'fachada'; assert.match(objetivoMissao(f), /Fale com a Carina/);
-  f.conversouCarina = true; assert.match(objetivoMissao(f), /porta/, 'quem volta à fachada não é mandado falar com a Carina de novo');
+  const f = criarMissao(); f.fase = 'fachada'; assert.match(objetivoMissao(f), /Fale com a Karina/);
+  f.conversouCarina = true; assert.match(objetivoMissao(f), /porta/, 'quem volta à fachada não é mandado falar com a Karina de novo');
   for (const fase of ['cidade', 'fachada', 'showroom']) { const n = criarMissao(); n.fase = fase; assert.doesNotMatch(objetivoMissao(n, 'cidade') + objetivoMissao(n), /segundo|tempo|rápido/i); }
 });

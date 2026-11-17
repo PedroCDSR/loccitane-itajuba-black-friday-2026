@@ -84,7 +84,7 @@ export const SONS = {
     ruido(c, s, t, { dur: .55, vol: .08, de: 300, ate: 1500, tipo: 'lowpass', q: .7, ataque: .2 });
     for (const n of [67, 71, 74, 79]) tom(c, s, t + .12, { f: N(n), dur: 1, tipo: 'sine', vol: .045, ataque: .18 });
   },
-  conversa: (c, s, t) => { // "olá!" em dois bipes de voz (Pedro na praça e Carina no showroom)
+  conversa: (c, s, t) => { // "olá!" em dois bipes de voz (Pedro na praça e Karina no showroom)
     tom(c, s, t, { f: N(69), ate: N(72), dur: .1, tipo: 'square', vol: .07, filtro: 1500 });
     tom(c, s, t + .12, { f: N(74), ate: N(77), dur: .14, tipo: 'square', vol: .07, filtro: 1500 });
   },
