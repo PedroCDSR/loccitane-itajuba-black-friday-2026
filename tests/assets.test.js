@@ -13,7 +13,7 @@ test('percurso cabe na janela promocional sem exigir velocidade impossível',()=
 });
 test('derivados do showroom existem e o percurso inclui as duas salas com folga',async()=>{
   const { SHOWROOM } = await import('../src/game/config.js');
-  for(const n of ['fachada','interior','caju','roma','pedro'])assert.equal(readFileSync(new URL(`../public/assets/showroom/${n}.png`,import.meta.url)).subarray(0,8).toString('hex'),'89504e470d0a1a0a');
+  for(const n of ['fachada','interior','caju','roma'])assert.equal(readFileSync(new URL(`../public/assets/showroom/${n}.png`,import.meta.url)).subarray(0,8).toString('hex'),'89504e470d0a1a0a');
   assert.equal(MUNDO,SHOWROOM.x+SHOWROOM.largura*2);
   assert.ok(MUNDO/JOGADOR.velocidade<DURACAO_SEGUNDOS-25,'sobra pelo menos 25 s para pulos, coleta e erros');
 });

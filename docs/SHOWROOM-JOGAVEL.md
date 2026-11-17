@@ -30,7 +30,7 @@ Capturas reais do jogo (canvas do Phaser, não são os conceitos):
 | `references/propostas/showroom-interior-exploradora-andando.png` | **Adaptado** → `public/assets/showroom/interior.png`: exploradora removida e a região reconstruída (parede de madeira, montante, base da estante, piso) |
 | `public/assets/produtos/caju-sabonete-pixel-art.png` | **Adaptado** → `showroom/caju.png` (32×78), coletável |
 | `public/assets/produtos/roma-chantilly-pixel-art.png` | **Adaptado** → `showroom/roma.png` (31×78), coletável |
-| `public/assets/personagens/pedro-pixel-art.png` | **Adaptado** → `showroom/pedro.png` (90×180), NPC na porta |
+| `public/assets/personagens/pedro-spritesheet.png` + atlas | **Reutilizado direto** (17/11, segunda rodada): Pedro parado, acena quando a exploradora chega e gesticula enquanto o balão está aberto |
 | Cidade (`public/assets/cidade/`), capivara, física, controles, pausa, HUD, tela final | **Reutilizados** sem mudança |
 | Exploradora | **Recriada em código** (`src/game/arte.js`) com 3× mais detalhe e o visual do conceito; continua provisória |
 | Halo dos coletáveis, balão de fala, batente entre as salas | **Criados** em código |
@@ -49,7 +49,7 @@ Os originais não foram alterados. Os derivados saem de `python3 ferramentas/pre
 
 - Nenhum aparelho real (Android/iPhone), nem áudio.
 - A exploradora é desenhada em código e fica mais simples que o cenário; a capivara, as caixas e os presentes da rua são da base antiga e aparecem maiores e borrados perto do showroom. Pedido de spritesheets em `docs/PROMPT-SPRITES.md`.
-- Pedro tem uma única pose (só um balanço leve). O balão aparece sozinho quando a exploradora chega perto; não há interação por tecla.
+- Pedro usa a spritesheet de 14 quadros (parado, aceno, conversa). O balão aparece sozinho quando a exploradora chega perto; não há interação por tecla. A folha é carregada em alta resolução (1,2 MB) e reduzida na tela.
 - A região onde a exploradora foi removida do interior é um vão de parede de madeira sem produtos; na porta da fachada o fundo foi interpolado e fica atrás do Pedro.
 - A emenda entre a cidade e a fachada é suavizada com faixas de transparência e uma árvore, mas os dois estilos de pixel são diferentes.
 - O topo das estantes da fachada funciona como plataforma: a personagem fica na frente das sacolas desenhadas.

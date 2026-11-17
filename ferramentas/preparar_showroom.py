@@ -1,7 +1,8 @@
 # Gera os derivados do showroom em public/assets/showroom/ a partir das artes originais (que ficam intactas).
 # Uso: python3 ferramentas/preparar_showroom.py . public/assets/showroom
 # - fachada.png / interior.png: conceitos sem a exploradora desenhada, reduzidos a 960x540 (320x180 no mundo, zoom 3)
-# - caju.png / roma.png / pedro.png: versões na escala do jogo (3 pixels de textura por unidade do mundo)
+# - caju.png / roma.png: versões na escala do jogo (3 pixels de textura por unidade do mundo)
+# O Pedro usa direto a spritesheet de public/assets/personagens/ (atlas), sem derivado.
 import sys
 from PIL import Image, ImageOps
 R,OUT=sys.argv[1],sys.argv[2]
@@ -54,4 +55,3 @@ def sprite(origem,nome,altura):
     Image.merge('RGBA',(r,g,bb,al)).save(OUT+'/'+nome,optimize=True); print(nome,w,altura)
 sprite('produtos/caju-sabonete-pixel-art.png','caju.png',78)
 sprite('produtos/roma-chantilly-pixel-art.png','roma.png',78)
-sprite('personagens/pedro-pixel-art.png','pedro.png',180)

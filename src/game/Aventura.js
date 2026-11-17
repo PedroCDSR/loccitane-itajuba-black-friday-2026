@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { Jogador } from './Jogador.js';
 import { Entrada } from './Entrada.js';
 import { criarArte } from './arte.js';
+import { carregarPedro, criarPedro } from './pedro-animacoes.js';
 import { ALTURA, MUNDO, DURACAO_SEGUNDOS, SHOWROOM, ZOOM_CIDADE, ZOOM_SHOWROOM } from './config.js';
 import { CAMPANHA } from '../data/campanha.js';
 import { registrar } from '../services/metricas.js';
@@ -20,11 +21,12 @@ export class Aventura extends Phaser.Scene {
   constructor(){ super('Aventura'); }
   preload(){
     for(const n of CIDADE) this.load.image(n,`assets/cidade/${n}.png`);
-    for(const n of ['fachada','interior','caju','roma','pedro']) this.load.image(n,`assets/showroom/${n}.png`);
+    for(const n of ['fachada','interior','caju','roma']) this.load.image(n,`assets/showroom/${n}.png`);
+    carregarPedro(this);
   }
   create(){
     if(!this.textures.exists('jogador')) criarArte(this);
-    for(const n of ['fachada','interior','caju','roma','pedro']) this.textures.get(n).setFilter(Phaser.Textures.FilterMode.LINEAR);
+    for(const n of ['fachada','interior','caju','roma','pedro-npc']) this.textures.get(n).setFilter(Phaser.Textures.FilterMode.LINEAR);
     this.fim=false; this.presentes=0; this.tempo=0; this.checkpoint=80; this.proximoArremesso=0;
     // Camadas de fundo: presas à tela na horizontal (parallax) e ao mundo na vertical, para acompanhar o zoom.
     this.add.image(240,0,'ceu').setOrigin(0).setScrollFactor(0,1);
@@ -94,10 +96,12 @@ export class Aventura extends Phaser.Scene {
       ['caju',px(INTERIOR,1330),200],['roma',px(INTERIOR,1520),182],
     ];
 
-    // Pedro recebe na porta. Pose única, sem animação além de um balanço leve.
+    // Pedro recebe na porta: parado, acena quando a exploradora chega e conversa enquanto o balão está aberto.
+    // Os quadros têm 400 de altura lógica com os pés em 380; 0.158 dá cerca de 60 unidades de altura.
     const pedroX=px(FACHADA,694);
-    this.pedro=this.add.image(pedroX,py(792),'pedro').setOrigin(.5,1).setScale(1/3).setDepth(2);
-    this.tweens.add({targets:this.pedro,scaleY:1/3*1.012,duration:1400,yoyo:true,repeat:-1,ease:'Sine.inOut'});
+    this.pedro=criarPedro(this,pedroX,py(792)+3,.158).setDepth(2);
+    this.pedro.off('animationcomplete-pedro-aceno');
+    this.pedro.on('animationcomplete-pedro-aceno',()=>this.pedro.play(this.pedroPerto?'pedro-conversa':'pedro-parado'));
     const fala=this.add.text(0,0,CAMPANHA.boasVindasPedro,{fontFamily:'Georgia,serif',fontSize:'7px',color:'#3a2a22',align:'center',resolution:6,lineSpacing:1}).setOrigin(.5);
     const fx=pedroX+34, fy=py(792)-78, w=fala.width+10, h=fala.height+7;
     const balao=this.add.graphics();balao.fillStyle(0x3a2a22).fillRoundedRect(fx-w/2-1,fy-h/2-1,w+2,h+2,4);balao.fillStyle(0xfbf1dc).fillRoundedRect(fx-w/2,fy-h/2,w,h,3.5);
@@ -131,7 +135,9 @@ export class Aventura extends Phaser.Scene {
     for(const c of this.capivaras.getChildren())if(!c.getData('alimentada')){const dir=Math.sin(agora/1800+c.getData('origem'))>0?1:-1;c.setVelocityX(dir*16);c.setFlipX(dir<0);}
     this.atualizarCamera(delta);
     const x=this.jogador.x;
-    const perto=Math.abs(x-this.pedroX)<62;this.balao.setAlpha(Phaser.Math.Clamp(this.balao.alpha+(perto?1:-1)*delta/200,0,1));
+    const perto=Math.abs(x-this.pedroX)<62;
+    if(perto!==this.pedroPerto){this.pedroPerto=perto;this.pedro.play(perto?'pedro-aceno':'pedro-parado');}
+    this.balao.setAlpha(Phaser.Math.Clamp(this.balao.alpha+(perto?1:-1)*delta/200,0,1));
     if(x>this.checkpoint+1000||(x>FACHADA+20&&this.checkpoint<FACHADA))this.checkpoint=Math.max(x,FACHADA+20);
     document.getElementById('local').textContent=x>INTERIOR?'Showroom · a saída fica à direita →':x>FACHADA+60?'Bem-vinda ao showroom':'Pelas ruas de Itajubá';
     this.atualizarHUD();if(this.tempo>=DURACAO_SEGUNDOS||x>MUNDO-14)this.concluir();
