@@ -5,6 +5,7 @@ import vm from 'node:vm';
 import { SHOWROOM, MUNDO, ALTURA, ALTURA_CIDADE, ALTURA_SHOWROOM } from '../src/game/config.js';
 import { CAMPANHA } from '../src/data/campanha.js';
 import { criarMissao, coletarProduto, objetivoMissao, META_KITS } from '../src/game/missao.js';
+import { enquadramento } from '../src/game/guiaShowroom.js';
 
 // Carrega a cena com adaptadores em memória (sem Phaser nem navegador), como em dialogo.test.js.
 function cena() {
@@ -20,7 +21,7 @@ function cena() {
   const s = new Klass();
   const pisos = new Set(), mundo = { bounds: null, pausado: 0, retomado: 0 };
   const jogador = { x: 100, y: 240, vida: 5, olhandoDireita: true, body: { setVelocity() {}, reset(x, y) { jogador.x = x; jogador.y = y; } }, atualizar: () => false, play() {} };
-  const cam = { fadeOut() {}, fadeIn() {}, once(_e, f) { f(); }, setZoom(z) { cam.zoom = z; }, setBounds(...b) { cam.bounds = b; }, centerOn() {}, setFollowOffset() {}, zoom: 1, scrollX: 0 };
+  const cam = { fadeOut() {}, fadeIn() {}, once(_e, f) { f(); }, setZoom(z) { cam.zoom = z; }, setBounds(...b) { cam.bounds = b; }, getBounds: () => ({ x: cam.bounds?.[0], width: cam.bounds?.[2], height: cam.bounds?.[3] }), height: 960, centerOn() {}, setFollowOffset() {}, zoom: 1, scrollX: 0 };
   Object.assign(s, {
     fim: false, tempo: 0, estado: 'jogo', sala: 'cidade', checkpoint: 80, presentes: 0, proximoArremesso: 0, missao: criarMissao(),
     dialogoAberto: false, pedroPerto: false, pedroConversou: true, pedidoInteracao: false, ultimoHUD: '', jogador,
@@ -29,7 +30,8 @@ function cena() {
     solidos: { contains: p => pisos.has(p), add: p => pisos.add(p) }, pisoShowroom: { piso: true },
     cameras: { main: cam }, scale: { width: 960, height: 960 }, time: { delayedCall(_ms, f) { f(); } },
     capivaras: { getChildren: () => s.listaCapivaras }, listaCapivaras: [], morros: {}, casas: {}, pedroX: SHOWROOM.x + 129, estacoes: [], faltaParaKit: () => [],
-    game: { events: { emit: (...a) => s.emitidos.push(a) } }, emitidos: [], scene: { stop() {} },
+    game: { events: { emit: (...a) => s.emitidos.push(a) } }, itens: { getChildren: () => [] },
+    guia: { esconder() {}, atualizar() {}, soNaPrincipal: o => o, layout: ativo => (ativo ? enquadramento(960, 960).zoom : 0) }, emitidos: [], scene: { stop() {} },
   });
   return { s, elements, metricas, mundo, pisos, cam };
 }
