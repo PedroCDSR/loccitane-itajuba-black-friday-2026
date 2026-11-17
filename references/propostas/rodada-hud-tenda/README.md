@@ -28,3 +28,7 @@ Referências de design, geradas com IA a pedido do usuário em 17/11/2026. Não 
 Ler a branch dev e o jogo publicado antes de implementar: mudanças recentes de gameplay estão em dev. Preservar contribuições existentes. Não importar as propostas antigas com relógio ou “0/3”. Distribuição dos produtos equilibrada, sem exigir três em toda tenda, permanece pedido pendente de implementação.
 
 Esta rodada adiciona apenas imagens e documentação. Nenhuma mudança no gameplay, deploy ou homologação mobile. Testes Node e build devem passar; validar depois a implementação em celular e desktop.
+
+## Correção dos produtos do HUD
+
+`05-hud-sprites-originais.html` e sua captura PNG usam diretamente os três PNGs originais do projeto em elementos img, sem regenerar as embalagens. Substituem os ícones incorretos da prancha 04. Estudo isolado de interface, não integrado ao jogo. Abrir o HTML por servidor na raiz do repositório para carregar imagens e fonte. Contadores exemplificam produtos já coletados; lógica de exibição após coleta ainda pertence à implementação futura.
