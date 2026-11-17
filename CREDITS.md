@@ -21,3 +21,5 @@ Não há assets do pacote 14collective, personagens Disney, músicas, fotos de p
 ## Pedro — personagem do showroom
 
 `public/assets/personagens/pedro-pixel-art.png`: arte em pixel art gerada a pedido do usuário com base na fotografia de Pedro, funcionário da loja, enviada na conversa. Uma pose com fundo transparente, sem integração ou animação automática. Foto original não incluída neste commit. Orientações em `public/assets/personagens/README.md` e handoff para Fable.
+
+Spritesheet de Pedro: 14 poses geradas a partir da arte-base, com atlas de recortes e parâmetros de animação. Mesma origem visual da pose original. Alinhamento por metadados, sem importação de assets de terceiros. Ainda requer revisão de continuidade no gameplay.

@@ -1,0 +1,22 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pedro — prévia das animações</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;background:#f4eddb;color:#352f27;font:15px system-ui}main{max-width:900px;margin:auto}h1{font:32px Georgia;color:#942c39}p{line-height:1.6}.cards{display:flex;gap:20px;flex-wrap:wrap}.card{padding:18px;background:#fff9ed;border:1px solid #b18b4555;border-radius:6px;text-align:center}.stage{position:relative;width:256px;height:400px;background:#304f3d;overflow:hidden;border-bottom:2px solid #dcb66e}.sprite{position:absolute;width:224px;height:380px;background-image:url('pedro-spritesheet.png');background-repeat:no-repeat;image-rendering:pixelated}.line{position:absolute;left:0;right:0;top:380px;border-top:1px dashed #ffffff55}button{padding:10px 15px;background:#942c39;color:white;border:0;border-radius:4px;margin:10px 6px 10px 0;cursor:pointer}img{width:100%;image-rendering:pixelated;background:#304f3d}a{color:#942c39}.small{font-size:12px}
+</style></head><body><main><h1>Pedro · parado, aceno e conversa</h1><p>Prévia dos recortes e sequências do atlas. A linha marca a base dos pés. Aceno repete aqui para inspeção; no helper Phaser ele toca uma vez e volta a parado.</p><button id="pause">Pausar</button><button id="bg">Trocar fundo</button><div class="cards" id="cards"></div><p id="status" role="status"></p><p class="small">Arte gerada em 14 poses. Conferir continuidade, contornos e expressão na escala final antes de homologar. Esta prévia não comprova integração na cena.</p><details><summary>Ver folha completa</summary><img src="pedro-spritesheet.png" alt="Quatorze poses do Pedro em duas linhas"></details></main>
+<script type="module">
+try {
+  const [atlas, config] = await Promise.all(['pedro-atlas.json','pedro-animacoes.json'].map(async p => {const r=await fetch(p);if(!r.ok)throw Error(p);return r.json();}));
+  let paused=false, started=performance.now(), saved=0, light=false;
+  const cards=config.animations.map(a=>{
+    const card=document.createElement('section');card.className='card';
+    const title=document.createElement('h2');title.textContent=a.key.replace('pedro-','');
+    const stage=document.createElement('div');stage.className='stage';
+    const line=document.createElement('div');line.className='line';
+    const sprite=document.createElement('div');sprite.className='sprite';
+    const label=document.createElement('p');label.className='small';
+    stage.append(line,sprite);card.append(title,stage,label);document.getElementById('cards').append(card);return {a,sprite,label};
+  });
+  function render(now){const t=paused?saved:now-started;for(const c of cards){const index=Math.floor(t/1000*c.a.frameRate)%c.a.frames.length;const name=c.a.frames[index], f=atlas.frames[name];c.sprite.style.left=f.spriteSourceSize.x+'px';c.sprite.style.top=f.spriteSourceSize.y+'px';c.sprite.style.backgroundPosition=`-${f.frame.x}px -${f.frame.y}px`;c.label.textContent=`${name} · ${c.a.frameRate} quadros/s`;}requestAnimationFrame(render);}
+  document.getElementById('pause').onclick=e=>{if(!paused){saved=performance.now()-started;paused=true;}else{started=performance.now()-saved;paused=false;}e.target.textContent=paused?'Continuar':'Pausar';};
+  document.getElementById('bg').onclick=()=>{light=!light;document.querySelectorAll('.stage').forEach(s=>s.style.background=light?'#f4eddb':'#304f3d');};requestAnimationFrame(render);
+} catch(e){document.getElementById('status').textContent='Abra esta página pelo servidor Vite, não por file://. Falha ao carregar: '+e.message;}
+</script></body></html>
