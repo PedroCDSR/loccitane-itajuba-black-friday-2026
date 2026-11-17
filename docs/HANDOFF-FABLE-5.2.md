@@ -1,3 +1,7 @@
+# Atualização de direção
+
+A direção mais recente está em [HANDOFF-CLAUDE.md](HANDOFF-CLAUDE.md). Jogo sem limite de tempo; menções a75s no histórico estão superadas. Estudos atuais em references/propostas/rodada-hud-tenda. Preservar o runtime da dev e os sprites pequenos originais.
+
 # Continuação — estado após integração
 
 A cena e os assets já foram integrados. O próximo agente deve ler `docs/HANDOFF-CLAUDE.md` e `docs/EVOLUCAO-MISSAO.md`, atualizar o checkout sem sobrescrever mudanças e começar pela validação em navegador, não por recriar os elementos.

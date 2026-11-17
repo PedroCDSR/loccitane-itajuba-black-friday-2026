@@ -2,6 +2,10 @@
 
 Base independente de um jogo promocional de plataforma 2D, mobile-first, com Phaser 4.2.1 e Vite 8.3.5. Desenvolvida para continuação com Fable 5.2. **Não é a versão final de campanha nem está publicada.**
 
+## Direção atual aprovada em 17/11/2026
+
+Leia [o handoff atualizado para o Claude](docs/HANDOFF-CLAUDE.md) antes de implementar. Usuário aprovou jogo **sem limite de tempo**, HUD sobre o céu com sprites pequenos originais e alturas visuais iguais, diálogos **creme e vinho**, Avançar acima de Caju/Pular e revisão da tenda com logos originais. [Estudos e limitações](references/propostas/rodada-hud-tenda/README.md). Esses ajustes ainda são direção de implementação: referências a75s abaixo descrevem o runtime anterior, não a especificação atual. Conferir a branch dev, que contém gameplay mais recente que a main.
+
 ## Atualização: missão de Caju e Romã
 
 O jogo agora inclui intro em três etapas, coleta dos produtos Caju/Romã pela cidade, modo fácil com cinco corações e montagem de três kits no showroom. Cidade, sprites e objetos novos integrados; duração75s, posições dos marcos e extensão do percurso preservadas. Pedro possui interação por E/Enter ou toque, com conversa sem consumir tempo. As conversas e o relógio de invencibilidade usam tempo de jogo ativo.

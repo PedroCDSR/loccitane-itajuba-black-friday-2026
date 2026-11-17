@@ -50,3 +50,7 @@ Exploradora adulta original: chapéu de palha, cabelo castanho, roupa verde bot�
 | Elenco Disney / chefe / tapete | Exploradora e fauna locais; fora do escopo |
 
 A oferta de fruta é ficção de jogo, sem instrução para alimentar fauna real. Não representar cosméticos sendo ingeridos. Presente coletado não significa produto físico grátis: comunicar com clareza que o benefício comercial depende das condições da campanha.
+
+## Decisões recentes de interface (17/11/2026)
+
+Paleta escolhida: creme/vinho, sem moldura dourada para diálogos. Fonte pixel legível, caixa compacta paginada, Avançar separado acima de Caju/Pular. HUD sobre céu, corações individuais e sprites pequenos originais dos três produtos; contador só após primeira coleta, sem revelar total. Mesma altura visual e base dos frascos. Jogo sem limite de tempo. Tenda compacta com produtos menores e logos originais brancos sobre vermelho. Direção consolidada e limitações em HANDOFF-CLAUDE.md. Estudos não substituem o cenário/personagens reais nem ativam oferta.
