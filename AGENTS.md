@@ -19,4 +19,6 @@ Leia README.md, docs/DIRECAO-CRIATIVA.md, docs/HANDOFF-FABLE-5.2.md e references
 - Usuário pretende continuar com Fable 5.2. Manter módulos simples e evitar refatoração sem necessidade.
 - Pedro, funcionário da loja: arte-base em `public/assets/personagens/pedro-pixel-art.png`. Papel proposto de NPC acolhedor do showroom; não substituir a exploradora. Leia o README da pasta e o handoff atualizado para integração e limitações da pose única.
 
-- Direção atual aprovada: manter cidade em SHOWROOM.x=5216 e mundo5856, sem limite de tempo. Modo fácil tem5 corações, sem encurtar percurso. Intro explica missão fictícia de reunir Caju/Romã para três kits no showroom. Leia docs/EVOLUCAO-MISSAO.md e docs/HANDOFF-CLAUDE.md antes de retomar.
+- Direção atual aprovada: manter cidade em SHOWROOM.x=5216, mundo5856, SEM limite de tempo (pedido atualizado). Modo fácil tem5 corações, sem encurtar percurso. Intro explica missão fictícia de reunir Caju/Romã para três kits no showroom. Leia docs/EVOLUCAO-MISSAO.md e docs/HANDOFF-CLAUDE.md antes de retomar.
+
+- Direção visual aprovada e handoff atual em docs/HANDOFF-CLAUDE.md: creme/vinho, HUD sobre o céu, corações individuais, contadores somente após coleta com sprites PEQUENOS originais e alturas visuais iguais; Avançar acima de Caju/Pular. Não implementar a prancha antiga rejeitada. Conferir dev e site publicado antes de editar; esta rodada adicionou propostas/documentação, sem implementar essas mudanças no runtime.
