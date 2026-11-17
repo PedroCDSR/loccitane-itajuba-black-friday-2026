@@ -7,7 +7,7 @@ globalThis.localStorage = { getItem: k => memoria.get(k) ?? null, setItem: (k, v
 const som = await import('../src/services/som.js');
 
 test('todos os eventos do jogo têm som próprio', () => {
-  for (const nome of ['pulo', 'toldo', 'arremesso', 'capivara', 'caju', 'roma', 'caixa', 'kit', 'vitrine', 'dano', 'transicao', 'pedro', 'falta', 'derruba', 'botao', 'dormir'])
+  for (const nome of ['pulo', 'toldo', 'arremesso', 'capivara', 'caju', 'roma', 'caixa', 'kit', 'vitrine', 'dano', 'transicao', 'conversa', 'falta', 'derruba', 'botao', 'dormir'])
     assert.equal(typeof som.SONS[nome], 'function', nome);
   const aventura = readFileSync(new URL('../src/game/Aventura.js', import.meta.url), 'utf8');
   for (const nome of [...aventura.matchAll(/tocar\('(\w+)'\)/g)].map(m => m[1])) assert.ok(som.SONS[nome], `som inexistente: ${nome}`);

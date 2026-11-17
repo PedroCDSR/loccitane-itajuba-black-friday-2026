@@ -2,7 +2,7 @@ export const META_KITS = 3;
 // Cada kit leva 1 Caju, 1 Romã e 1 caixa de presente. As três caixas ficam no alto das estantes do interior.
 export const ITENS_MISSAO = ['caju', 'roma', 'caixa'];
 export function criarMissao() {
-  return { coletados: { caju: 0, roma: 0, caixa: 0 }, estoque: { caju: 0, roma: 0, caixa: 0 }, kits: 0, estacoes: [], fase: 'cidade', conversouPedro: false };
+  return { coletados: { caju: 0, roma: 0, caixa: 0 }, estoque: { caju: 0, roma: 0, caixa: 0 }, kits: 0, estacoes: [], fase: 'cidade', conversouCarina: false };
 }
 export function coletarProduto(missao, tipo) {
   if (!ITENS_MISSAO.includes(tipo)) return false;
@@ -31,7 +31,7 @@ export function objetivoMissao(missao, sala) {
     return `Leve tudo à bancada para montar os kits · ${missao.kits}/${META_KITS}`;
   }
   if (missao.fase === 'fachada') {
-    if (!missao.conversouPedro) return 'Fale com Pedro na porta do showroom →';
+    if (!missao.conversouCarina) return 'Fale com a Carina na porta do showroom →';
     return 'Entre no showroom pela porta: as caixas estão no alto das estantes';
   }
   return 'Reúna Caju e Romã · pule nas tendinhas →';

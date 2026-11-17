@@ -80,3 +80,28 @@ Capturas reais em `docs/capturas/revisao-*.png`: `revisao-fachada-*`, `revisao-i
 4. **Commit `c39b084` "Unverified"** no GitHub: fica como está, conforme combinado, até todos os chats terminarem.
 5. **Antes de lançar:** jogar a dev num iPhone e num Android, com som. No iPhone, a chave de silencioso pode calar o áudio da página.
 6. **Oferta:** continua desativada (`oferta.ativa: false`, 10%, sem WhatsApp, validade, condições ou responsável). Nada disso foi mexido nem inventado.
+
+## História nova: Pedro na praça, Carina no showroom (mesmo dia)
+
+Pedido do Pedro: ele aparece no começo, na praça, e conta como a L’Occitane chegou a Itajubá; no showroom, quem atende é a Carina, dona da loja.
+
+- **Merge da `main` na `dev`** para trazer a coleção de sprites da Carina (`3d7cca8`): `public/assets/personagens/carina/` e `src/game/carina-animacoes.js`. O merge também trouxe a foto original da fachada (`055a57b`). Sem conflitos.
+- **Pedro na praça**, ao lado da fonte do Theodomiro Santiago (x 1330), logo depois das primeiras dicas e da primeira capivara. Ele acena quando a exploradora chega perto e a conversa abre sozinha na primeira passagem, ou pelo botão "Conversar com Pedro". A fala é só a que o Pedro ditou: "Oi! Eu sou o Pedro. Em janeiro de 2023 nós trouxemos a L’Occitane para Itajubá, com o objetivo de trazer uma nova forma de autocuidado para a cidade." A conversa não mexe na missão.
+- **Carina no showroom**, no lugar do Pedro: recebe na porta e depois espera ao lado da bancada, acenando a cada kit. A fala dela são só as instruções da missão (as mesmas de antes), sem falas pessoais inventadas. Altura 70 (escala 0,39), entre a exploradora (64) e o Pedro (78).
+- **Textos:**
+  - abertura "MENSAGEM DA CARINA" (antes "MENSAGEM DO PEDRO") e "Fale com a Carina" na fala "NO SHOWROOM";
+  - objetivo da fachada e passo 04 da tela inicial passam a citar a Carina;
+  - final: "montou 3 kits com a Carina".
+  As falas ficam em `CAMPANHA.conversas` (`src/data/campanha.js`, fora da parte da oferta).
+- As conversas abrem com a exploradora a 30 unidades do personagem (antes 20), para os dois aparecerem lado a lado e não um na frente do outro.
+
+Testado no Chromium em 390×844 com toque emulado:
+- abertura com as 6 falas;
+- conversa do Pedro abrindo ao andar até ele, sem reabrir depois;
+- objetivo da fachada "Fale com a Carina", conversa da Carina na porta, Carina na bancada acenando nos kits;
+- final com "com a Carina";
+- sem erros nem 4xx/5xx.
+
+`npm test` passou (52 de 52, com um teste novo da conversa do Pedro) e `npm run build` também. Capturas: `revisao-pedro-praca-conversa.png`, `revisao-carina-conversa.png`, `revisao-carina-porta.png` e `revisao-carina-bancada.png`.
+
+Para confirmar com o Pedro: o nome no repositório é **Carina** (com C), como na coleção de sprites. Ele disse "Karina" na conversa.

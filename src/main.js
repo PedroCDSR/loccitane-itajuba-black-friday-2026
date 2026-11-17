@@ -29,7 +29,7 @@ function passeio(segundos){
 }
 function concluir({presentes, caju=0, roma=0, kits=0, tempo}){
   total=presentes;emPartida=false;musica(false);document.body.classList.remove('jogando');$('partida').hidden=true;$('pausar').hidden=true;$('final').hidden=false;
-  $('resultado').textContent=`Vitrine pronta! Você reuniu ${caju} Caju, ${roma} Romã e montou ${kits} kits com Pedro.${passeio(tempo)} Obrigada por fazer parte desta história!`;
+  $('resultado').textContent=`Vitrine pronta! Você reuniu ${caju} Caju, ${roma} Romã e montou ${kits} kits com a Carina.${passeio(tempo)} Obrigada por fazer parte desta história!`;
   $('beneficio').textContent=podeResgatar(CAMPANHA)?`Seu benefício: ${percentualSeguro(CAMPANHA.oferta.descontoPercentual)}% de desconto.`:'Prévia do benefício: até 10% de desconto. Resgate em preparação.';
   $('condicoes').textContent=podeResgatar(CAMPANHA)?`Validade: ${CAMPANHA.oferta.validade}. ${CAMPANHA.oferta.condicoes}`:'A oferta será ativada após a definição de validade e condições pela loja.';
 }
