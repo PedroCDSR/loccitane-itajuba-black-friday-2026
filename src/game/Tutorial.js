@@ -1,4 +1,4 @@
-// Dicas da primeira partida, no estilo do jogo do Aladdin: um balão com seta aponta o botão certo e some quando
+// Dicas da primeira partida, no estilo dos jogos de plataforma clássicos: um balão com seta aponta o botão certo e some quando
 // a pessoa faz a ação (ou depois de alguns segundos). No computador, o texto mostra as teclas.
 const $ = id => document.getElementById(id);
 const TOQUE = typeof window !== 'undefined' && window.matchMedia?.('(pointer: coarse)').matches;
