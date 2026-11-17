@@ -38,7 +38,7 @@ export class Aventura extends Phaser.Scene {
     this.fim = false; this.presentes = 0; this.tempo = 0; this.checkpoint = 80;
     this.proximoArremesso = 0; this.missao = criarMissao(); this.dialogoAberto = false;
     this.pedroPerto = false; this.vistaTravada = false; this.pedidoInteracao = false;
-    this.estacoes = []; this.uiAbort = new AbortController();
+    this.estacoes = []; this.ultimoHUD = ''; this.uiAbort = new AbortController();
     $('fechar-dialogo').addEventListener('click', () => this.fecharDialogo(), { signal: this.uiAbort.signal });
     this.add.image(240, 0, 'ceu').setOrigin(0).setScale(1/3).setScrollFactor(0, 1);
     this.morros = this.add.tileSprite(240, 0, 480, ALTURA, 'morros').setOrigin(0).setTileScale(1/3).setScrollFactor(0, 1);
@@ -154,7 +154,7 @@ export class Aventura extends Phaser.Scene {
     }
   }
   abrirDialogo() {
-    this.dialogoAberto = true; this.entrada.limpar(); this.entrada.ignorarAteSoltar();
+    this.dialogoAberto = true; this.entrada.ignorarAteSoltar();
     this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
     this.pedro.play('pedro-conversa');
     $('dialogo-texto').textContent = `${CAMPANHA.boasVindasPedro} Cada kit leva um Caju e uma Romã. Vá até os três pontos da bancada e toque em “Montar kit”.`;
@@ -167,8 +167,8 @@ export class Aventura extends Phaser.Scene {
   }
   contextoInteracao() {
     if (this.pedroPerto) return { tipo: 'pedro', texto: 'Conversar · E / Enter' };
-    const estacao = this.estacoes.find(e => !this.missao.estacoes.includes(e.id) && Math.abs(this.jogador.x-e.x) < 16);
-    if (estacao && this.missao.fase === 'showroom') return { tipo: 'kit', texto: 'Montar kit · E / Enter', estacao };
+    const estacao = this.estacoes.find(e => !this.missao.estacoes.includes(e.id) && Math.abs(this.jogador.x-e.x) < 40);
+    if (estacao && this.missao.fase === 'showroom') return { tipo: 'kit', texto: `Montar kit ${estacao.id+1} · E / Enter`, estacao };
     return null;
   }
   interagir(contexto) {
@@ -182,9 +182,13 @@ export class Aventura extends Phaser.Scene {
     this.atualizarHUD();
   }
   atualizarHUD() {
+    const segundos = Math.max(0, Math.ceil(DURACAO_SEGUNDOS-this.tempo));
+    const assinatura = [this.missao.coletados.caju, this.missao.coletados.roma, this.jogador.vida, segundos, this.missao.fase, this.missao.kits].join('|');
+    if (assinatura === this.ultimoHUD) return;
+    this.ultimoHUD = assinatura;
     $('presentes').textContent = `Caju ${this.missao.coletados.caju} · Romã ${this.missao.coletados.roma}`;
     $('vida').textContent = `${this.jogador.vida} ♥`;
-    $('tempo').textContent = `${Math.max(0, Math.ceil(DURACAO_SEGUNDOS-this.tempo))}s`;
+    $('tempo').textContent = `${segundos}s`;
     $('tempo').classList.toggle('urgente', this.tempo >= DURACAO_SEGUNDOS-15);
     $('objetivo').textContent = objetivoMissao(this.missao);
     $('kits').textContent = `Kits ${this.missao.kits}/${META_KITS}`;
@@ -234,10 +238,12 @@ export class Aventura extends Phaser.Scene {
       this.missao.fase = 'showroom'; registrar('chegada_showroom'); this.aviso('Vamos montar os três kits na bancada!');
     }
     const contexto = this.contextoInteracao();
-    $('interagir').hidden = !contexto; if (contexto) $('interagir').textContent = contexto.texto;
+    $('interagir').hidden = !contexto;
+    if (contexto && $('interagir').textContent !== contexto.texto) $('interagir').textContent = contexto.texto;
     if (this.entrada.interagirApertou || this.pedidoInteracao) { this.pedidoInteracao=false; this.interagir(contexto); }
     if (x > this.checkpoint+MODO_FACIL.checkpointDistancia || (x>FACHADA+20 && this.checkpoint<FACHADA)) this.checkpoint=x;
-    $('local').textContent = x>INTERIOR ? 'Showroom · monte a vitrine' : x>FACHADA+60 ? 'Pedro espera por você' : 'Pelas ruas de Itajubá';
+    const local = x>INTERIOR ? 'Showroom · monte a vitrine' : x>FACHADA+60 ? 'Pedro espera por você' : 'Pelas ruas de Itajubá';
+    if ($('local').textContent !== local) $('local').textContent = local;
     this.atualizarHUD();
     if (this.tempo >= DURACAO_SEGUNDOS) this.concluir('tempo');
     else if (x > MUNDO-14 && this.missao.kits === META_KITS) this.concluir('vitrine');

@@ -15,7 +15,7 @@ Leia AGENTS.md e docs/EVOLUCAO-MISSAO.md. A integração já foi feita: não rec
 
 ## Sua primeira tarefa
 
-Execute npm test e npm run build; depois faça QA real em navegador. Esta rodada não teve navegador controlável. Testes anteriores de Chromium não validam a nova versão. Faça uma partida completa com cidade e showroom, usando teclado e toque emulado. Verifique console, 404, novas animações, body do jogador/capivara, pulo sobre cestos, alcance dos produtos e interação com as três estações.
+Última verificação: 26 testes Node e build passaram. Os testes de fluxo usam adaptadores em memória, sem renderização. Execute npm test e npm run build; depois faça QA real em navegador. Esta rodada não teve navegador controlável. Testes anteriores de Chromium não validam a nova versão. Faça uma partida completa com cidade e showroom, usando teclado e toque emulado. Verifique console, 404, novas animações, body do jogador/capivara, pulo sobre cestos, alcance dos produtos e interação com as três estações.
 
 A intro é ficção de jogo: uma entrega de Caju/Romã se espalhou pela cidade e Pedro precisa de ajuda para preparar a vitrine da última Black Friday. Coletar na rua, conversar opcionalmente e montar3 kits na bancada é o objetivo. Cada kit usa1 Caju e1 Romã, sem duplicação da mesma estação. O botão Caju oferece fruta separada, não cosmético. A conversa não consome tempo; verificar fechamento sem salto/interação duplicada. Sair com3 kits dá final de vitrine; timeout dá final parcial sem fingir sucesso.
 

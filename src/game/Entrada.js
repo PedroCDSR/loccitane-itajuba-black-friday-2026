@@ -1,7 +1,7 @@
 // Unifica teclado e Pointer Events. Pointer capture permite andar + pular + arremessar.
 export class Entrada {
   constructor(scene) {
-    this.scene = scene; this.toques = new Map(); this.antes = {};
+    this.scene = scene; this.toques = new Map(); this.antes = {}; this.bloqueados = {};
     this.keys = scene.input.keyboard.addKeys({ esquerda: 'LEFT', direita: 'RIGHT', pular: 'SPACE', fruta: 'X', a: 'A', d: 'D', w: 'W', cima: 'UP', j: 'J', interagir: 'E', confirmar: 'ENTER' });
     this.abort = new AbortController();
     const signal = this.abort.signal;
@@ -13,22 +13,28 @@ export class Entrada {
     window.addEventListener('blur', () => this.limpar(), {signal});
     scene.events.once('shutdown', () => { this.abort.abort(); this.limpar(); });
   }
-  limpar() { this.toques.clear(); this.scene.input.keyboard.resetKeys(); this.antes = {}; document.querySelectorAll('.pressed').forEach(b => b.classList.remove('pressed')); }
+  limpar() { this.toques.clear(); this.scene.input.keyboard.resetKeys(); this.antes = {}; this.bloqueados = {}; document.querySelectorAll('.pressed').forEach(b => b.classList.remove('pressed')); }
   ignorarAteSoltar() {
     this.antes = { pular: true, fruta: true, interagir: true };
-    this.scene.input.keyboard.resetKeys();
-    this.toques.clear();
+    this.bloqueados = { pular: true, fruta: true, interagir: true };
+    // Preserva isDown/pointers até o release real: resetá-los liberaria o autorepeat do teclado.
   }
   atualizar() {
     const t = new Set(this.toques.values()), k = this.keys;
     this.esquerda = t.has('esquerda') || k.esquerda.isDown || k.a.isDown;
     this.direita = t.has('direita') || k.direita.isDown || k.d.isDown;
     if (this.esquerda && this.direita) this.esquerda = this.direita = false;
-    this.pular = t.has('pular') || k.pular.isDown || k.w.isDown || k.cima.isDown;
-    this.fruta = t.has('fruta') || k.fruta.isDown || k.j.isDown;
+    const raw = {
+      pular: t.has('pular') || k.pular.isDown || k.w.isDown || k.cima.isDown,
+      fruta: t.has('fruta') || k.fruta.isDown || k.j.isDown,
+      interagir: t.has('interagir') || k.interagir.isDown || k.confirmar.isDown,
+    };
+    for (const acao of Object.keys(raw)) if (!raw[acao]) this.bloqueados[acao] = false;
+    this.pular = raw.pular && !this.bloqueados.pular;
+    this.fruta = raw.fruta && !this.bloqueados.fruta;
     this.pularApertou = this.pular && !this.antes.pular;
     this.frutaApertou = this.fruta && !this.antes.fruta;
-    this.interagir = t.has('interagir') || k.interagir.isDown || k.confirmar.isDown;
+    this.interagir = raw.interagir && !this.bloqueados.interagir;
     this.interagirApertou = this.interagir && !this.antes.interagir;
     this.antes = { pular: this.pular, fruta: this.fruta, interagir: this.interagir };
   }

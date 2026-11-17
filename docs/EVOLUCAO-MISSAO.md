@@ -22,7 +22,7 @@ Indicador de progresso e opção de tentar novamente em falha de assets. Control
 
 ## Verificação desta rodada
 
-Build e testes Node executados. Testes de missão cobrem inventários independentes, produtos válidos, consumo de pares, bloqueio fora do showroom, estação única, estoque não negativo e preservação das medidas/tempo atuais. Texturas runtime conferidas contra medidas dos PNGs. Alfa e pixels visíveis dos sprites lossless conferidos; cidade preserva alfa mas possui redução de paleta documentada.
+Build e 26 testes Node passaram nesta rodada. Testes de fluxo/diálogo usam adaptadores de DOM e Phaser em memória: não são testes de navegador e não exercitam renderização ou colisões reais. Testes de missão cobrem inventários independentes, produtos válidos, consumo de pares, bloqueio fora do showroom, estação única, estoque não negativo e preservação das medidas/tempo atuais. Texturas runtime conferidas contra medidas dos PNGs. Alfa e pixels visíveis dos sprites lossless conferidos; cidade preserva alfa mas possui redução de paleta documentada.
 
 **Não houve navegador controlável disponível para esta rodada do Codex.** Portanto não foram homologados console, colisões em partida real, fluidez, posição dos novos assets, layout de celular, tempo real de conclusão ou áudio. Os resultados de Chromium nos documentos anteriores pertencem à versão anterior testada pelo outro agente, não provam esta integração.
 
@@ -37,3 +37,9 @@ Build e testes Node executados. Testes de missão cobrem inventários independen
 7. Capturar cidade, diálogo, bancada e final em desktop e celular emulado. Não apresentar conceitos como capturas reais.
 
 Oferta permanece desativada e limitada a10%, aguardando dados reais. Não foi feito deploy.
+
+## Ajustes finais
+
+A ação na bancada tem raio de aproximação tolerante no modo fácil e informa qual kit será montado. A tecla/toque que abre ou fecha a conversa permanece bloqueada até a soltura real, evitando salto ou interação duplicada por autorepeat. A atualização do HUD foi limitada a mudanças reais de segundos, inventário, vida e objetivo.
+
+Entrega no GitHub sem deploy. O build completo tem cerca de15,6MB porque preserva PNGs e artes originais de referência dentro de public; isso NÃO equivale ao download inicial do jogador. Novas texturas runtime~1,95MB; Pedro, fundos de showroom e bundle são adicionais. Medir a transferência e FPS em aparelho real na próxima rodada.
