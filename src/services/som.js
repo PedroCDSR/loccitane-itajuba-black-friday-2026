@@ -8,7 +8,7 @@
 import { MUSICA } from '../data/musica.js';
 
 const CHAVE = 'aventura-som';
-export const VOLUME_MUSICA = .161; // 0,14 + 15% (pedido do Pedro)
+export const VOLUME_MUSICA = 1; // Volume solicitado pelo usuário.
 const N = m => 440 * 2 ** ((m - 69) / 12); // nota MIDI → Hz
 
 let ctx = null, efeitos = null, trilha = null, ruidoBuffer = null;
@@ -184,3 +184,6 @@ export function musica(tocando) {
   inicioVolta = 0; indice = 0;
   relogioMusica = setInterval(agendar, 60);
 }
+
+// Tenta autoplay normal; o primeiro gesto continua retomando o áudio se o navegador bloquear.
+export function tentarMusicaInicial() { acordar(); musica(true); }

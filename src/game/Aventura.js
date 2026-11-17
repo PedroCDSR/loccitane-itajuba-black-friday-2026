@@ -12,6 +12,7 @@ import { carregarPedro, criarPedro } from './pedro-animacoes.js';
 import { carregarKarina, criarKarina } from './karina-animacoes.js';
 import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, faltaParaKit, META_KITS } from './missao.js';
 import { ALTURA, MUNDO, SHOWROOM, ALTURA_CIDADE, MODO_FACIL } from './config.js';
+import { desempenho } from '../data/recompensas.js';
 import { CAMPANHA } from '../data/campanha.js';
 import { registrar } from '../services/metricas.js';
 import { tocar } from '../services/som.js';
@@ -75,7 +76,7 @@ export class Aventura extends Phaser.Scene {
     this.events.once('shutdown', () => this.game.renderer?.off?.('restorewebgl', refazer));
     for (const texture of this.textures.getTextureKeys()) this.textures.get(texture).setFilter(Phaser.Textures.FilterMode.NEAREST);
     this.fim = false; this.presentes = 0; this.tempo = 0; this.checkpoint = 80;
-    this.proximoArremesso = 0; this.missao = criarMissao(); this.dialogoAberto = false; this.capivaraDoPisao = null;
+    this.proximoArremesso = 0; this.missao = criarMissao(); this.despedidaKarina = false; this.dialogoAberto = false; this.capivaraDoPisao = null;
     this.pedroPerto = false; this.pedroConversou = false; this.karinaPerto = false; this.karinaConversou = false; this.pedidoInteracao = false;
     this.estacoes = []; this.ultimoHUD = ''; this.avisoFaltaAte = 0;
     this.uiAbort = new AbortController();
@@ -382,6 +383,9 @@ export class Aventura extends Phaser.Scene {
       this.mostrarFala(l.titulo, l.texto, botao);
       return;
     }
+    if (this.dialogoAberto === 'karina-final') {
+      this.dialogoAberto = false; this.esconderFala(); this.concluir('vitrine'); return;
+    }
     if (this.dialogoAberto) this.fecharDialogo();
   }
   terminarIntro() {
@@ -582,6 +586,16 @@ export class Aventura extends Phaser.Scene {
   }
   concluir(motivo) {
     if (this.fim) return;
+    if (!this.despedidaKarina) {
+      this.despedidaKarina = true;
+      this.dialogoAberto = 'karina-final';
+      this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
+      this.karinaBancada?.play('karina-conversa');
+      const pontos = desempenho({ ...this.missao.coletados, kits: this.missao.kits }).total;
+      this.mostrarFala('KARINA · SHOWROOM ITAJUBÁ', `Olha só como nossa vitrine ficou linda! Obrigada por ajudar a preparar os kits.\n\nForam muitos encontros e boas lembranças aqui em Itajubá. Você agora faz parte dessa história!\n\nVocê conquistou ${pontos} pontos! Guardei uma recompensa para você usar em toda a loja. Vamos descobrir?`, 'REVELAR CUPOM');
+      $('interagir').hidden = true;
+      return;
+    }
     this.fim = true;
     registrar('conclusao', { presentes: this.presentes });
     this.game.events.emit('conclusao', { presentes: this.presentes, tempo: Math.round(this.tempo), motivo,

@@ -74,5 +74,5 @@ test('instruções aos poucos: abertura curta, regras da rua nas dicas e do show
   const karina = CAMPANHA.conversas.karina.texto;
   for (const termo of [/Caju/, /Romã/, /caixa/, /no alto das estantes/, /bancada/]) assert.match(karina, termo);
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-  assert.match(html, /Recupere os produtos espalhados pela cidade/); assert.doesNotMatch(html, /tira 1 coração/, 'a tela inicial não adianta as regras');
+  assert.match(html, /última aventura/); assert.doesNotMatch(html, /tira 1 coração/, 'a tela inicial não adianta as regras');
 });

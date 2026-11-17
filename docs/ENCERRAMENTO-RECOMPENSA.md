@@ -15,3 +15,9 @@ Abertura em pergaminho com história familiar iniciada em 2023, capítulo final 
 Música agendada já na história; o navegador só libera áudio após primeiro gesto, respeitando som desligado. Sem contornar autoplay. Comunicação do encerramento, texto alternativo, páginas de cupom e mensagem do WhatsApp explicita desconto em toda a loja; as artes aprovadas foram preservadas.
 
 61 testes Node e build passaram. Chrome local: loading visível em 97%, transição ao pergaminho, texto e botão Jogar, loading do Phaser em 98% e abertura jogável apareceram corretamente. Sem teste em celular físico ou nova partida completa.
+
+## Simplificação após revisão por screenshots
+
+Título grande e textos auxiliares removidos da abertura, junto com todo o teste inicial. Frase final em negrito com destaques vinho; história compacta e estilos menores para telas curtas, buscando manter Jogar na primeira dobra. Final remove frase repetida, confirmação de imagem pronta e repetição do código; indicador de carregamento/erro continua funcional. A despedida acontece antes de emitir a conclusão, dentro do showroom, usando `mostrarFala`, paginação e botão REVELAR CUPOM existentes. O teste de exploração agora confirma que a conclusão espera terminar essa fala. Volume da trilha configurado em 1; tentativa de autoplay ao revelar a abertura, com retomada por gesto caso o navegador bloqueie.
+
+Verificação desta rodada: 61 testes e build passaram; navegador indisponível por erro de conexão do serviço, sem nova homologação visual ou de autoplay em celular.

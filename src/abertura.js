@@ -41,6 +41,8 @@ async function carregar() {
     $('abertura-loading').hidden = true;
     $('inicio').hidden = false;
     document.body.classList.remove('preparando');
+    const { tentarMusicaInicial } = await import('./services/som.js');
+    tentarMusicaInicial();
   } catch {
     $('texto-abertura').textContent = 'Não foi possível preparar a aventura. Confira sua conexão e tente novamente.';
     $('tentar-abertura').hidden = false;

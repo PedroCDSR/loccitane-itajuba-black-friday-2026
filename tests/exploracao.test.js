@@ -6,6 +6,7 @@ import { SHOWROOM, MUNDO, ALTURA, ALTURA_CIDADE, ALTURA_SHOWROOM } from '../src/
 import { CAMPANHA } from '../src/data/campanha.js';
 import { criarMissao, coletarProduto, objetivoMissao, META_KITS } from '../src/game/missao.js';
 import { enquadramento } from '../src/game/guiaShowroom.js';
+import { desempenho } from '../src/data/recompensas.js';
 import { paginar } from '../src/game/falas.js';
 
 // Carrega a cena com adaptadores em memória (sem Phaser nem navegador), como em dialogo.test.js.
@@ -15,7 +16,7 @@ function cena() {
   const metricas = [];
   const source = readFileSync(new URL('../src/game/Aventura.js', import.meta.url), 'utf8').replace(/^import[^\n]*\n/gm, '').replace('export class Aventura', 'class Aventura');
   const Klass = vm.runInNewContext(source + '\nAventura;', {
-    Phaser: { Scene: class {} }, CAMPANHA, paginar, SHOWROOM, MUNDO, ALTURA, ALTURA_CIDADE, ALTURA_SHOWROOM, META_KITS, objetivoMissao, faltaParaKit: () => [],
+    Phaser: { Scene: class {} }, CAMPANHA, paginar, desempenho, SHOWROOM, MUNDO, ALTURA, ALTURA_CIDADE, ALTURA_SHOWROOM, META_KITS, objetivoMissao, faltaParaKit: () => [],
     MODO_FACIL: { capivaraVelocidade: 10, checkpointDistancia: 400 }, TENDA: {}, registrar: n => metricas.push(n), tocar() {},
     document: { getElementById: id => elements[id] },
   });
@@ -48,7 +49,14 @@ test('tempo longo de passeio não encerra a partida', () => {
 test('a partida só termina saindo do showroom com os três kits', () => {
   const { s } = cena(); s.sala = 'showroom'; s.missao.fase = 'showroom'; s.jogador.x = MUNDO - 5;
   s.update(0, 16); assert.equal(s.fim, false, 'sem kits a saída não conclui');
+  s.mostrarFala = (titulo, texto, botao) => { s.falaFinal = { titulo, texto, botao }; };
+  s.esconderFala = () => {}; s.avancarFala = () => false;
   s.missao.kits = META_KITS; s.update(0, 16);
+  assert.equal(s.fim, false); assert.equal(s.emitidos.length, 0);
+  assert.equal(s.dialogoAberto, 'karina-final');
+  assert.equal(s.falaFinal.botao, 'REVELAR CUPOM');
+  assert.match(s.falaFinal.texto, /toda a loja/);
+  s.avancarDialogo();
   assert.equal(s.fim, true); assert.equal(s.emitidos[0][1].motivo, 'vitrine');
 });
 
