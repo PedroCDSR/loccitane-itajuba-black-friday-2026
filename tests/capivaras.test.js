@@ -63,7 +63,7 @@ test('dicas e abertura explicam as três formas de lidar com a capivara, o toldo
   assert.match(PASSOS.toldo.toque, /toldo/); assert.match(PASSOS.caixas.toque, /caixas/); assert.match(PASSOS.bancada.toque, /bancada/);
   for (const p of Object.values(PASSOS)) assert.ok(p.toque.length <= 80 && p.teclado.length <= 80, `dica curta: ${p.toque}`);
   const intro = CAMPANHA.introCena.map(l => l.texto).join(' ');
-  for (const termo of [/[Pp]ise/, /caju/, /pule por cima/, /toldo/, /tira 1 ♥/, /bancada/, /75 segundos/]) assert.match(intro, termo);
+  for (const termo of [/[Pp]ise/, /caju/, /pule por cima/, /toldo/, /tira 1 ♥/, /bancada/, /Sem pressa/]) assert.match(intro, termo);
   for (const l of CAMPANHA.introCena) assert.ok(l.texto.length <= 140, `fala curta: ${l.titulo}`);
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(html, /Pise, dê caju ou pule por cima/); assert.match(html, /tira 1 coração/);

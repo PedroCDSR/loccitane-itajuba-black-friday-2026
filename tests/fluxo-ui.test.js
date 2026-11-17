@@ -34,12 +34,18 @@ test('começar abre a partida com a abertura encenada; jogar de novo reaproveita
   assert.match(e.resultado.textContent,/Vitrine pronta/);assert.equal(e.final.hidden,false);
   await e.novamente.onclick();assert.equal(games.length,1);assert.equal(games[0].starts,1);assert.equal(games[0].registry.get('comIntro'),false);assert.equal(e.final.hidden,true);
 });
-test('tempo parcial não apresenta vitrine completa e a configuração entregue bloqueia o resgate',async()=>{
+test('final é sempre o da vitrine, com o tempo de passeio como lembrança, e a configuração entregue bloqueia o resgate',async()=>{
   const {elements:e,games}=executarUI();await e.jogar.onclick();
-  games[0].events.emit('conclusao',{presentes:2,caju:1,roma:1,kits:0,motivo:'tempo'});
-  assert.match(e.resultado.textContent,/O tempo terminou/);assert.doesNotMatch(e.resultado.textContent,/Vitrine pronta/);
+  games[0].events.emit('conclusao',{presentes:20,caju:5,roma:4,kits:3,tempo:185,motivo:'vitrine'});
+  assert.match(e.resultado.textContent,/Vitrine pronta/);assert.match(e.resultado.textContent,/passeio por Itajubá durou 3 min 5 s/);
+  assert.doesNotMatch(e.resultado.textContent,/tempo terminou/i);
   e['ver-oferta'].onclick();assert.equal(e.nome.disabled,true);assert.equal(e.enviar.disabled,true);assert.equal(e.marketing.disabled,true);
   e.resgate.onsubmit({preventDefault(){}});
+});
+test('textos da tela inicial, da abertura e do final não falam mais em limite de tempo',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8'),main=readFileSync(new URL('../src/main.js',import.meta.url),'utf8');
+  for(const texto of [html,main,JSON.stringify(CAMPANHA.introCena)])assert.doesNotMatch(texto,/75 segundos|75s|tempo terminou|id="tempo"/);
+  assert.match(CAMPANHA.introCena.at(-1).texto,/Sem pressa/);
 });
 test('pausa e retomada são idempotentes e erro de assets permite nova tentativa',async()=>{
   const {elements:e,games}=executarUI();await e.jogar.onclick();

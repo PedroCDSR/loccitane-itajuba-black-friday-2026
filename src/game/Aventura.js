@@ -8,7 +8,7 @@ import { Tutorial } from './Tutorial.js';
 import { carregarArte } from './assets.js';
 import { carregarPedro, criarPedro } from './pedro-animacoes.js';
 import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, faltaParaKit, META_KITS } from './missao.js';
-import { ALTURA, MUNDO, DURACAO_SEGUNDOS, SHOWROOM, ALTURA_CIDADE, ALTURA_SHOWROOM, MODO_FACIL } from './config.js';
+import { ALTURA, MUNDO, SHOWROOM, ALTURA_CIDADE, ALTURA_SHOWROOM, MODO_FACIL } from './config.js';
 import { CAMPANHA } from '../data/campanha.js';
 import { registrar } from '../services/metricas.js';
 import { tocar } from '../services/som.js';
@@ -23,6 +23,9 @@ const CAPIVARAS = [1180, 2265, 3015, 3700, 4380];
 const CHAO = 240;
 const FACHADA = SHOWROOM.x, INTERIOR = SHOWROOM.x + SHOWROOM.largura;
 const PORTAL = FACHADA - 46; // a bandeira do fim da rua: passou dela, a tela escurece e abre no showroom
+// Volta ao showroom → cidade: andando para a esquerda no começo da fachada. As posições de chegada ficam longe
+// dos dois gatilhos (PORTAL + 8 na rua, VOLTA na fachada) para a passagem nunca disparar em seguida, em loop.
+const VOLTA = FACHADA + 12, CHEGADA_SHOWROOM = FACHADA + 24, CHEGADA_CIDADE = PORTAL - 40;
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
@@ -209,6 +212,8 @@ export class Aventura extends Phaser.Scene {
       const visual = this.add.image(x, py(646), 'presente').setOrigin(.5, 1).setScale(.3).setAlpha(.28).setDepth(4);
       this.estacoes.push({ id: i, x, visual });
     }
+    this.placaCidade = this.add.text(FACHADA + 46, 128, '← ITAJUBÁ', { fontFamily: 'Georgia, serif', fontSize: '9px', color: '#fff4df', backgroundColor: '#304f3d', padding: { x: 3, y: 2 }, resolution: 4 })
+      .setOrigin(.5).setDepth(6).setAlpha(.9); // no alto: não cobre a exploradora na chegada e aparece no celular em pé
     this.saida = this.add.text(MUNDO - 22, 186, 'SAÍDA →', { fontFamily: 'Georgia, serif', fontSize: '9px', color: '#fff4df', backgroundColor: '#7d2029', padding: { x: 3, y: 2 }, resolution: 4 })
       .setOrigin(.5).setDepth(6).setAlpha(0);
   }
@@ -330,28 +335,43 @@ export class Aventura extends Phaser.Scene {
     this.ultimoHUD = ''; this.atualizarHUD();
   }
 
-  // ---------- Passagem da rua para o showroom ----------
-  entrarNoShowroom() {
+  // ---------- Passagem entre a rua e o showroom (nos dois sentidos) ----------
+  // A tela escurece, troca a "sala" (limites de câmera e de física) e reabre. Missão, itens já pegos e capivaras
+  // alimentadas ficam como estão: só a exploradora muda de lugar.
+  trocarSala(destino) {
     this.estado = 'transicao';
-    this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.entrada.limpar();
-    this.tutorial?.esconder(); // dicas da rua não seguem para o showroom
+    this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.entrada.limpar(); this.tutorial?.esconder();
+    const showroom = destino === 'showroom';
+    $('transicao-titulo').textContent = showroom ? 'Showroom' : 'De volta a';
+    $('transicao-nome').textContent = showroom ? 'L’Occitane au Brésil' : 'Itajubá';
+    $('transicao-sub').textContent = showroom ? 'Itajubá' : 'Passeie à vontade';
     $('transicao').hidden = false;
     const cam = this.cameras.main;
     cam.fadeOut(380, 30, 16, 22);
     cam.once('camerafadeoutcomplete', () => {
-      this.sala = 'showroom'; this.missao.fase = 'fachada';
-      this.physics.world.setBounds(FACHADA, 0, MUNDO - FACHADA, ALTURA);
-      this.solidos.add(this.pisoShowroom);
-      this.jogador.body.reset(FACHADA + 24, CHAO); this.jogador.olhandoDireita = true; this.checkpoint = FACHADA + 24;
-      cam.setZoom(this.scale.height / ALTURA_SHOWROOM); cam.setBounds(FACHADA, SHOWROOM.topo, MUNDO - FACHADA, SHOWROOM.altura);
-      cam.centerOn(FACHADA + 80, 180);
-      registrar('chegada_showroom');
+      this.sala = destino;
+      if (showroom) {
+        if (this.missao.fase === 'cidade') { this.missao.fase = 'fachada'; registrar('chegada_showroom'); }
+        this.physics.world.setBounds(FACHADA, 0, MUNDO - FACHADA, ALTURA);
+        if (!this.solidos.contains(this.pisoShowroom)) this.solidos.add(this.pisoShowroom);
+        this.jogador.body.reset(CHEGADA_SHOWROOM, CHAO); this.jogador.olhandoDireita = true; this.checkpoint = CHEGADA_SHOWROOM;
+        cam.setZoom(this.scale.height / ALTURA_SHOWROOM); cam.setBounds(FACHADA, SHOWROOM.topo, MUNDO - FACHADA, SHOWROOM.altura);
+        cam.centerOn(FACHADA + 80, 180);
+      } else {
+        this.physics.world.setBounds(0, 0, FACHADA, ALTURA);
+        this.jogador.body.reset(CHEGADA_CIDADE, CHAO); this.jogador.olhandoDireita = false; this.checkpoint = CHEGADA_CIDADE;
+        cam.setZoom(this.scale.height / ALTURA_CIDADE); cam.setBounds(0, 0, FACHADA, ALTURA);
+        cam.centerOn(CHEGADA_CIDADE - 40, ALTURA / 2);
+      }
+      this.ultimoHUD = ''; this.atualizarHUD();
       this.time.delayedCall(650, () => {
         $('transicao').hidden = true; cam.fadeIn(420, 30, 16, 22);
-        this.physics.world.resume(); this.estado = 'jogo';
+        this.physics.world.resume(); this.estado = 'jogo'; this.entrada.ignorarAteSoltar();
       });
     });
   }
+  entrarNoShowroom() { this.trocarSala('showroom'); }
+  voltarParaCidade() { this.trocarSala('cidade'); }
 
   // ---------- Conversa com Pedro ----------
   abrirDialogo() {
@@ -372,7 +392,7 @@ export class Aventura extends Phaser.Scene {
   // Pedro sai da porta e aparece ao lado da bancada.
   pedroEntra() {
     if (this.pedroConversou) return;
-    this.pedroConversou = true;
+    this.pedroConversou = true; this.missao.conversouPedro = true; this.ultimoHUD = '';
     this.tweens.add({ targets: this.pedro, alpha: 0, duration: 350, onComplete: () => this.pedro.disableInteractive() });
     this.tweens.add({ targets: this.pedroBancada, alpha: 1, duration: 350 });
   }
@@ -443,16 +463,14 @@ export class Aventura extends Phaser.Scene {
     if (!t.feitos.has('pisao')) { this.capivaraDoPisao ??= capivara; if (capivara === this.capivaraDoPisao) t.mostrar('pisao', agora); }
     else if (capivara !== this.capivaraDoPisao) t.mostrar('caju', agora);
   }
+  // Sem relógio no HUD: a partida não tem limite de tempo (pedido do Pedro). O tempo de passeio aparece só no final.
   atualizarHUD() {
-    const segundos = Math.max(0, Math.ceil(DURACAO_SEGUNDOS - this.tempo));
-    const m = this.missao, assinatura = [m.coletados.caju, m.coletados.roma, m.estoque.caixa, this.jogador?.vida, segundos, m.fase, m.kits].join('|');
+    const m = this.missao, assinatura = [m.coletados.caju, m.coletados.roma, m.estoque.caixa, this.jogador?.vida, m.fase, m.kits, this.sala, this.estado].join('|');
     if (assinatura === this.ultimoHUD) return;
     this.ultimoHUD = assinatura;
     $('presentes').textContent = `Caju ${m.coletados.caju} · Romã ${m.coletados.roma} · Caixas ${m.estoque.caixa}`;
     $('vida').textContent = `${this.jogador?.vida ?? 5} ♥`;
-    $('tempo').textContent = `${segundos}s`;
-    $('tempo').classList.toggle('urgente', this.tempo >= DURACAO_SEGUNDOS - 15);
-    $('objetivo').textContent = this.estado === 'intro' ? 'A aventura vai começar…' : objetivoMissao(m);
+    $('objetivo').textContent = this.estado === 'intro' ? 'A aventura vai começar…' : objetivoMissao(m, this.sala);
     $('kits').textContent = `Kits ${m.kits}/${META_KITS}`;
   }
   concluir(motivo) {
@@ -483,7 +501,7 @@ export class Aventura extends Phaser.Scene {
     if (this.dialogoAberto) { if (this.entrada.interagirApertou) this.fecharDialogo(); return; }
     if (this.estado === 'transicao') return;
     this.tempo += delta / 1000;
-    const agora = this.tempo * 1000; // relógio de jogo ativo: pausa, intro, transição e conversa não contam
+    const agora = this.tempo * 1000; // relógio de jogo ativo (invencibilidade, avisos): pausa, intro, transição e conversa não contam
     const soltou = this.jogador.atualizar(this.entrada, agora, delta, true);
     if (this.entrada.pularApertou) { tocar('pulo'); this.tutorial?.concluir('pular'); }
     if (this.entrada.frutaApertou && this.tutorial?.atual === 'caju') this.tutorial.concluir('caju');
@@ -505,6 +523,8 @@ export class Aventura extends Phaser.Scene {
       if (x > PORTAL + 8) { this.entrarNoShowroom(); return; }
       if (x > this.checkpoint + MODO_FACIL.checkpointDistancia) this.checkpoint = x;
     } else {
+      // andando para a esquerda no começo da fachada, volta para a rua
+      if (x < VOLTA && this.entrada.esquerda) { this.voltarParaCidade(); return; }
       const perto = !this.pedroConversou && Math.abs(x - this.pedroX) < 45;
       if (perto !== this.pedroPerto) { this.pedroPerto = perto; this.pedro.play(perto ? 'pedro-aceno' : 'pedro-parado'); }
       // a primeira passagem pela porta abre a conversa sozinha: é ela que explica as caixas de presente
@@ -520,8 +540,8 @@ export class Aventura extends Phaser.Scene {
     const local = this.sala === 'cidade' ? 'Pelas ruas de Itajubá' : x > INTERIOR ? 'Showroom · monte a vitrine' : 'Showroom L’Occitane';
     if ($('local').textContent !== local) $('local').textContent = local;
     this.atualizarHUD();
-    if (this.tempo >= DURACAO_SEGUNDOS) this.concluir('tempo');
-    else if (x > MUNDO - 14 && this.missao.kits === META_KITS) this.concluir('vitrine');
+    // A partida só termina saindo à direita com os três kits; não há fim por tempo.
+    if (x > MUNDO - 14 && this.missao.kits === META_KITS) this.concluir('vitrine');
     else if (x > MUNDO - 14) $('objetivo').textContent = 'Antes de sair, monte os três kits na bancada ←';
   }
 }

@@ -1,6 +1,6 @@
 export const LARGURA = 480;
 export const ALTURA = 270;
-export const DURACAO_SEGUNDOS = 75;
+// Sem limite de tempo: a partida só termina saindo do showroom com os três kits (pedido do Pedro, 17/11/2026).
 // O mundo é medido em unidades de 480x270. O canvas tem o dobro (960x540) e a câmera usa zoom 2 na
 // cidade e zoom 3 no showroom, onde os fundos têm 3 pixels de textura por unidade.
 // A tela do jogo ocupa todo o espaço livre entre o placar e os botões (no celular em pé fica mais alta que larga).

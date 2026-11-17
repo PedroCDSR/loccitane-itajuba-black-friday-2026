@@ -2,7 +2,7 @@ export const META_KITS = 3;
 // Cada kit leva 1 Caju, 1 Romã e 1 caixa de presente. As caixas ficam no alto das estantes do showroom.
 export const ITENS_MISSAO = ['caju', 'roma', 'caixa'];
 export function criarMissao() {
-  return { coletados: { caju: 0, roma: 0, caixa: 0 }, estoque: { caju: 0, roma: 0, caixa: 0 }, kits: 0, estacoes: [], fase: 'cidade' };
+  return { coletados: { caju: 0, roma: 0, caixa: 0 }, estoque: { caju: 0, roma: 0, caixa: 0 }, kits: 0, estacoes: [], fase: 'cidade', conversouPedro: false };
 }
 export function coletarProduto(missao, tipo) {
   if (!ITENS_MISSAO.includes(tipo)) return false;
@@ -17,13 +17,20 @@ export function montarKit(missao, estacao) {
   for (const t of ITENS_MISSAO) missao.estoque[t]--;
   missao.estacoes.push(estacao); missao.kits++; return true;
 }
-export function objetivoMissao(missao) {
+// `sala` diz onde a exploradora está: quem já chegou ao showroom pode voltar para passear pela cidade.
+export function objetivoMissao(missao, sala) {
+  if (sala === 'cidade' && missao.fase !== 'cidade') {
+    if (missao.kits === META_KITS) return 'Vitrine pronta! Passeie à vontade · a bandeira leva de volta ao showroom →';
+    const faltam = META_KITS - missao.kits;
+    if (missao.estoque.caju < faltam || missao.estoque.roma < faltam) return 'Reúna mais Caju e Romã · a bandeira leva ao showroom →';
+    return 'Passeie à vontade · a bandeira leva de volta ao showroom →';
+  }
   if (missao.kits === META_KITS) return 'Vitrine pronta! Siga para a saída à direita →';
   if (missao.fase === 'showroom') {
     if (missao.estoque.caixa < 1 && missao.coletados.caixa < META_KITS) return `Pegue as caixas de presente no alto das estantes · kits ${missao.kits}/${META_KITS}`;
     return `Leve tudo à bancada para montar os kits · ${missao.kits}/${META_KITS}`;
   }
-  if (missao.fase === 'fachada') return 'Fale com Pedro na porta do showroom →';
+  if (missao.fase === 'fachada') return missao.conversouPedro ? 'Entre no showroom: as caixas estão no alto das estantes →' : 'Fale com Pedro na porta do showroom →';
   return 'Reúna Caju e Romã · pule nas tendinhas →';
 }
 // Produtos da cidade a partir do traçado da rua (posições das tendas e dos cestos).

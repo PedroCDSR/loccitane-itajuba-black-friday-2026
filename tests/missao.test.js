@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, META_KITS } from '../src/game/missao.js';
-import { DURACAO_SEGUNDOS, SHOWROOM, MUNDO, JOGADOR, MODO_FACIL } from '../src/game/config.js';
+import { SHOWROOM, MUNDO, JOGADOR, MODO_FACIL } from '../src/game/config.js';
 
 test('uma nova partida começa sem itens, kits ou estado reaproveitado', () => {
   const a = criarMissao(), b = criarMissao(); coletarProduto(a, 'caju'); a.estacoes.push(0);
@@ -39,7 +39,19 @@ test('a cidade garante a missão pelo chão e guarda o resto para saltos e tenda
   assert.ok(alto.every(i => i.y < 100), 'itens das tendas só com o quique');
   assert.equal(new Set(itens.map(i => `${i.x},${i.y}`)).size, itens.length);
 });
-test('modo fácil mantém cidade, velocidade e duração atuais', () => {
-  assert.equal(DURACAO_SEGUNDOS, 75); assert.equal(SHOWROOM.x, 5216); assert.equal(MUNDO, 5856); assert.equal(JOGADOR.velocidade, 140);
+test('modo fácil mantém cidade e velocidade atuais', () => {
+  assert.equal(SHOWROOM.x, 5216); assert.equal(MUNDO, 5856); assert.equal(JOGADOR.velocidade, 140);
   assert.equal(JOGADOR.coracoes, 5); assert.ok(JOGADOR.coyoteMs >= 100); assert.ok(MODO_FACIL.checkpointDistancia <= 400);
+});
+test('de volta à cidade, o objetivo convida a passear sem perder a missão', () => {
+  const m = criarMissao(); m.fase = 'showroom';
+  for (let i = 0; i < 3; i++) { coletarProduto(m, 'caju'); coletarProduto(m, 'roma'); }
+  assert.match(objetivoMissao(m, 'cidade'), /Passeie à vontade/);
+  assert.match(objetivoMissao(m, 'showroom'), /caixas de presente/, 'no showroom continua a orientação das caixas');
+  m.estoque.roma = 1; assert.match(objetivoMissao(m, 'cidade'), /Reúna mais Caju e Romã/);
+  m.kits = META_KITS; assert.match(objetivoMissao(m, 'cidade'), /Vitrine pronta! Passeie/);
+  assert.match(objetivoMissao(criarMissao(), 'cidade'), /Reúna Caju e Romã/, 'antes do showroom, o objetivo é o de sempre');
+  const f = criarMissao(); f.fase = 'fachada'; assert.match(objetivoMissao(f), /Fale com Pedro/);
+  f.conversouPedro = true; assert.match(objetivoMissao(f), /Entre no showroom/, 'quem volta à fachada não é mandado falar com Pedro de novo');
+  for (const fase of ['cidade', 'fachada', 'showroom']) { const n = criarMissao(); n.fase = fase; assert.doesNotMatch(objetivoMissao(n, 'cidade') + objetivoMissao(n), /segundo|tempo|rápido/i); }
 });

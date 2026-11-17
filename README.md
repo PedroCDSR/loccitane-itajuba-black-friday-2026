@@ -4,7 +4,7 @@ Base independente de um jogo promocional de plataforma 2D, mobile-first, com Pha
 
 ## Atualização: missão de Caju e Romã
 
-O jogo agora inclui intro em três etapas, coleta dos produtos Caju/Romã pela cidade, modo fácil com cinco corações e montagem de três kits no showroom. Cidade, sprites e objetos novos integrados; duração75s, posições dos marcos e extensão do percurso preservadas. Pedro possui interação por E/Enter ou toque, com conversa sem consumir tempo. As conversas e o relógio de invencibilidade usam tempo de jogo ativo.
+O jogo agora inclui intro em três etapas, coleta dos produtos Caju/Romã pela cidade, modo fácil com cinco corações e montagem de três kits no showroom. Cidade, sprites e objetos novos integrados; posições dos marcos e extensão do percurso preservadas. **Não há limite de tempo** (pedido do Pedro, 17/11/2026): dá para passear pela cidade e pelo showroom, ir e voltar pela bandeira, e a partida termina ao sair do showroom com os três kits. Pedro possui interação por E/Enter ou toque. A invencibilidade e os avisos usam um relógio de jogo ativo interno, que não aparece no HUD.
 
 Veja `docs/EVOLUCAO-MISSAO.md` e `docs/HANDOFF-CLAUDE.md` para a rodada atual. O teste em navegador desta versão está em `docs/QA-NAVEGADOR.md`. Ajustes de 17/11 (transição, tendas, abertura e showroom): `docs/RODADA-AJUSTES.md`. Build/testes Node passaram; esta rodada ainda precisa de teste completo em navegador. As capturas anteriores documentam a versão anterior. Assets originais e ZIPs preservados; versões de carregamento em WebP com manifesto em `docs/pacotes/runtime.json`.
 
@@ -17,7 +17,7 @@ Node 22.12+ (ou Node 24). Use `npm ci`, `npm run dev` e abra o endereço informa
 - Percurso único por Itajubá com câmera e parallax e cena jogável do showroom (jardim, fachada, Pedro na porta, interior com mesa e produtos Caju e Romã). Ver `docs/SHOWROOM-JOGAVEL.md`.
 - Exploradora original provisória; controles touch e teclado: setas/A/D, espaço/W/cima, X/J para caju.
 - Pulo variável, aceleração, tolerância na borda, antecipação do pulo e recuperação após colisões.
-- Presentes, frascos, capivaras alimentadas com caju, contador e duração máxima de 75 segundos de jogo ativo.
+- Presentes, frascos, capivaras alimentadas com caju e contador. Sem limite de tempo; o final mostra quanto durou o passeio.
 - Telas inicial/final, pausa, áudio sintético original opcional e reinício.
 - Compartilhamento direto pelo WhatsApp. Formulário de primeiro nome e consentimento para preparar mensagem de resgate.
 - Eventos locais `campanha:metrica`: inicio, conclusao, clique_oferta, clique_compartilhar, encaminhamento_whatsapp. Sem provedor externo e sem dados pessoais.
@@ -33,7 +33,7 @@ O formulário permanece desativado enquanto a configuração estiver incompleta.
 | Área | Arquivo |
 | --- | --- |
 | Campanha, desconto, contato, condições | `src/data/campanha.js` |
-| Física e duração | `src/game/config.js` |
+| Física e tela | `src/game/config.js` |
 | Mundo, colisões, showroom e coleta | `src/game/Aventura.js` |
 | Texturas provisórias e animações | `src/game/arte.js` |
 | Movimento reaproveitado | `src/game/Jogador.js` |
