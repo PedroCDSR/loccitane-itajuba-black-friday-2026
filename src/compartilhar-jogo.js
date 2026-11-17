@@ -7,7 +7,7 @@ let imagem;
 $('instagram-final').href = CAMPANHA.instagram;
 $('whatsapp-final').href = `https://wa.me/${CAMPANHA.whatsapp}`;
 // Prepara a imagem antes do clique para preservar a ativação do usuário ao abrir o menu nativo.
-fetch(`${import.meta.env.BASE_URL}assets/compartilhar/aventura-itajuba.png`)
+fetch(`${import.meta.env.BASE_URL}assets/compartilhar/ultima-aventura-promocional.png`)
   .then(r => { if (!r.ok) throw new Error('Imagem indisponível'); return r.blob(); })
   .then(blob => { imagem = new File([blob], 'aventura-itajuba.png', {type:'image/png'}); })
   .catch(() => {});

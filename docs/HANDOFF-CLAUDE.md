@@ -38,7 +38,7 @@ Mínimo de vida é registrado antes de reposicionar a exploradora, evitando cont
 - Música tenta tocar já na abertura; navegador pode exigir primeiro gesto. Não contornar política de autoplay. Pausa, foco e som desligado devem suspender e retomar coerentemente.
 - WhatsApp da loja:553598137549, exatamente o número fornecido. Instagram: https://www.instagram.com/loccitane.itajuba/ . Não inventar outro contato.
 - Resgate abre conversa com código e link da página do cupom. Open Graph estático nas páginas /recompensas/roma/, /caju/, /bresil/. Usuário confirmou prévia ao colar manualmente; preenchimento via wa.me pode não gerar prévia automaticamente. Não prometer anexo automático.
-- Compartilhe usa menu nativo com imagem real do jogo e convite, quando suportado. Instagram pode ou não aparecer como destino no dispositivo. Fallback: WhatsApp por texto e download da imagem. Botão Instagram abre perfil da loja.
+- Compartilhe usa menu nativo com a arte promocional aprovada (Clube Itajubense, exploradora e logo da revenda), em public/assets/compartilhar/ultima-aventura-promocional.png, e convite, quando suportado. Instagram pode ou não aparecer como destino no dispositivo. Fallback: WhatsApp por texto e download da imagem. Botão Instagram abre perfil da loja.
 - Cupons são fixos; não há antifraude, banco, CRM ou uso único. Validade26/11/26 é ilustrativa nas artes. Condições oficiais ainda pendentes e oferta.ativa permanece false para o fluxo comercial antigo. Fluxo de demonstração dos cupons já funciona em dev; isto não valida campanha para lançamento.
 
 ## Reinício — regressão prioritária
