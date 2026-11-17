@@ -60,9 +60,10 @@ Chromium com Playwright nesta máquina, sem placa de vídeo, servidor `npx vite 
   - duas caixas na estante esquerda e uma na direita; 3 kits; saída e final;
   - sem erros nem 4xx/5xx.
 - **Música** no 390×844: nenhum som antes do toque; com a partida parada na rua, 74 notas em 4 s sem nenhum efeito sonoro no período; pausada, nenhuma nota nova.
-- **Link de testes no ar:** o deploy do Netlify da `dev` saiu como "ready" para cada push conferido (`6c7de02` e `2d563c0`).
+- **Celular em pé 412×915**: o mesmo percurso do showroom, com o mesmo resultado.
+- **Link de testes no ar** (deploy `f783da1`, "ready" no Netlify), 390×844 com toque emulado: carrega o build novo, nenhum som antes do toque, música tocando depois, exploradora anda com toque, sem rolagem, sem erros e nenhum 404. Os deploys de `6c7de02` e `2d563c0` também saíram "ready".
 
-Capturas reais em `docs/capturas/revisao-*.png`.
+Capturas reais em `docs/capturas/revisao-*.png`: `revisao-fachada-*`, `revisao-interior-*`, `revisao-estante-*` e `revisao-tres-kits-*` em 390×844 e 412×915 (versão nova); `revisao-no-ar-390x844.png` (link no ar); `revisao-celular390-*` e `revisao-computador-*` (antes dos ajustes da fachada: ainda com o mapa e o Pedro menor).
 
 ## O que não foi testado
 
