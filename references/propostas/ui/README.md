@@ -22,3 +22,7 @@ Prancha conceitual gerada com IA em 17/11/2026. Proposta para avaliação do usu
 `hud-dialogos-abertura-proposta.png`: prancha de direção. Não carregar a prancha inteira no jogo. Recriar UI responsiva com CSS/SVG ou sprites próprios, mantendo texto selecionável/acessível. A fonte pixel existente pode ser reutilizada.
 
 Verificar em 390×844, 412×915, paisagem e desktop: HUD sem sobreposição, Karina visível, animação do cesto sem texto por cima, acentos, quebra de linhas, touch e teclado. Esta proposta não foi homologada em navegador.
+
+## Superada pela rodada seguinte
+
+A prancha desta pasta foi considerada distante do jogo pelo usuário. Não implementar a partir dela. Direção atual em `../rodada-hud-tenda/README.md`: creme/vinho, sem cronômetro, contadores após coleta sem total, botão Avançar acima de Caju/Pular, preservar arte real do jogo.
