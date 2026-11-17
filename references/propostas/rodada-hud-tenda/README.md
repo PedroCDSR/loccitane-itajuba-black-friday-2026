@@ -36,3 +36,5 @@ Esta rodada adiciona apenas imagens e documentação. Nenhuma mudança no gamepl
 ### Ajuste final: sprites pequenos
 
 A proposta 05 agora referencia `public/assets/showroom/caju.png` (32×78), `public/assets/showroom/roma.png` (31×78) e `public/assets/produtos/capim-limao-colonia-sprite.png` (32×78). Substituem as artes grandes da versão anterior. Preservar pixels com image-rendering: pixelated e proporção original, sem regenerar embalagens. Captura conferida em navegador headless; jogo continua sem alterações nesta entrega.
+
+Altura visual corrigida: Caju/Romã têm 67px de conteúdo visível dentro do PNG de 78px, enquanto Capim ocupa 78px. A proposta reduz proporcionalmente Capim para 67px e alinha os três conteúdos visíveis à mesma base e topo. Arquivos fonte preservados.
