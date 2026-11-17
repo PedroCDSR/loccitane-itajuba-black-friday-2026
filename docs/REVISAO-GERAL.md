@@ -239,3 +239,15 @@ Seguindo `docs/HANDOFF-CLAUDE.md` (versão consolidada na `main`, `a2563ba`) e o
 ### Observação sobre o Netlify
 
 Os deploys de produção da `main` desde `f3238e3` aparecem como `error`/`skipped` na API do Netlify, sem mensagem de erro. O site publicado continua em `723a7cf`. Vale conferir no painel do Netlify (pode ser uma regra de ignorar build ou o limite do plano).
+
+## Tendas sumindo no "Jogar novamente" e botão Pular abertura (mesmo dia)
+
+Relato do Pedro no Android: depois do final, em "Jogar novamente", as tendas sumiam e a exploradora ficava "no ar", em pé sobre um toldo invisível.
+
+- **Causa provável:** as tendas, a placa "SHOWROOM", o brilho e o "zzz" são as únicas imagens desenhadas em código (canvas). As outras vêm de arquivos. O jogo criava essas imagens só na primeira partida e as reaproveitava depois. Quando o celular descarta a memória de vídeo (trocar de app, tirar print), as imagens de arquivo voltam sozinhas, mas as desenhadas em código podiam não voltar.
+- **Correção** em `create()` de `src/game/Aventura.js`, lista `DESENHADAS`: essas imagens são apagadas e redesenhadas a cada partida, e reenviadas quando o Phaser avisa que o WebGL voltou (evento `restorewebgl`).
+- **Não reproduzido aqui:** no Chromium, mesmo a versão anterior se recupera da perda de contexto simulada (`WEBGL_lose_context`) e as 6 tendas aparecem nos dois casos. Também passaram, sem a falha, o reinício simples e o reinício depois de ir até o interior. Falta confirmar no aparelho.
+- **"Pular abertura"** saiu de dentro da caixa de texto e virou um botão ao lado do AVANÇAR, acima de Caju e Pular, em creme com borda vinho por ser a ação secundária. Fica disponível também durante a cena da capivara.
+- As dicas de primeira partida não aparecem no "Jogar novamente", como antes: são só para a primeira partida da visita.
+
+`npm test` passou (57 de 57) e `npm run build` também. Chromium em 390×844: botões lado a lado (Pular abertura 156×44, AVANÇAR 139×44), o botão some da caixa e encerra a abertura; sem erros.

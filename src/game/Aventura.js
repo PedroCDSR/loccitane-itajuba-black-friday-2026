@@ -43,6 +43,7 @@ const chaoFachada = x => CALCADA.esquerda + (CALCADA.direita - CALCADA.esquerda)
 // Karina (assets em personagens/karina/), a dona, atende no showroom: na porta e depois na bancada.
 const PEDRO_ESCALA = .41, KARINA_ESCALA = .39; // alturas: exploradora 64, Karina 70, Pedro 78
 const PEDRO_PRACA = 1330;
+const DESENHADAS = ['tenda', 'placa', 'brilho', 'bandeira', 'capivara-dormindo', 'zzz'];
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
@@ -64,7 +65,14 @@ export class Aventura extends Phaser.Scene {
   create() {
     if (this.falhas.length) { this.game.events.emit('falha-assets'); this.scene.stop(); return; }
     $('loading').hidden = true;
+    // Texturas desenhadas em código: refeitas a cada partida e quando o navegador recupera o WebGL. No celular,
+    // trocar de app pode descartar a memória de vídeo; sem isso, em "Jogar novamente" as tendas sumiam
+    // (a colisão do toldo continuava e a exploradora ficava "no ar").
+    for (const chave of DESENHADAS) if (this.textures.exists(chave)) this.textures.remove(chave);
     criarArte(this); criarCapivaraDormindo(this); criarZ(this); criarCenario(this);
+    const refazer = () => { for (const chave of DESENHADAS) this.textures.get(chave)?.refresh?.(); };
+    this.game.renderer?.on?.('restorewebgl', refazer);
+    this.events.once('shutdown', () => this.game.renderer?.off?.('restorewebgl', refazer));
     for (const texture of this.textures.getTextureKeys()) this.textures.get(texture).setFilter(Phaser.Textures.FilterMode.NEAREST);
     this.fim = false; this.presentes = 0; this.tempo = 0; this.checkpoint = 80;
     this.proximoArremesso = 0; this.missao = criarMissao(); this.dialogoAberto = false; this.capivaraDoPisao = null;

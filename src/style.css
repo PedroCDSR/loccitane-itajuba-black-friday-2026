@@ -88,9 +88,14 @@ body.jogando #partida{padding-top:0}
 #partida #dialogo .dialogo-mais{position:absolute;right:10px;bottom:6px;width:0;height:0;border:5px solid transparent;border-top:6px solid #942c39;opacity:0}
 #partida #dialogo.pronto .dialogo-mais{opacity:1;animation:pisca .8s steps(2) infinite}
 @keyframes pisca{50%{opacity:0}}
-#partida #dialogo #pular-intro{position:absolute;top:6px;right:8px;padding:4px 2px;background:none;border:0;color:#942c39;font-family:Pixel,monospace;font-size:8px;text-decoration:underline;cursor:pointer}
+
 /* AVANÇAR: separado da caixa, acima dos botões Caju e Pular, só durante o diálogo */
-#partida #controles #fechar-dialogo{position:absolute;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(100% + 8px);z-index:7;width:auto;height:auto;min-height:44px;min-width:0;padding:12px 30px 12px 16px;background:#942c39;color:#f4eddb;border:3px solid #6e1f2a;border-radius:0;font-family:Pixel,monospace;font-size:12px;font-weight:400;letter-spacing:.04em;box-shadow:3px 3px 0 #3b1d1c;touch-action:manipulation}
+/* ações da fala: PULAR ABERTURA (creme, secundária) ao lado de AVANÇAR, acima de Caju e Pular */
+#partida #controles .acoes-fala{position:absolute;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(100% + 8px);z-index:7;display:flex;gap:10px;align-items:stretch;pointer-events:none}
+#partida #controles .acoes-fala button{pointer-events:auto}
+#partida #controles #pular-intro{width:auto;height:auto;min-height:44px;min-width:0;padding:10px 12px;background:#f4eddb;color:#942c39;border:3px solid #942c39;border-radius:0;font-family:Pixel,monospace;font-size:9px;font-weight:400;line-height:1.4;box-shadow:3px 3px 0 #3b1d1c;touch-action:manipulation}
+#partida #controles #pular-intro[hidden]{display:none}
+#partida #controles #fechar-dialogo{position:relative;width:auto;height:auto;min-height:44px;min-width:0;padding:12px 30px 12px 16px;background:#942c39;color:#f4eddb;border:3px solid #6e1f2a;border-radius:0;font-family:Pixel,monospace;font-size:12px;font-weight:400;letter-spacing:.04em;box-shadow:3px 3px 0 #3b1d1c;touch-action:manipulation}
 #partida #controles #fechar-dialogo::after{content:"";position:absolute;right:12px;top:50%;margin-top:-6px;border:6px solid transparent;border-left:8px solid #f4eddb;border-right:0}
 #partida #controles #fechar-dialogo[hidden]{display:none}
 #partida #controles #fechar-dialogo:focus-visible{outline:3px solid #f4eddb;outline-offset:2px}
