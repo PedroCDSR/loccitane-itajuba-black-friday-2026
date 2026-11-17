@@ -1,22 +1,19 @@
 import { SHOWROOM, ALTURA_SHOWROOM } from './config.js';
 
 // Showroom no celular em pé: com o zoom pela altura sobravam ~110 unidades de largura.
-// Aqui ficam o enquadramento do celular em pé, o "mapa da loja" no alto (uma segunda câmera que mostra
-// a tela atual do showroom, fachada ou interior, com as próprias artes) e as setas que apontam para o próximo objetivo.
-export const MAPA = { y1: 128, y2: 246 }; // faixa vertical do showroom que aparece no mapa (estantes e chão)
-export const LARGURA_MIN_SHOWROOM = 150; // largura mínima visível (unidades) no celular em pé
-const LARGURA_TELA = SHOWROOM.largura, LARGURA_TOTAL = SHOWROOM.largura * 2;
+// Aqui ficam o enquadramento do celular em pé e as setas que apontam para o próximo objetivo.
+// O "mapa da loja" no alto saiu a pedido do Pedro (17/11/2026): a câmera do jogo ocupa toda a tela.
+export const LARGURA_MIN_SHOWROOM = 136; // largura mínima visível (unidades) no celular em pé
+const LARGURA_TOTAL = SHOWROOM.largura * 2;
 const CORES = { alvo: 0xf2c14e, jogadora: 0xc8323f, moldura: 0xfff4df, escuro: 0x1f3329 };
 
 // Celular em pé: a tela do jogo é bem mais alta que larga.
 export const emPe = (largura, altura) => altura > largura * 1.15;
 
-// Enquadramento por tamanho de tela, sem Phaser (testável): altura do mapa, zoom e área visível do jogo.
+// Enquadramento por tamanho de tela, sem Phaser (testável): zoom do showroom.
 export function enquadramento(largura, altura) {
-  if (!emPe(largura, altura)) return { mapa: 0, zoom: altura / ALTURA_SHOWROOM };
-  const mapa = Math.round(largura * (MAPA.y2 - MAPA.y1) / LARGURA_TELA);
-  const zoom = Math.min((altura - mapa) / ALTURA_SHOWROOM, largura / LARGURA_MIN_SHOWROOM);
-  return { mapa, zoom };
+  if (!emPe(largura, altura)) return { zoom: altura / ALTURA_SHOWROOM };
+  return { zoom: Math.min(altura / ALTURA_SHOWROOM, largura / LARGURA_MIN_SHOWROOM) };
 }
 
 export class GuiaShowroom {
@@ -37,18 +34,13 @@ export class GuiaShowroom {
     sombra.fillStyle(CORES.escuro, 1).fillRect(x, topo + SHOWROOM.altura + 30, LARGURA_TOTAL, 200);
     this.base.push(sombra);
 
-    // Mapa da loja: segunda câmera no alto da tela, com o showroom inteiro.
-    this.mapa = scene.cameras.add(0, 0, 10, 10).setVisible(false).setBackgroundColor(CORES.escuro).setRoundPixels(true);
-    this.marcasMapa = scene.add.graphics().setDepth(20);
     // Setas da tela principal (tamanho constante na tela: a escala acompanha o zoom).
     this.setas = [];
     this.apontadores = [];
-    scene.cameras.main.ignore(this.marcasMapa);
-    this.alturaMapa = 0;
   }
 
-  // Objetos que só a câmera principal deve mostrar (avisos, setas).
-  soNaPrincipal(obj) { this.mapa.ignore(obj); return obj; }
+  // Mantido para quem chama (avisos, setas): sem o mapa, só existe a câmera principal.
+  soNaPrincipal(obj) { return obj; }
 
   criarSeta() {
     const s = this.scene, g = s.add.graphics();
@@ -67,31 +59,22 @@ export class GuiaShowroom {
     return this.soNaPrincipal(g);
   }
 
-  // Liga o mapa e ajusta a câmera principal ao tamanho da tela; devolve o zoom usado.
-  layout(ativo, x0 = SHOWROOM.x) {
+  // Ajusta a câmera principal ao tamanho da tela; devolve o zoom do showroom (ativo) ou 0.
+  layout(ativo) {
     const s = this.scene, cam = s.cameras.main, w = s.scale.width, h = s.scale.height;
-    const { mapa, zoom } = ativo ? enquadramento(w, h) : { mapa: 0, zoom: 0 };
-    const mostrar = ativo && mapa > 0;
-    if (this.alturaMapa !== (mostrar ? mapa : 0) || cam.height !== h - (mostrar ? mapa : 0) || cam.width !== w || this.x0 !== x0) {
-      this.alturaMapa = mostrar ? mapa : 0; this.x0 = x0;
-      cam.setViewport(0, this.alturaMapa, w, h - this.alturaMapa);
-      if (mostrar) {
-        this.mapa.setViewport(0, 0, w, mapa).setZoom(w / LARGURA_TELA);
-        this.mapa.centerOn(x0 + LARGURA_TELA / 2, (MAPA.y1 + MAPA.y2) / 2);
-      }
-    }
-    this.mapa.setVisible(mostrar);
-    for (const b of this.base) b.setVisible(mostrar);
+    const { zoom } = ativo ? enquadramento(w, h) : { zoom: 0 };
+    if (cam.height !== h || cam.width !== w || cam.y !== 0) cam.setViewport(0, 0, w, h);
+    const reflexo = ativo && emPe(w, h); // o reflexo do piso só aparece quando sobra altura embaixo
+    for (const b of this.base) b.setVisible(reflexo);
     return zoom;
   }
   esconder() {
-    this.mapa.setVisible(false); this.marcasMapa.clear();
     for (const o of [...this.setas, ...this.apontadores]) o.setVisible(false);
   }
 
   // alvos: [{ x, y, icone, frame?, escala? }] em unidades do mundo. Fora da tela vira seta na borda; dentro, um triângulo
-  // que balança em cima do alvo. No mapa, o alvo pisca e a moldura mostra o pedaço visível.
-  atualizar(alvos, jogadora, agora) {
+  // que balança em cima do alvo.
+  atualizar(alvos, _jogadora, agora) {
     const cam = this.scene.cameras.main, v = cam.worldView, escala = this.scene.scale;
     // seta com ~38 px de diâmetro na tela, no celular e no computador (o canvas é reduzido para caber na página)
     const cssPorPx = (escala.displaySize?.width || escala.width) / escala.width;
@@ -114,18 +97,5 @@ export class GuiaShowroom {
       }
     });
     for (let i = alvos.length; i < this.setas.length; i++) { this.setas[i].setVisible(false); this.apontadores[i].setVisible(false); }
-
-    const g = this.marcasMapa; g.clear();
-    if (!this.mapa.visible) return;
-    const pisca = .55 + .45 * Math.sin(agora / 200);
-    g.lineStyle(2, CORES.moldura, .9).strokeRect(v.x, Math.max(v.y, MAPA.y1 + 1), v.width, Math.min(v.bottom, MAPA.y2 - 1) - Math.max(v.y, MAPA.y1 + 1));
-    for (const a of alvos) {
-      g.lineStyle(5, CORES.escuro, .7 * pisca).strokeCircle(a.x, a.y, 11);
-      g.lineStyle(3, CORES.alvo, pisca).strokeCircle(a.x, a.y, 11);
-    }
-    // a exploradora: um losango vermelho acima da cabeça
-    const jx = jogadora.x, jy = jogadora.y - 52;
-    g.fillStyle(CORES.moldura, 1).fillTriangle(jx - 8, jy, jx + 8, jy, jx, jy + 11).fillTriangle(jx - 8, jy, jx + 8, jy, jx, jy - 7);
-    g.fillStyle(CORES.jogadora, 1).fillTriangle(jx - 5.5, jy, jx + 5.5, jy, jx, jy + 7.5).fillTriangle(jx - 5.5, jy, jx + 5.5, jy, jx, jy - 4.5);
   }
 }

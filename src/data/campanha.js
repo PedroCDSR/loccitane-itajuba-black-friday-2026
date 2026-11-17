@@ -4,7 +4,7 @@ export const CAMPANHA = {
   subtitulo: 'Última Black Friday L’Occitane Itajubá',
   periodo: 'Novembro de 2026',
   despedida: 'Nossa loja vai encerrar este ciclo. Vamos celebrar os encontros e os presentes que fizeram parte dessa história.',
-  boasVindasPedro: 'Você chegou! Cada kit leva um Caju, uma Romã e uma caixa de presente. Uma caixa ficou aqui fora, no alto da marquise: quique no toldo vermelho. As outras duas estão no alto das estantes lá dentro. Depois é só passar na bancada.',
+  boasVindasPedro: 'Você chegou! Cada kit leva um Caju, uma Romã e uma caixa de presente. As três caixas estão no alto das estantes, lá dentro: suba pelas prateleiras. Depois é só passar na bancada.',
   // Abertura encenada no jogo. Ficção de jogo: não descreve um incidente real da loja.
   introCena: [
     { titulo: 'ITAJUBÁ · NOVEMBRO DE 2026', texto: 'Fim de tarde em Itajubá. Hoje é a última Black Friday do showroom L’Occitane au Brésil, e a entrega de Caju e Romã acabou de chegar!' },

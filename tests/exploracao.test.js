@@ -27,7 +27,7 @@ function cena() {
     dialogoAberto: false, pedroPerto: false, pedroConversou: true, pedidoInteracao: false, ultimoHUD: '', jogador,
     entrada: { esquerda: false, atualizar() {}, limpar() {}, ignorarAteSoltar() {} },
     physics: { world: { setBounds(...b) { mundo.bounds = b; }, pause() { mundo.pausado++; }, resume() { mundo.retomado++; } } },
-    solidos: { contains: p => pisos.has(p), add: p => pisos.add(p) }, pisoShowroom: { piso: true },
+    solidos: { contains: p => pisos.has(p), add: p => pisos.add(p) }, pisoShowroom: [{ piso: 'interior' }, { piso: 'calcada' }],
     cameras: { main: cam }, scale: { width: 960, height: 960 }, time: { delayedCall(_ms, f) { f(); } },
     capivaras: { getChildren: () => s.listaCapivaras }, listaCapivaras: [], morros: {}, casas: {}, pedroX: SHOWROOM.x + 129, estacoes: [], faltaParaKit: () => [],
     game: { events: { emit: (...a) => s.emitidos.push(a) } }, itens: { getChildren: () => [] },
@@ -58,7 +58,7 @@ test('voltar à cidade e retornar ao showroom preserva missão, itens e capivara
   // rua → showroom pela bandeira
   s.jogador.x = SHOWROOM.x - 30; s.update(0, 16);
   assert.equal(s.sala, 'showroom'); assert.equal(s.missao.fase, 'fachada'); assert.equal(s.estado, 'jogo');
-  assert.equal(mundo.bounds[0], SHOWROOM.x); assert.ok(pisos.size === 1); assert.equal(cam.zoom, 960 / ALTURA_SHOWROOM);
+  assert.equal(mundo.bounds[0], SHOWROOM.x); assert.ok(pisos.size === 2); assert.equal(cam.zoom, 960 / ALTURA_SHOWROOM);
   const chegada = s.jogador.x;
   // parado na chegada não volta sozinho; nem andando para a direita
   s.update(0, 16); s.update(0, 16); assert.equal(s.sala, 'showroom');
@@ -79,7 +79,7 @@ test('voltar à cidade e retornar ao showroom preserva missão, itens e capivara
   // rua → showroom de novo: a fase não regride para a fachada e a métrica de chegada não se repete
   s.entrada.esquerda = false; s.jogador.x = SHOWROOM.x - 30; s.update(0, 16);
   assert.equal(s.sala, 'showroom'); assert.equal(s.missao.fase, 'showroom'); assert.equal(s.jogador.x, chegada);
-  assert.equal(metricas.filter(n => n === 'chegada_showroom').length, 1); assert.equal(pisos.size, 1);
+  assert.equal(metricas.filter(n => n === 'chegada_showroom').length, 1); assert.equal(pisos.size, 2);
   assert.equal(mundo.pausado, mundo.retomado, 'toda transição retoma a física');
   assert.equal(s.fim, false);
 });

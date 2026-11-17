@@ -5,6 +5,8 @@
 // - definirAtivo(false) suspende tudo (pausa, aba escondida, janela sem foco); definirAtivo(true) retoma.
 // - Volumes: efeitos num barramento a 0,5 e música a 0,1, com um compressor no fim para segurar picos.
 
+import { MUSICA } from '../data/musica.js';
+
 const CHAVE = 'aventura-som';
 const N = m => 440 * 2 ** ((m - 69) / 12); // nota MIDI → Hz
 
@@ -148,30 +150,33 @@ export function tocar(nome) {
   som(ctx, efeitos, t + .005);
 }
 
-// ---------- Música de fundo: 8 compassos em Dó maior, 92 bpm, timbres suaves e volume baixo ----------
-const COLCHEIA = 60 / 92 / 2;
-const ACORDES = [[48, 55, 64], [45, 52, 60], [41, 48, 57], [43, 50, 59], [48, 55, 64], [45, 52, 60], [41, 48, 57], [43, 50, 62]]; // C Am F G C Am F G
-const MELODIA = [
-  76, null, 79, null, 81, 79, 76, null, 72, null, 76, null, 74, null, 72, null,
-  69, null, 72, null, 74, 76, 77, null, 74, null, 71, null, 74, null, null, null,
-  76, null, 79, null, 81, null, 84, 81, 79, null, 76, null, 74, 76, 72, null,
-  69, null, 72, 74, 77, null, 76, 74, 71, null, 74, null, 72, null, null, null,
-];
-let relogioMusica = 0, proxima = 0, passo = 0;
-export function tocarCompasso(c, saida, t, i) { // uma colcheia da trilha (exportado para conferência)
-  const acorde = ACORDES[Math.floor(i / 8) % ACORDES.length], p = i % 8, nota = MELODIA[i % MELODIA.length];
-  if (p === 0 || p === 4) tom(c, saida, t, { f: N(acorde[0] + (p === 4 ? 7 : 0)), dur: COLCHEIA * 3.6, tipo: 'triangle', vol: .35, filtro: 700, ataque: .02 });
-  if (p === 2 || p === 6) for (const n of acorde.slice(1)) tom(c, saida, t, { f: N(n + 12), dur: COLCHEIA * 1.6, vol: .1, ataque: .01, filtro: 1600 });
-  if (nota) tom(c, saida, t, { f: N(nota), dur: COLCHEIA * 1.8, vol: .3, ataque: .015, filtro: 2600 });
+// ---------- Música de fundo: "Espalhe Amor" (L’Occitane), enviada pelo Pedro em MIDI ----------
+// O MIDI vira uma lista de notas em src/data/musica.js (ferramentas/converter_midi.py) e toca neste sintetizador,
+// com timbre de piano macio, em loop. Sem arquivo de áudio nem biblioteca de MIDI.
+const SEG_POR_TICK = 60 / MUSICA.bpm / MUSICA.divisao, FIM_MUSICA = MUSICA.fim * SEG_POR_TICK + .6; // pausa curta antes de repetir
+const TOTAL_NOTAS = MUSICA.notas.length / 4;
+export function tocarNota(c, saida, t, nota, vel, dur) { // uma nota de piano (exportado para conferência)
+  const vol = .48 * vel / 127, grave = nota < 48; // pico da trilha ~0,08, como a música anterior
+  const queda = Math.min(2.2, Math.max(.18, dur + .12)); // a nota morre sozinha, como corda de piano
+  tom(c, saida, t, { f: N(nota), dur: queda, tipo: 'triangle', vol, ataque: .005, filtro: grave ? 700 : 2400 });
+  tom(c, saida, t, { f: N(nota + 12), dur: queda * .4, tipo: 'sine', vol: vol * (grave ? .15 : .25), ataque: .004 });
 }
+let relogioMusica = 0, inicioVolta = 0, indice = 0;
 function agendar() {
   if (!ctx || ctx.state !== 'running') return;
-  if (proxima < ctx.currentTime) proxima = ctx.currentTime + .06; // aba voltou de segundo plano: recomeça do ponto atual
-  while (proxima < ctx.currentTime + .25) { tocarCompasso(ctx, trilha, proxima, passo++); proxima += COLCHEIA; }
+  const agora = ctx.currentTime;
+  if (!inicioVolta || inicioVolta + FIM_MUSICA < agora - 1) { inicioVolta = agora + .08; indice = 0; } // começo ou aba voltou de segundo plano
+  for (let n = 0; n < 64; n++) { // no máximo 64 notas por chamada
+    if (indice >= TOTAL_NOTAS) { if (inicioVolta + FIM_MUSICA > agora + .3) return; inicioVolta += FIM_MUSICA; indice = 0; }
+    const k = indice * 4, t = inicioVolta + MUSICA.notas[k] * SEG_POR_TICK;
+    if (t > agora + .3) return;
+    if (t >= agora - .05) tocarNota(ctx, trilha, Math.max(t, agora), MUSICA.notas[k + 2], MUSICA.notas[k + 3], MUSICA.notas[k + 1] * SEG_POR_TICK);
+    indice++;
+  }
 }
 export function musica(tocando) {
   clearInterval(relogioMusica); relogioMusica = 0;
   if (!tocando) return;
-  passo = 0; proxima = 0;
+  inicioVolta = 0; indice = 0;
   relogioMusica = setInterval(agendar, 60);
 }

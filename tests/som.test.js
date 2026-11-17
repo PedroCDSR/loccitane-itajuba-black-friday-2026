@@ -36,3 +36,16 @@ test('cada nota tem queda de volume no código, não dentro de comentário (sem 
   const ativas = fonte.split('\n').map(l => l.replace(/\/\/.*$/, ''));
   assert.equal(ativas.filter(l => /exponentialRampToValueAtTime\(\.0001, t \+ dur\)/.test(l)).length, 2);
 });
+
+test('música de fundo vem do MIDI enviado pelo Pedro: notas válidas, em ordem, ~1 min 44 s', async () => {
+  const { MUSICA } = await import('../src/data/musica.js');
+  const n = MUSICA.notas;
+  assert.equal(n.length % 4, 0); assert.equal(n.length / 4, 1108);
+  for (let i = 0; i < n.length; i += 4) {
+    assert.ok(n[i + 1] > 0 && n[i + 2] >= 21 && n[i + 2] <= 108 && n[i + 3] > 0 && n[i + 3] <= 127);
+    if (i) assert.ok(n[i] >= n[i - 4], 'notas em ordem de início');
+  }
+  const segundos = MUSICA.fim / MUSICA.divisao * 60 / MUSICA.bpm;
+  assert.ok(segundos > 100 && segundos < 108, `${segundos} s`);
+  assert.equal(typeof som.tocarNota, 'function'); assert.equal(typeof som.musica, 'function');
+});

@@ -32,6 +32,12 @@ const VOLTA = FACHADA + 12, CHEGADA_SHOWROOM = FACHADA + 34, CHEGADA_CIDADE = PO
 // A fachada nova é fechada: entra-se pela porta (botão "Entrar no showroom", E ou Enter), no centro da arte.
 const PORTA = FACHADA + 157, PASSAGEM = 14, CHEGADA_INTERIOR = INTERIOR + 34, CHEGADA_JARDIM = PORTA;
 const TRECHO = { fachada: FACHADA, interior: INTERIOR };
+// Calçada da fachada: na arte ela desce levemente da esquerda (y 255) para a direita (y 241). A exploradora anda
+// sobre ela, acompanhando a inclinação, e não no nível do jardim. O piso é feito de degraus de 4 unidades
+// (0,18 de diferença cada), que a física sobe e desce sem travar.
+const CALCADA = { esquerda: 255, direita: 241, degrau: 4 };
+const chaoFachada = x => CALCADA.esquerda + (CALCADA.direita - CALCADA.esquerda) * Math.min(1, Math.max(0, (x - FACHADA) / SHOWROOM.largura));
+const PEDRO_ESCALA = .41; // o Pedro é um adulto: um pouco mais alto que a exploradora
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
@@ -110,7 +116,7 @@ export class Aventura extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.setZoom(this.scale.height / ALTURA_CIDADE); cam.setBounds(0, 0, FACHADA, ALTURA); cam.startFollow(this.jogador, true, .15, .15); cam.setDeadzone(64, 56);
     this.sala = 'cidade'; this.trecho = 'fachada';
-    this.guia = new GuiaShowroom(this); // mapa da loja e setas (celular em pé)
+    this.guia = new GuiaShowroom(this); // setas para o próximo objetivo e enquadramento do celular em pé
     this.entrada = new Entrada(this);
     this.events.once('shutdown', () => {
       this.uiAbort.abort(); $('controles').hidden = true; $('dialogo').hidden = true; $('interagir').hidden = true;
@@ -188,28 +194,32 @@ export class Aventura extends Phaser.Scene {
     const { topo } = SHOWROOM;
     this.add.image(FACHADA, topo, 'fachada').setOrigin(0).setScale(1 / 3);
     this.add.image(INTERIOR, topo, 'interior').setOrigin(0).setScale(1 / 3);
-    const piso = this.add.zone(FACHADA + SHOWROOM.largura, 255, SHOWROOM.largura * 2, 30);
+    // piso do interior (reto) e calçada da fachada (degraus finos seguindo a inclinação)
+    const piso = this.add.zone(INTERIOR + SHOWROOM.largura / 2, 255, SHOWROOM.largura, 30);
     this.physics.add.existing(piso, true);
-    this.pisoShowroom = piso;
+    this.pisoShowroom = [piso];
+    for (let x = FACHADA; x < INTERIOR; x += CALCADA.degrau) {
+      const topo = chaoFachada(x + CALCADA.degrau / 2), degrau = this.add.zone(x + CALCADA.degrau / 2, topo + 20, CALCADA.degrau, 40);
+      this.physics.add.existing(degrau, true); this.pisoShowroom.push(degrau);
+    }
     const tampo = (x1, x2, y) => this.umSentido(this.plataformas, (x1 + x2) / 2, y + 3, x2 - x1);
-    // fachada fechada: o toldo vermelho sobre a porta quica (como o das tendinhas) e leva à marquise
-    this.umSentido(this.toldos, FACHADA + 155, 177, 84);
-    tampo(FACHADA + 113, FACHADA + 318, 146);
+    // fachada fechada: só a calçada, o Pedro e a porta (sem subir no toldo nem na marquise, pedido do Pedro)
     // interior: mesa e duas prateleiras de cada estante (medidas sobre a arte, ver docs/SHOWROOM-JOGAVEL.md)
     tampo(px(INTERIOR, 745), px(INTERIOR, 1132), py(646));
     for (const [x1, x2] of [[52, 153], [234, 314]]) for (const y of [183, 150]) tampo(INTERIOR + x1, INTERIOR + x2, y);
-    // Itens do showroom: uma caixa no alto da marquise, duas no alto das estantes e um par de reserva no jardim.
+    // Itens do showroom: as três caixas no alto das estantes do interior (duas na da esquerda, uma na da direita)
+    // e um par de reserva de Caju e Romã na calçada da fachada.
     this.itensShowroom = [
-      ['caixa', FACHADA + 290, 132], ['caixa', INTERIOR + 72, 138], ['caixa', INTERIOR + 296, 138],
-      ['caju', FACHADA + 238, 222], ['roma', FACHADA + 262, 222],
+      ['caixa', INTERIOR + 72, 138], ['caixa', INTERIOR + 136, 138], ['caixa', INTERIOR + 296, 138],
+      ['caju', FACHADA + 238, chaoFachada(FACHADA + 238) - 18], ['roma', FACHADA + 262, chaoFachada(FACHADA + 262) - 18],
     ];
     // Pedro recebe na porta; depois da conversa ele entra e espera ao lado da bancada.
     this.pedroX = FACHADA + 122; // ao lado da porta, na frente do pilar de pedra
-    this.pedro = criarPedro(this, this.pedroX, CHAO + 1, .316).setDepth(3).setInteractive({ useHandCursor: true });
+    this.pedro = criarPedro(this, this.pedroX, chaoFachada(this.pedroX) + 1, PEDRO_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
     this.pedro.off('animationcomplete-pedro-aceno');
     this.pedro.on('animationcomplete-pedro-aceno', () => this.pedro.play(this.dialogoAberto ? 'pedro-conversa' : 'pedro-parado'));
     this.pedro.on('pointerup', () => { if (this.pedroPerto) this.pedidoInteracao = true; });
-    this.pedroBancada = criarPedro(this, INTERIOR + 229, CHAO + 1, .316).setDepth(3).setAlpha(0);
+    this.pedroBancada = criarPedro(this, INTERIOR + 229, CHAO + 1, PEDRO_ESCALA).setDepth(3).setAlpha(0);
     this.pedroBancada.on('animationcomplete-pedro-aceno', () => this.pedroBancada.play('pedro-parado'));
     // Bancada: três lugares marcados; o kit se monta ao passar com os três itens.
     for (let i = 0; i < META_KITS; i++) {
@@ -370,7 +380,7 @@ export class Aventura extends Phaser.Scene {
       this.sala = destino === 'cidade' ? 'cidade' : 'showroom';
       if (this.sala === 'showroom') {
         if (this.missao.fase === 'cidade') { this.missao.fase = 'fachada'; registrar('chegada_showroom'); }
-        if (!this.solidos.contains(this.pisoShowroom)) this.solidos.add(this.pisoShowroom);
+        for (const p of this.pisoShowroom) if (!this.solidos.contains(p)) this.solidos.add(p);
         const [trecho, chegada, direita] = { showroom: ['fachada', CHEGADA_SHOWROOM, true], interior: ['interior', CHEGADA_INTERIOR, true], jardim: ['fachada', CHEGADA_JARDIM, true] }[destino];
         this.trecho = trecho;
         if (trecho === 'interior') {
@@ -378,7 +388,7 @@ export class Aventura extends Phaser.Scene {
           if (this.missao.fase !== 'showroom') { this.missao.fase = 'showroom'; this.time.delayedCall(900, () => this.aviso('Caixas no alto das estantes!')); }
         }
         this.physics.world.setBounds(TRECHO[trecho], 0, SHOWROOM.largura, ALTURA);
-        this.jogador.body.reset(chegada, CHAO); this.jogador.olhandoDireita = direita; this.checkpoint = chegada;
+        this.jogador.body.reset(chegada, trecho === 'fachada' ? chaoFachada(chegada) : CHAO); this.jogador.olhandoDireita = direita; this.checkpoint = chegada;
         this.enquadrar(); cam.centerOn(chegada + (direita ? 40 : -40), 180);
       } else {
         this.physics.world.setBounds(0, 0, FACHADA, ALTURA);
@@ -459,7 +469,7 @@ export class Aventura extends Phaser.Scene {
 
   contextoInteracao() {
     if (this.pedroPerto && !this.pedroConversou && !this.dialogoAberto) return { tipo: 'pedro', texto: 'Conversar com Pedro' };
-    if (this.sala === 'showroom' && this.trecho === 'fachada' && Math.abs(this.jogador.x - PORTA) < 20 && this.jogador.y > CHAO - 4 && (this.jogador.body.blocked?.down ?? true)) return { tipo: 'porta', texto: 'Entrar no showroom' };
+    if (this.sala === 'showroom' && this.trecho === 'fachada' && Math.abs(this.jogador.x - PORTA) < 20 && this.jogador.y > chaoFachada(this.jogador.x) - 6) return { tipo: 'porta', texto: 'Entrar no showroom' };
     return null;
   }
   interagir(contexto) {
@@ -508,8 +518,8 @@ export class Aventura extends Phaser.Scene {
       caju: this.missao.coletados.caju, roma: this.missao.coletados.roma, kits: this.missao.kits });
     this.scene.stop();
   }
-  // Cidade: zoom pela altura da tela. Showroom no celular em pé: mapa da loja no alto e zoom limitado para
-  // mostrar ao menos 150 unidades de largura (antes ~110); o que sobra embaixo é um reflexo do piso.
+  // Cidade: zoom pela altura da tela. Showroom no celular em pé: zoom limitado para mostrar ao menos
+  // LARGURA_MIN_SHOWROOM unidades de largura; o que sobra embaixo é um reflexo escurecido do piso.
   enquadrar() {
     const cam = this.cameras.main, showroom = this.sala === 'showroom';
     const x0 = TRECHO[this.trecho] ?? FACHADA;
@@ -522,7 +532,7 @@ export class Aventura extends Phaser.Scene {
   }
   // Para onde ir no showroom: Pedro, caixas, produtos de reserva, o próximo lugar livre da bancada e a saída.
   alvosShowroom() {
-    if (!this.pedroConversou) return [{ x: this.pedroX, y: py(792) - 58, icone: 'pedro-npc', frame: 'parado-0', escala: .075 }];
+    if (!this.pedroConversou) return [{ x: this.pedroX, y: this.pedro.getTopCenter().y + 6, icone: 'pedro-npc', frame: 'parado-0', escala: .075 }];
     if (this.missao.kits >= META_KITS) return this.alvosNestaTela([{ x: MUNDO - 22, y: 200, icone: 'sacola', escala: .22 }]);
     const alvos = [];
     const falta = faltaParaKit(this.missao);
