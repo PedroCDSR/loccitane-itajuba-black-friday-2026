@@ -7,7 +7,7 @@ import { percentualSeguro, podeResgatar, linkResgate, linkCompartilhar } from '.
 import { registrar } from './services/metricas.js';
 import { alternarSom } from './services/som.js';
 const $=id=>document.getElementById(id);
-let jogo, total=0, emPartida=false, pausado=false, etapaIntro=0;
+let jogo, total=0, emPartida=false, pausado=false;
 $('despedida').textContent=CAMPANHA.despedida;
 $('som').onclick=()=>{const ligado=alternarSom();$('som').textContent=`Som: ${ligado?'ligado':'desligado'}`;$('som').setAttribute('aria-pressed',String(ligado));};
 function pausar(){if(!emPartida||pausado||!jogo)return;const cena=jogo.scene.getScene('Aventura');if(!cena?.entrada)return;pausado=true;cena.entrada.limpar();jogo.scene.pause('Aventura');$('pausa').hidden=false;}
@@ -24,28 +24,20 @@ function concluir({presentes, caju=0, roma=0, kits=0, motivo}){
   $('beneficio').textContent=podeResgatar(CAMPANHA)?`Seu benefício: ${percentualSeguro(CAMPANHA.oferta.descontoPercentual)}% de desconto.`:'Prévia do benefício: até 10% de desconto. Resgate em preparação.';
   $('condicoes').textContent=podeResgatar(CAMPANHA)?`Validade: ${CAMPANHA.oferta.validade}. ${CAMPANHA.oferta.condicoes}`:'A oferta será ativada após a definição de validade e condições pela loja.';
 }
-async function iniciar(){
-  $('inicio').hidden=true;$('intro').hidden=true;$('final').hidden=true;$('resgate').hidden=true;$('resgate').reset();$('partida').hidden=false;$('controles').hidden=false;$('pausar').hidden=false;document.body.classList.add('jogando');emPartida=true;pausado=false;
+async function iniciar(comIntro=false){
+  $('inicio').hidden=true;$('final').hidden=true;$('resgate').hidden=true;$('resgate').reset();$('partida').hidden=false;$('controles').hidden=true;$('pausar').hidden=false;document.body.classList.add('jogando');emPartida=true;pausado=false;
   $('loading').hidden=false;$('tentar-carga').hidden=true;$('loading-texto').textContent='Preparando a aventura…';
   registrar('inicio');
-  if(jogo){jogo.scene.start('Aventura');return;}
+  if(jogo){jogo.registry.set('comIntro',comIntro);jogo.scene.start('Aventura');return;}
   jogo=new Phaser.Game({type:Phaser.AUTO,parent:'jogo',width:LARGURA*2,height:ALTURA*2,pixelArt:true,roundPixels:true,backgroundColor:'#cdd7b0',scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},input:{activePointers:4},audio:{noAudio:true},physics:{default:'arcade',arcade:{gravity:{x:0,y:JOGADOR.gravidade},debug:false}},scene:[Aventura]});
+  jogo.registry.set('comIntro',comIntro);
   jogo.events.on('conclusao',concluir);
   jogo.events.on('falha-assets',()=>{emPartida=false;$('loading-texto').textContent='Não foi possível carregar todas as imagens. Confira sua conexão e tente novamente.';$('tentar-carga').hidden=false;});
   if(import.meta.env.DEV)window.jogo=jogo;
 }
-$('tentar-carga').onclick=()=>{jogo?.destroy(true);jogo=null;iniciar();};
-function mostrarIntro(){
-  $('inicio').hidden=true;$('final').hidden=true;$('intro').hidden=false;
-  const etapa=CAMPANHA.intro[etapaIntro];
-  $('intro-etapa').textContent=`SUA MISSÃO · ${etapaIntro+1}/${CAMPANHA.intro.length}`;
-  $('intro-titulo').textContent=etapa.titulo;$('intro-texto').textContent=etapa.texto;
-  $('intro-proximo').textContent=etapaIntro===CAMPANHA.intro.length-1?'Jogar no modo fácil →':'Continuar →';
-  $('intro-titulo').focus({preventScroll:true});
-}
-$('jogar').onclick=()=>{etapaIntro=0;mostrarIntro();};
-$('intro-proximo').onclick=()=>{if(etapaIntro<CAMPANHA.intro.length-1){etapaIntro++;mostrarIntro();}else iniciar();};
-$('intro-pular').onclick=iniciar;$('novamente').onclick=iniciar;
+$('tentar-carga').onclick=()=>{jogo?.destroy(true);jogo=null;iniciar(true);};
+// A abertura é encenada dentro do jogo; "Jogar novamente" vai direto para a cidade.
+$('jogar').onclick=()=>iniciar(true);$('novamente').onclick=()=>iniciar(false);
 $('ver-oferta').onclick=()=>{
   registrar('clique_oferta',{presentes:total});$('resgate').hidden=false;
   const pronto=podeResgatar(CAMPANHA);$('enviar').disabled=!pronto;$('nome').disabled=!pronto;$('atendimento').disabled=!pronto;$('marketing').disabled=!pronto;

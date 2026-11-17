@@ -2,19 +2,26 @@ import * as Phaser from 'phaser';
 import { Jogador } from './Jogador.js';
 import { Entrada } from './Entrada.js';
 import { criarArte } from './arte.js';
+import { criarCenario, TENDA } from './cenario.js';
 import { carregarArte } from './assets.js';
 import { carregarPedro, criarPedro } from './pedro-animacoes.js';
-import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, META_KITS } from './missao.js';
+import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, faltaParaKit, META_KITS } from './missao.js';
 import { ALTURA, MUNDO, DURACAO_SEGUNDOS, SHOWROOM, ZOOM_CIDADE, ZOOM_SHOWROOM, MODO_FACIL } from './config.js';
 import { CAMPANHA } from '../data/campanha.js';
 import { registrar } from '../services/metricas.js';
 import { tocar } from '../services/som.js';
 
-const LUGARES = [['clube',450],['fonte',1250],['cafe',2000],['igreja',2750],['posto',3450],['estatua',4100],['helicoptero',4550]];
+// ---------- Traçado da rua (unidades do mundo) ----------
+// Marcos de Itajubá na ordem real; árvores, tendas e cestos ficam só nos vãos entre eles.
+const LUGARES = [['clube', 450], ['fonte', 1250], ['cafe', 2000], ['igreja', 2750], ['posto', 3450], ['estatua', 4100], ['helicoptero', 4550]];
+const ARVORES = [[190, 'arvore2'], [660, 'arvore'], [1420, 'arvore2'], [2170, 'arvore'], [2925, 'arvore2'], [3590, 'arvore'], [4290, 'arvore2'], [4990, 'arvore']];
+const TENDAS = [870, 1630, 2385, 3130, 3795, 4800];
+const CESTOS = [[1065, 1], [1830, 2], [2575, 1], [3320, 2], [3985, 2], [4690, 1]]; // [x, quantos empilhados]
+const CAPIVARAS = [1180, 2265, 3015, 3700, 4380];
 const CHAO = 240;
-const FIM_CIDADE = SHOWROOM.x - 620;
 const FACHADA = SHOWROOM.x, INTERIOR = SHOWROOM.x + SHOWROOM.largura;
-const ESCALA = SHOWROOM.largura / 1672;
+const PORTAL = FACHADA - 46; // a bandeira do fim da rua: passou dela, a tela escurece e abre no showroom
+const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
 
@@ -22,57 +29,56 @@ export class Aventura extends Phaser.Scene {
   constructor() { super('Aventura'); }
   preload() {
     this.falhas = [];
-    const progresso = valor => { $('loading-texto').textContent = `Preparando a aventura · ${Math.round(valor*100)}%`; };
+    const progresso = valor => { $('loading-texto').textContent = `Preparando a aventura · ${Math.round(valor * 100)}%`; };
     const falhou = arquivo => this.falhas.push(arquivo.key);
     this.load.on('progress', progresso); this.load.on('loaderror', falhou);
     this.events.once('shutdown', () => { this.load.off('progress', progresso); this.load.off('loaderror', falhou); });
     carregarArte(this);
-    for (const n of ['fachada','interior','caju','roma']) this.load.image(n, `assets/showroom/${n}.png`);
+    for (const n of ['fachada', 'interior', 'caju', 'roma']) this.load.image(n, `assets/showroom/${n}.png`);
     carregarPedro(this);
   }
+
   create() {
     if (this.falhas.length) { this.game.events.emit('falha-assets'); this.scene.stop(); return; }
     $('loading').hidden = true;
-    criarArte(this);
+    criarArte(this); criarCenario(this);
     for (const texture of this.textures.getTextureKeys()) this.textures.get(texture).setFilter(Phaser.Textures.FilterMode.NEAREST);
     this.fim = false; this.presentes = 0; this.tempo = 0; this.checkpoint = 80;
     this.proximoArremesso = 0; this.missao = criarMissao(); this.dialogoAberto = false;
-    this.pedroPerto = false; this.vistaTravada = false; this.pedidoInteracao = false;
-    this.estacoes = []; this.ultimoHUD = ''; this.uiAbort = new AbortController();
-    $('fechar-dialogo').addEventListener('click', () => this.fecharDialogo(), { signal: this.uiAbort.signal });
-    this.add.image(240, 0, 'ceu').setOrigin(0).setScale(1/3).setScrollFactor(0, 1);
-    this.morros = this.add.tileSprite(240, 0, 480, ALTURA, 'morros').setOrigin(0).setTileScale(1/3).setScrollFactor(0, 1);
-    this.casas = this.add.tileSprite(240, CHAO-ALTURA, 480, ALTURA, 'casas').setOrigin(0).setTileScale(1/3).setScrollFactor(0, 1);
-    for (const [n, x] of LUGARES) this.add.image(x, CHAO, n).setOrigin(.5, 1).setScale(n === 'igreja' ? .3 : 1/3);
-    for (let x = 150; x < FIM_CIDADE; x += 520) this.add.image(x, CHAO, x % 3 ? 'arvore' : 'arvore2').setOrigin(.5, 1).setScale(1/3);
-    this.add.tileSprite(0, CHAO, FACHADA, 32, 'chao').setOrigin(0).setTileScale(1/3).setDepth(1);
-    this.solidos = this.physics.add.staticGroup();
-    const pisoCidade = this.add.zone(FACHADA/2, 256, FACHADA, 32);
-    this.physics.add.existing(pisoCidade, true); this.solidos.add(pisoCidade);
-    for (let x = 650; x < FIM_CIDADE; x += 600) {
-      this.add.image(x, CHAO, 'caixa').setOrigin(.5, 1).setScale(1/3).setDepth(2);
-      // O cesto ocupa apenas os 60 px inferiores da célula de 96 px: colisão acompanha a arte.
-      const corpo = this.add.zone(x, CHAO-10, 32, 20);
-      this.physics.add.existing(corpo, true); this.solidos.add(corpo);
-    }
+    this.pedroPerto = false; this.pedroConversou = false; this.pedidoInteracao = false;
+    this.estacoes = []; this.ultimoHUD = ''; this.avisoFaltaAte = 0;
+    this.uiAbort = new AbortController();
+    $('fechar-dialogo').addEventListener('click', () => this.avancarDialogo(), { signal: this.uiAbort.signal });
+    $('pular-intro').addEventListener('click', () => this.terminarIntro(), { signal: this.uiAbort.signal });
+
+    this.criarCidade();
     this.criarShowroom();
     this.jogador = new Jogador(this, 80, CHAO).setDepth(5);
     this.physics.add.collider(this.jogador, this.solidos);
     this.physics.add.collider(this.jogador, this.plataformas);
+    // Toldo das tendas: ao cair sobre ele, quica alto (segurando PULAR vai mais alto).
+    this.physics.add.collider(this.jogador, this.toldos, (j, toldo) => {
+      if (!j.body.touching.down) return;
+      j.quicar(this.entrada.pular ? 430 : 360); tocar('pulo');
+      const t = toldo.getData('visual');
+      this.tweens.add({ targets: t, scaleY: t.scaleY * .94, duration: 70, yoyo: true });
+    });
+
     this.itens = this.physics.add.staticGroup();
-    for (const item of criarProdutosCidade(FIM_CIDADE)) this.adicionarProduto(item.tipo, item.x, item.y);
-    for (const [tipo, x, y] of this.itensShowroom) this.adicionarProduto(tipo, x, y);
-    this.physics.add.overlap(this.jogador, this.itens, (_, item) => this.pegarProduto(item));
+    for (const p of criarProdutosCidade({ chao: CHAO, tendas: TENDAS, cestos: CESTOS, topoToldo: CHAO - TENDA.altura + TENDA.toldo })) this.adicionarItem(p.tipo, p.x, p.y);
+    for (const [tipo, x, y] of this.itensShowroom) this.adicionarItem(tipo, x, y);
+    this.physics.add.overlap(this.jogador, this.itens, (_, item) => this.pegarItem(item));
+
     this.capivaras = this.physics.add.group();
-    for (let x = 950; x < FIM_CIDADE; x += 1200) {
-      const c = this.capivaras.create(x, CHAO, 'capivara', 0).setOrigin(.5, 1).setScale(1/3);
+    for (const x of CAPIVARAS) {
+      const c = this.capivaras.create(x, CHAO, 'capivara', 0).setOrigin(.5, 1).setScale(1 / 3).setDepth(4);
       c.body.setSize(72, 48).setOffset(12, 24); c.setData('origem', x); c.play('capivara-andar');
     }
     this.physics.add.collider(this.capivaras, this.solidos);
     this.physics.add.overlap(this.jogador, this.capivaras, (j, c) => {
       if (c.getData('alimentada') || j.estaInvencivel(this.tempo * 1000)) return;
       const vida = j.levarDano(c.x, this.tempo * 1000);
-      this.aviso('Tudo bem! Seus produtos estão guardados.', '#fff0d2');
+      this.aviso('Ai! Seus produtos estão guardados.', '#fff0d2');
       if (vida === 0) j.reposicionar(this.checkpoint, 200, this.tempo * 1000);
       this.atualizarHUD();
     });
@@ -82,116 +88,286 @@ export class Aventura extends Phaser.Scene {
       f.destroy(); c.setData('alimentada', true); c.setVelocityX(0); c.play('capivara-comer');
       this.aviso('A capivara gostou do caju!', '#f5c875');
     });
-    this.physics.world.setBounds(0, 0, MUNDO, ALTURA);
+
+    // Cidade e showroom são "salas" separadas: a câmera nunca mostra as duas ao mesmo tempo.
+    this.physics.world.setBounds(0, 0, FACHADA, ALTURA);
     const cam = this.cameras.main;
-    cam.setZoom(ZOOM_CIDADE); cam.setBounds(0, 0, MUNDO, ALTURA); cam.startFollow(this.jogador, true, .15, .15); cam.setDeadzone(64, 56);
-    this.entrada = new Entrada(this); this.atualizarHUD();
+    cam.setZoom(ZOOM_CIDADE); cam.setBounds(0, 0, FACHADA, ALTURA); cam.startFollow(this.jogador, true, .15, .15); cam.setDeadzone(64, 56);
+    this.sala = 'cidade';
+    this.entrada = new Entrada(this);
     this.events.once('shutdown', () => {
       this.uiAbort.abort(); $('controles').hidden = true; $('dialogo').hidden = true; $('interagir').hidden = true;
+      $('pular-intro').hidden = true; $('transicao').hidden = true; $('dialogo').classList.remove('no-alto');
     });
+    this.atualizarHUD();
+    if (this.registry.get('comIntro')) this.comecarIntro(); else this.comecarJogo();
   }
-  adicionarProduto(tipo, x, y) {
-    const item = this.itens.create(x, y, tipo).setScale(.42).setDepth(4).setData('tipo', tipo);
+
+  // ---------- Cidade ----------
+  criarCidade() {
+    this.add.image(240, 0, 'ceu').setOrigin(0).setScale(1 / 3).setScrollFactor(0, 1);
+    this.morros = this.add.tileSprite(240, 0, 480, ALTURA, 'morros').setOrigin(0).setTileScale(1 / 3).setScrollFactor(0, 1);
+    this.casas = this.add.tileSprite(240, CHAO - ALTURA, 480, ALTURA, 'casas').setOrigin(0).setTileScale(1 / 3).setScrollFactor(0, 1);
+    for (const [n, x] of LUGARES) this.add.image(x, CHAO, n).setOrigin(.5, 1).setScale(n === 'igreja' ? .3 : 1 / 3);
+    for (const [x, n] of ARVORES) this.add.image(x, CHAO, n).setOrigin(.5, 1).setScale(1 / 3);
+    this.add.tileSprite(0, CHAO, FACHADA, 32, 'chao').setOrigin(0).setTileScale(1 / 3).setDepth(1);
+    this.solidos = this.physics.add.staticGroup();
+    const piso = this.add.zone(FACHADA / 2, 256, FACHADA, 32);
+    this.physics.add.existing(piso, true); this.solidos.add(piso);
+    // Cestos: a colisão acompanha só a parte visível da arte (os 20 de baixo da célula de 32).
+    for (const [x, n] of CESTOS) {
+      for (let i = 0; i < n; i++) this.add.image(x, CHAO - i * 20, 'caixa').setOrigin(.5, 1).setScale(1 / 3).setDepth(2);
+      const corpo = this.add.zone(x, CHAO - 10 * n, 32, 20 * n);
+      this.physics.add.existing(corpo, true); this.solidos.add(corpo);
+    }
+    // Tendas: balcão e toldo se atravessam por baixo; o toldo quica.
+    this.plataformas = this.physics.add.staticGroup();
+    this.toldos = this.physics.add.staticGroup();
+    for (const x of TENDAS) {
+      const visual = this.add.image(x, CHAO, 'tenda').setOrigin(.5, 1).setScale(1 / 3).setDepth(2);
+      const topo = CHAO - TENDA.altura;
+      this.umSentido(this.plataformas, x, topo + TENDA.balcao + 2, TENDA.largura - 12);
+      const toldo = this.umSentido(this.toldos, x, topo + TENDA.toldo + 3, TENDA.largura - 4);
+      toldo.setData('visual', visual);
+    }
+    this.add.image(PORTAL - 70, CHAO, 'placa').setOrigin(.5, 1).setScale(1 / 3).setDepth(2);
+    this.add.image(PORTAL, CHAO, 'bandeira').setOrigin(.5, 1).setScale(1 / 3).setDepth(2);
+  }
+  // Plataforma que só segura quem cai por cima.
+  umSentido(grupo, x, y, largura) {
+    const z = this.add.zone(x, y, largura, 6); this.physics.add.existing(z, true);
+    const c = z.body.checkCollision; c.down = c.left = c.right = false; grupo.add(z); return z;
+  }
+
+  // ---------- Showroom ----------
+  criarShowroom() {
+    const { topo } = SHOWROOM;
+    this.add.image(FACHADA, topo, 'fachada').setOrigin(0).setScale(1 / 3);
+    this.add.image(INTERIOR, topo, 'interior').setOrigin(0).setScale(1 / 3);
+    const g = this.add.graphics();
+    g.fillStyle(0x4a2c1c).fillRect(INTERIOR - 3, topo, 6, 150); g.fillStyle(0xd9a765).fillRect(INTERIOR - 2, topo, 2, 150);
+    const piso = this.add.zone(FACHADA + SHOWROOM.largura, 255, SHOWROOM.largura * 2, 30);
+    this.physics.add.existing(piso, true);
+    this.pisoShowroom = piso;
+    const tampo = (x1, x2, y) => this.umSentido(this.plataformas, (x1 + x2) / 2, y + 3, x2 - x1);
+    // fachada: mesa de presentes e topo das estantes
+    tampo(px(FACHADA, 846), px(FACHADA, 1082), py(657));
+    tampo(px(FACHADA, 1040), px(FACHADA, 1640), py(432));
+    // interior: mesa e duas prateleiras de cada estante (medidas sobre a arte, ver docs/SHOWROOM-JOGAVEL.md)
+    tampo(px(INTERIOR, 745), px(INTERIOR, 1132), py(646));
+    for (const [x1, x2] of [[52, 153], [234, 314]]) for (const y of [183, 150]) tampo(INTERIOR + x1, INTERIOR + x2, y);
+    // Itens do showroom: as três caixas de presente no alto e um par de reserva na mesa da fachada.
+    this.itensShowroom = [
+      ['caixa', px(FACHADA, 1420), py(432) - 12], ['caixa', INTERIOR + 72, 138], ['caixa', INTERIOR + 296, 138],
+      ['caju', px(FACHADA, 930), py(657) - 20], ['roma', px(FACHADA, 1010), py(657) - 20],
+    ];
+    // Pedro recebe na porta; depois da conversa ele entra e espera ao lado da bancada.
+    this.pedroX = px(FACHADA, 694);
+    this.pedro = criarPedro(this, this.pedroX, py(792) + 3, .316).setDepth(3).setInteractive({ useHandCursor: true });
+    this.pedro.off('animationcomplete-pedro-aceno');
+    this.pedro.on('animationcomplete-pedro-aceno', () => this.pedro.play(this.dialogoAberto ? 'pedro-conversa' : 'pedro-parado'));
+    this.pedro.on('pointerup', () => { if (this.pedroPerto) this.pedidoInteracao = true; });
+    this.pedroBancada = criarPedro(this, INTERIOR + 229, CHAO + 1, .316).setDepth(3).setAlpha(0);
+    this.pedroBancada.on('animationcomplete-pedro-aceno', () => this.pedroBancada.play('pedro-parado'));
+    // Bancada: três lugares marcados; o kit se monta ao passar com os três itens.
+    for (let i = 0; i < META_KITS; i++) {
+      const x = INTERIOR + 160 + i * 20;
+      const visual = this.add.image(x, py(646), 'presente').setOrigin(.5, 1).setScale(.3).setAlpha(.28).setDepth(4);
+      this.estacoes.push({ id: i, x, visual });
+    }
+    this.saida = this.add.text(MUNDO - 22, 186, 'SAÍDA →', { fontFamily: 'Georgia, serif', fontSize: '9px', color: '#fff4df', backgroundColor: '#7d2029', padding: { x: 3, y: 2 }, resolution: 4 })
+      .setOrigin(.5).setDepth(6).setAlpha(0);
+  }
+
+  adicionarItem(tipo, x, y) {
+    const textura = tipo === 'caixa' ? 'embalagem' : tipo;
+    const item = this.itens.create(x, y, textura).setScale(tipo === 'caixa' ? .3 : .42).setDepth(4).setData('tipo', tipo);
     item.refreshBody();
-    // Sombra oval sob o produto e flutuação leve: destaca sem caixa nem halo sobre a arte.
-    const sinal = this.add.ellipse(x, y + item.displayHeight/2 + 3, item.displayWidth + 4, 3, 0x2a1626, .35).setDepth(3);
+    // Sombra oval e flutuação leve: destaca sem caixa nem halo sobre a arte.
+    const sinal = this.add.ellipse(x, y + item.displayHeight / 2 + 3, item.displayWidth + 4, 3, 0x2a1626, .35).setDepth(3);
     item.setData('sinal', sinal);
-    this.tweens.add({ targets: item, y: y - 2, duration: 700 + (x*13) % 300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+    this.tweens.add({ targets: item, y: y - 2, duration: 700 + (x * 13) % 300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
   }
-  pegarProduto(item) {
-    if (!item.active) return;
+  pegarItem(item) {
+    if (!item.active || this.estado !== 'jogo') return;
     const tipo = item.getData('tipo');
     item.getData('sinal')?.destroy(); item.destroy();
     coletarProduto(this.missao, tipo); this.presentes++; tocar('coleta');
-    this.aviso(tipo === 'caju' ? '+1 Caju' : '+1 Romã', tipo === 'caju' ? '#f5cc73' : '#ffa5c0');
+    this.aviso({ caju: '+1 Caju', roma: '+1 Romã', caixa: '+1 caixa de presente' }[tipo], { caju: '#f5cc73', roma: '#ffa5c0', caixa: '#fff1d5' }[tipo]);
     this.atualizarHUD();
   }
   aviso(texto, cor = '#fff1d5') {
     if (!this.jogador) return;
-    const t = this.add.text(this.jogador.x, this.jogador.y - 70, texto, {
-      fontFamily: 'system-ui', fontSize: '8px', color: cor, backgroundColor: '#35263b', padding: { x: 3, y: 2 }, resolution: 3,
+    const t = this.add.text(this.jogador.x, this.jogador.y - 62, texto, {
+      fontFamily: 'system-ui', fontSize: '8px', color: cor, backgroundColor: '#35263b', padding: { x: 3, y: 2 }, resolution: 4,
     }).setOrigin(.5).setDepth(10);
-    this.tweens.add({ targets: t, y: t.y - 12, alpha: 0, delay: 400, duration: 450, onComplete: () => t.destroy() });
+    this.tweens.add({ targets: t, y: t.y - 12, alpha: 0, delay: 500, duration: 500, onComplete: () => t.destroy() });
   }
-  criarShowroom() {
-    const { topo } = SHOWROOM;
-    const FAIXAS = 10, LF = 2;
-    for (let i = 0; i < FAIXAS; i++) this.add.image(FACHADA, topo, 'fachada').setOrigin(0).setScale(1/3)
-      .setCrop(i*LF*3, 0, LF*3, 540).setAlpha((i+1)/(FAIXAS+1));
-    this.add.image(FACHADA, topo, 'fachada').setOrigin(0).setScale(1/3).setCrop(FAIXAS*LF*3, 0, 960-FAIXAS*LF*3, 540);
-    this.add.image(INTERIOR, topo, 'interior').setOrigin(0).setScale(1/3);
-    this.add.image(FACHADA-4, CHAO, 'arvore2').setOrigin(.5, 1).setScale(1/3);
-    const g = this.add.graphics();
-    g.fillStyle(0x4a2c1c).fillRect(INTERIOR-3, topo, 6, 150); g.fillStyle(0xd9a765).fillRect(INTERIOR-2, topo, 2, 150);
-    const piso = this.add.zone(FACHADA+SHOWROOM.largura, 255, SHOWROOM.largura*2, 30);
-    this.physics.add.existing(piso, true); this.solidos.add(piso);
-    this.plataformas = this.physics.add.staticGroup();
-    const tampo = (x1, x2, y) => {
-      const z = this.add.zone((x1+x2)/2, y+3, x2-x1, 6); this.physics.add.existing(z, true);
-      const c = z.body.checkCollision; c.down = c.left = c.right = false; this.plataformas.add(z);
-    };
-    tampo(px(FACHADA,846), px(FACHADA,1082), py(657));
-    tampo(px(FACHADA,1040), px(FACHADA,1640), py(432));
-    tampo(px(INTERIOR,745), px(INTERIOR,1132), py(646));
-    this.itensShowroom = [
-      ['roma',px(FACHADA,330),210], ['caju',px(FACHADA,520),210],
-      ['roma',px(FACHADA,960),py(657)-22], ['roma',px(FACHADA,1200),py(432)-18], ['caju',px(FACHADA,1420),py(432)-18],
-      ['roma',px(INTERIOR,250),210], ['caju',px(INTERIOR,380),210],
-      ['caju',px(INTERIOR,860),py(646)-25], ['roma',px(INTERIOR,1010),py(646)-25],
-      ['caju',px(INTERIOR,1330),210], ['roma',px(INTERIOR,1520),210],
-    ];
-    const pedroX = px(FACHADA,694);
-    this.pedro = criarPedro(this, pedroX, py(792)+3, .316).setDepth(2).setInteractive({ useHandCursor: true });
-    this.pedro.off('animationcomplete-pedro-aceno');
-    this.pedro.on('animationcomplete-pedro-aceno', () => this.pedro.play(this.dialogoAberto ? 'pedro-conversa' : 'pedro-parado'));
-    this.pedro.on('pointerup', () => { if (this.pedroPerto) this.pedidoInteracao = true; });
-    this.pedroX = pedroX;
-    for (let i = 0; i < META_KITS; i++) {
-      const x = INTERIOR + 155 + i*25;
-      const visual = this.add.image(x, py(646), 'presente').setOrigin(.5, 1).setScale(.4).setAlpha(.3).setDepth(4);
-      this.estacoes.push({ id: i, x, visual });
-      this.add.text(x, 178, String(i+1), { fontSize: '8px', color: '#fff0cf', backgroundColor: '#49342c', resolution: 3 }).setOrigin(.5).setDepth(4);
+
+  // ---------- Intro encenada ----------
+  // A exploradora chega, uma capivara derruba a entrega e os frascos voam pela rua. Não gasta tempo.
+  comecarIntro() {
+    this.estado = 'intro'; this.passoIntro = -1;
+    this.jogador.body.enable = false; this.jogador.setPosition(-20, CHAO).play('correndo');
+    const entrega = [this.add.image(176, CHAO, 'caixa').setOrigin(.5, 1).setScale(1 / 3).setDepth(4)];
+    entrega.push(this.add.image(170, CHAO - 19, 'presente').setOrigin(.5, 1).setScale(.28).setDepth(4));
+    entrega.push(this.add.image(184, CHAO - 19, 'sacola').setOrigin(.5, 1).setScale(.24).setDepth(4));
+    this.frascosIntro = [];
+    for (let i = 0; i < 6; i++) this.frascosIntro.push(this.add.image(166 + i * 4, CHAO - 14, i % 2 ? 'roma' : 'caju').setOrigin(.5, 1).setScale(.3).setDepth(3));
+    this.entregaIntro = entrega;
+    this.capivaraIntro = this.add.sprite(300, CHAO, 'capivara', 0).setOrigin(.5, 1).setScale(1 / 3).setFlipX(true).setDepth(5);
+    this.tweens.add({ targets: this.jogador, x: 96, duration: 1300, onComplete: () => { if (this.estado === 'intro') this.jogador.play('parado'); } });
+    $('controles').hidden = true; $('pular-intro').hidden = false; $('dialogo').classList.add('no-alto');
+    this.ultimoHUD = ''; this.atualizarHUD(); $('local').textContent = 'Itajubá';
+    this.avancarDialogo();
+  }
+  passoDaIntro(n) {
+    if (n === 1) {
+      // capivara entra, derruba a entrega e os frascos voam pela rua
+      this.capivaraIntro.play('capivara-andar');
+      this.tweens.add({ targets: this.capivaraIntro, x: 196, duration: 900, onComplete: () => {
+        tocar('pulo');
+        this.tweens.add({ targets: this.entregaIntro, angle: { from: 0, to: 70 }, x: '+=14', y: '+=4', duration: 260 });
+        this.frascosIntro.forEach((f, i) => {
+          const destinoX = 300 + i * 90, altura = 60 + (i % 3) * 25;
+          this.tweens.add({ targets: f, x: destinoX, duration: 900 + i * 90, ease: 'Linear' });
+          this.tweens.add({ targets: f, y: CHAO - 14 - altura, duration: (900 + i * 90) / 2, yoyo: true, ease: 'Sine.out' });
+          this.tweens.add({ targets: f, angle: 540, duration: 900 + i * 90 });
+        });
+        this.capivaraIntro.play('capivara-comer');
+      } });
     }
+    if (n === 2) this.jogador.setFlipX(false);
   }
+  avancarDialogo() {
+    if (this.estado === 'intro') {
+      this.passoIntro++;
+      const linhas = CAMPANHA.introCena;
+      if (this.passoIntro >= linhas.length) { this.terminarIntro(); return; }
+      this.passoDaIntro(this.passoIntro);
+      const l = linhas[this.passoIntro];
+      $('dialogo-titulo').textContent = l.titulo; $('dialogo-texto').textContent = l.texto;
+      $('fechar-dialogo').textContent = this.passoIntro === linhas.length - 1 ? 'Começar a aventura →' : 'Continuar →';
+      $('dialogo').hidden = false; this.entrada.ignorarAteSoltar();
+      return;
+    }
+    this.fecharDialogo();
+  }
+  terminarIntro() {
+    if (this.estado !== 'intro') return;
+    this.tweens.killTweensOf([this.jogador, this.capivaraIntro, ...this.entregaIntro, ...this.frascosIntro]);
+    for (const o of [this.capivaraIntro, ...this.entregaIntro, ...this.frascosIntro]) o.destroy();
+    $('dialogo').hidden = true; $('pular-intro').hidden = true; $('dialogo').classList.remove('no-alto');
+    this.comecarJogo();
+  }
+  comecarJogo() {
+    this.estado = 'jogo';
+    this.jogador.body.enable = true; this.jogador.body.reset(80, CHAO); this.jogador.play('parado');
+    this.entrada.ignorarAteSoltar();
+    $('controles').hidden = false; $('dialogo').hidden = true;
+    this.ultimoHUD = ''; this.atualizarHUD();
+  }
+
+  // ---------- Passagem da rua para o showroom ----------
+  entrarNoShowroom() {
+    this.estado = 'transicao';
+    this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.entrada.limpar();
+    $('transicao').hidden = false;
+    const cam = this.cameras.main;
+    cam.fadeOut(380, 30, 16, 22);
+    cam.once('camerafadeoutcomplete', () => {
+      this.sala = 'showroom'; this.missao.fase = 'fachada';
+      this.physics.world.setBounds(FACHADA, 0, MUNDO - FACHADA, ALTURA);
+      this.solidos.add(this.pisoShowroom);
+      this.jogador.body.reset(FACHADA + 24, CHAO); this.jogador.olhandoDireita = true; this.checkpoint = FACHADA + 24;
+      cam.setZoom(ZOOM_SHOWROOM); cam.setBounds(FACHADA, SHOWROOM.topo, MUNDO - FACHADA, SHOWROOM.altura);
+      cam.centerOn(FACHADA + 80, 180);
+      registrar('chegada_showroom');
+      this.time.delayedCall(650, () => {
+        $('transicao').hidden = true; cam.fadeIn(420, 30, 16, 22);
+        this.physics.world.resume(); this.estado = 'jogo';
+      });
+    });
+  }
+
+  // ---------- Conversa com Pedro ----------
   abrirDialogo() {
     this.dialogoAberto = true; this.entrada.ignorarAteSoltar();
     this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
     this.pedro.play('pedro-conversa');
-    $('dialogo-texto').textContent = `${CAMPANHA.boasVindasPedro} Cada kit leva um Caju e uma Romã. Vá até os três pontos da bancada e toque em “Montar kit”.`;
+    $('dialogo-titulo').textContent = 'PEDRO · SHOWROOM ITAJUBÁ';
+    $('dialogo-texto').textContent = CAMPANHA.boasVindasPedro;
+    $('fechar-dialogo').textContent = 'Vamos montar os kits →';
     $('dialogo').hidden = false; $('fechar-dialogo').focus({ preventScroll: true });
   }
   fecharDialogo() {
     if (!this.dialogoAberto) return;
     this.dialogoAberto = false; $('dialogo').hidden = true;
     this.entrada.ignorarAteSoltar(); this.physics.world.resume(); this.pedro.play('pedro-parado');
+    this.pedroEntra();
   }
+  // Pedro sai da porta e aparece ao lado da bancada.
+  pedroEntra() {
+    if (this.pedroConversou) return;
+    this.pedroConversou = true;
+    this.tweens.add({ targets: this.pedro, alpha: 0, duration: 350, onComplete: () => this.pedro.disableInteractive() });
+    this.tweens.add({ targets: this.pedroBancada, alpha: 1, duration: 350 });
+  }
+
+  // ---------- Bancada ----------
+  // O kit se monta ao passar pelo lugar livre mais próximo com os três itens; a animação corre sem travar o passo.
+  verificarBancada() {
+    if (this.missao.kits >= META_KITS) return;
+    const livres = this.estacoes.filter(e => !this.missao.estacoes.includes(e.id) && Math.abs(this.jogador.x - e.x) <= 12);
+    if (!livres.length) return;
+    const estacao = livres.sort((a, b) => Math.abs(this.jogador.x - a.x) - Math.abs(this.jogador.x - b.x))[0];
+    const falta = faltaParaKit(this.missao);
+    if (falta.length) {
+      if (this.tempo * 1000 > this.avisoFaltaAte) {
+        this.avisoFaltaAte = this.tempo * 1000 + 1800;
+        const nomes = { caju: 'Caju', roma: 'Romã', caixa: 'caixa de presente' };
+        this.aviso(`Falta: ${falta.map(f => nomes[f]).join(', ')}`);
+      }
+      return;
+    }
+    montarKit(this.missao, estacao.id); tocar('coleta'); this.atualizarHUD();
+    const pronto = this.missao.kits === META_KITS, numero = this.missao.kits;
+    // os três itens voam até a bancada; o kit aparece com um brilho
+    const voos = ['caju', 'roma', 'embalagem'].map(t => this.add.image(this.jogador.x, this.jogador.y - 30, t)
+      .setScale(t === 'embalagem' ? .26 : .34).setDepth(7));
+    voos.forEach((v, i) => this.tweens.add({ targets: v, x: estacao.x + (i - 1) * 3, y: py(646) - 6, scale: v.scale * .6, duration: 340, delay: i * 80, ease: 'Quad.in', onComplete: () => v.destroy() }));
+    this.time.delayedCall(520, () => {
+      estacao.visual.setAlpha(1);
+      this.tweens.add({ targets: estacao.visual, scale: { from: .42, to: .3 }, duration: 260, ease: 'Back.out' });
+      for (let k = 0; k < 7; k++) {
+        const b = this.add.image(estacao.x, py(646) - 8, 'brilho').setScale(.5).setDepth(8), a = k / 7 * Math.PI * 2;
+        this.tweens.add({ targets: b, x: b.x + Math.cos(a) * 16, y: b.y + Math.sin(a) * 12 - 6, alpha: 0, duration: 520, onComplete: () => b.destroy() });
+      }
+      this.pedroBancada.play('pedro-aceno');
+      this.aviso(pronto ? 'Vitrine pronta! Obrigado pela ajuda!' : `Kit ${numero} pronto!`, '#ffe7a6');
+      if (pronto) this.tweens.add({ targets: this.saida, alpha: 1, duration: 400 });
+    });
+  }
+
   contextoInteracao() {
-    if (this.pedroPerto) return { tipo: 'pedro', texto: 'Conversar · E / Enter' };
-    const estacao = this.estacoes.find(e => !this.missao.estacoes.includes(e.id) && Math.abs(this.jogador.x-e.x) < 40);
-    if (estacao && this.missao.fase === 'showroom') return { tipo: 'kit', texto: `Montar kit ${estacao.id+1} · E / Enter`, estacao };
+    if (this.pedroPerto && !this.pedroConversou) return { tipo: 'pedro', texto: 'Conversar · E / Enter' };
     return null;
   }
   interagir(contexto) {
-    if (!contexto) return;
-    if (contexto.tipo === 'pedro') { this.abrirDialogo(); return; }
-    if (!montarKit(this.missao, contexto.estacao.id)) {
-      this.aviso('Pegue 1 Caju e 1 Romã para este kit.'); return;
-    }
-    contexto.estacao.visual.setAlpha(1); tocar('coleta');
-    this.aviso(this.missao.kits === META_KITS ? 'Vitrine pronta! Obrigada por ajudar!' : `Kit pronto · ${this.missao.kits}/${META_KITS}`);
-    this.atualizarHUD();
+    if (contexto?.tipo === 'pedro') this.abrirDialogo();
   }
+
   atualizarHUD() {
-    const segundos = Math.max(0, Math.ceil(DURACAO_SEGUNDOS-this.tempo));
-    const assinatura = [this.missao.coletados.caju, this.missao.coletados.roma, this.jogador.vida, segundos, this.missao.fase, this.missao.kits].join('|');
+    const segundos = Math.max(0, Math.ceil(DURACAO_SEGUNDOS - this.tempo));
+    const m = this.missao, assinatura = [m.coletados.caju, m.coletados.roma, m.estoque.caixa, this.jogador?.vida, segundos, m.fase, m.kits].join('|');
     if (assinatura === this.ultimoHUD) return;
     this.ultimoHUD = assinatura;
-    $('presentes').textContent = `Caju ${this.missao.coletados.caju} · Romã ${this.missao.coletados.roma}`;
-    $('vida').textContent = `${this.jogador.vida} ♥`;
+    $('presentes').textContent = `Caju ${m.coletados.caju} · Romã ${m.coletados.roma} · Caixas ${m.estoque.caixa}`;
+    $('vida').textContent = `${this.jogador?.vida ?? 5} ♥`;
     $('tempo').textContent = `${segundos}s`;
-    $('tempo').classList.toggle('urgente', this.tempo >= DURACAO_SEGUNDOS-15);
-    $('objetivo').textContent = objetivoMissao(this.missao);
-    $('kits').textContent = `Kits ${this.missao.kits}/${META_KITS}`;
+    $('tempo').classList.toggle('urgente', this.tempo >= DURACAO_SEGUNDOS - 15);
+    $('objetivo').textContent = this.estado === 'intro' ? 'A aventura vai começar…' : objetivoMissao(m);
+    $('kits').textContent = `Kits ${m.kits}/${META_KITS}`;
   }
   concluir(motivo) {
     if (this.fim) return;
@@ -201,52 +377,59 @@ export class Aventura extends Phaser.Scene {
       caju: this.missao.coletados.caju, roma: this.missao.coletados.roma, kits: this.missao.kits });
     this.scene.stop();
   }
-  atualizarCamera(delta) {
-    const cam = this.cameras.main, x = this.jogador.x;
-    const alvo = x > SHOWROOM.x-430 ? ZOOM_SHOWROOM : ZOOM_CIDADE;
-    let z = cam.zoom+(alvo-cam.zoom)*Math.min(1,delta/260); if (Math.abs(z-alvo)<.01) z=alvo;
-    if (z !== cam.zoom) cam.setZoom(z);
-    const travada = z === ZOOM_SHOWROOM;
-    if (travada !== this.vistaTravada) { this.vistaTravada=travada; cam.setBounds(0,travada?SHOWROOM.topo:0,MUNDO,travada?SHOWROOM.altura:ALTURA); }
+  atualizarCamera() {
+    const cam = this.cameras.main;
     cam.setFollowOffset(this.jogador.olhandoDireita ? -40 : 40, 0);
-    this.morros.tilePositionX = cam.scrollX*.15*3; this.casas.tilePositionX = cam.scrollX*.4*3;
+    this.morros.tilePositionX = cam.scrollX * .15 * 3; this.casas.tilePositionX = cam.scrollX * .4 * 3;
   }
+
   update(_agora, delta) {
     if (this.fim || !this.entrada) return;
     this.entrada.atualizar();
+    if (this.estado === 'intro') {
+      if (this.entrada.interagirApertou || this.entrada.pularApertou) this.avancarDialogo();
+      this.atualizarCamera(); return;
+    }
     if (this.dialogoAberto) { if (this.entrada.interagirApertou) this.fecharDialogo(); return; }
-    this.tempo += delta/1000;
-    const agora = this.tempo*1000; // Relógio de jogo ativo: pausa e conversa não consomem invencibilidade.
+    if (this.estado === 'transicao') return;
+    this.tempo += delta / 1000;
+    const agora = this.tempo * 1000; // relógio de jogo ativo: pausa, intro, transição e conversa não contam
     const soltou = this.jogador.atualizar(this.entrada, agora, delta, true);
     if (this.entrada.pularApertou) tocar('pulo');
     if (soltou && agora >= this.proximoArremesso) {
-      this.proximoArremesso = agora+350;
+      this.proximoArremesso = agora + 350;
       const dir = this.jogador.olhandoDireita ? 1 : -1;
-      const f = this.frutas.create(this.jogador.x+dir*22, this.jogador.y-20, 'caju-fruta').setScale(1/3);
-      f.body.setAllowGravity(false); f.setVelocityX(dir*260);
+      const f = this.frutas.create(this.jogador.x + dir * 22, this.jogador.y - 20, 'caju-fruta').setScale(1 / 3);
+      f.body.setAllowGravity(false); f.setVelocityX(dir * 260);
       this.time.delayedCall(1500, () => { if (f.active) f.destroy(); });
     }
     for (const c of this.capivaras.getChildren()) if (!c.getData('alimentada')) {
-      const dir = Math.sin(agora/1800+c.getData('origem')) > 0 ? 1 : -1;
-      c.setVelocityX(dir*MODO_FACIL.capivaraVelocidade); c.setFlipX(dir<0);
+      const dir = Math.sin(agora / 1800 + c.getData('origem')) > 0 ? 1 : -1;
+      c.setVelocityX(dir * MODO_FACIL.capivaraVelocidade); c.setFlipX(dir < 0);
     }
-    this.atualizarCamera(delta);
+    this.atualizarCamera();
     const x = this.jogador.x;
-    const perto = Math.abs(x-this.pedroX)<45;
-    if (perto !== this.pedroPerto) { this.pedroPerto=perto; this.pedro.play(perto ? 'pedro-aceno' : 'pedro-parado'); }
-    if (x > INTERIOR && this.missao.fase !== 'showroom') {
-      this.missao.fase = 'showroom'; registrar('chegada_showroom'); this.aviso('Vamos montar os três kits na bancada!');
+    if (this.sala === 'cidade') {
+      if (x > PORTAL + 8) { this.entrarNoShowroom(); return; }
+      if (x > this.checkpoint + MODO_FACIL.checkpointDistancia) this.checkpoint = x;
+    } else {
+      const perto = !this.pedroConversou && Math.abs(x - this.pedroX) < 45;
+      if (perto !== this.pedroPerto) { this.pedroPerto = perto; this.pedro.play(perto ? 'pedro-aceno' : 'pedro-parado'); }
+      // a primeira passagem pela porta abre a conversa sozinha: é ela que explica as caixas de presente
+      if (perto && !this.pedroConversou && Math.abs(x - this.pedroX) < 20) { this.abrirDialogo(); return; }
+      if (x > this.pedroX + 30 && !this.pedroConversou) this.pedroEntra();
+      if (x > INTERIOR && this.missao.fase !== 'showroom') { this.missao.fase = 'showroom'; this.aviso('Caixas no alto das estantes!'); }
+      if (this.missao.fase === 'showroom') this.verificarBancada();
     }
     const contexto = this.contextoInteracao();
     $('interagir').hidden = !contexto;
     if (contexto && $('interagir').textContent !== contexto.texto) $('interagir').textContent = contexto.texto;
-    if (this.entrada.interagirApertou || this.pedidoInteracao) { this.pedidoInteracao=false; this.interagir(contexto); }
-    if (x > this.checkpoint+MODO_FACIL.checkpointDistancia || (x>FACHADA+20 && this.checkpoint<FACHADA)) this.checkpoint=x;
-    const local = x>INTERIOR ? 'Showroom · monte a vitrine' : x>FACHADA+60 ? 'Pedro espera por você' : 'Pelas ruas de Itajubá';
+    if (this.entrada.interagirApertou || this.pedidoInteracao) { this.pedidoInteracao = false; this.interagir(contexto); }
+    const local = this.sala === 'cidade' ? 'Pelas ruas de Itajubá' : x > INTERIOR ? 'Showroom · monte a vitrine' : 'Showroom L’Occitane';
     if ($('local').textContent !== local) $('local').textContent = local;
     this.atualizarHUD();
     if (this.tempo >= DURACAO_SEGUNDOS) this.concluir('tempo');
-    else if (x > MUNDO-14 && this.missao.kits === META_KITS) this.concluir('vitrine');
-    else if (x > MUNDO-14) $('objetivo').textContent = 'Antes de sair, monte os três kits na bancada ←';
+    else if (x > MUNDO - 14 && this.missao.kits === META_KITS) this.concluir('vitrine');
+    else if (x > MUNDO - 14) $('objetivo').textContent = 'Antes de sair, monte os três kits na bancada ←';
   }
 }

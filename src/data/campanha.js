@@ -4,11 +4,13 @@ export const CAMPANHA = {
   subtitulo: 'Última Black Friday L’Occitane Itajubá',
   periodo: 'Novembro de 2026',
   despedida: 'Nossa loja vai encerrar este ciclo. Vamos celebrar os encontros e os presentes que fizeram parte dessa história.',
-  boasVindasPedro: 'Você chegou! Vamos preparar juntos os kits da nossa última Black Friday.',
-  intro: [
-    { titulo: 'Uma última Black Friday', texto: 'O showroom L’Occitane au Brésil de Itajubá está comemorando sua última Black Friday. Vamos preparar uma vitrine cheia de boas lembranças!' },
-    { titulo: 'Uma entrega virou aventura', texto: 'Nesta história, a seleção de Caju e Romã se espalhou pelo caminho da entrega. Percorra Itajubá, reúna os produtos e leve tudo ao showroom.' },
-    { titulo: 'Pedro conta com você', texto: 'No showroom, ajude Pedro a montar três kits, cada um com Caju e Romã. Você tem 75 segundos de aventura no modo fácil. As conversas não gastam tempo.' },
+  boasVindasPedro: 'Você chegou! Cada kit leva um Caju, uma Romã e uma caixa de presente. As caixas estão no alto das estantes: suba pelas prateleiras e depois passe na bancada.',
+  // Abertura encenada no jogo (não gasta tempo). Ficção de jogo: não descreve um incidente real da loja.
+  introCena: [
+    { titulo: 'ITAJUBÁ · NOVEMBRO DE 2026', texto: 'Fim de tarde em Itajubá. Hoje é a última Black Friday do showroom L’Occitane au Brésil, e a entrega de Caju e Romã acabou de chegar!' },
+    { titulo: 'OPA!', texto: 'Uma capivara curiosa sentiu o cheirinho de caju e derrubou a entrega. Os frascos voaram pela cidade!' },
+    { titulo: 'MENSAGEM DO PEDRO', texto: '“Preciso de você! Traga Caju e Romã até o showroom e me ajude a montar três kits para a vitrine.”' },
+    { titulo: 'COMO JOGAR', texto: 'Pule nas tendinhas para pegar o que voou alto e ofereça caju às capivaras. Você tem 75 segundos!' },
   ],
   instagram: 'https://www.instagram.com/loccitane.itajuba/',
   whatsapp: '', // DDI + DDD + número. Nunca usar o contato do espetáculo anterior.

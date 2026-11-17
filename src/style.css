@@ -9,3 +9,12 @@
 @media(max-width:600px){#hud{flex-wrap:wrap;gap:7px}#hud #local{flex:1;max-width:none}#hud #pausar{min-height:28px}#objetivo-panel{font-size:10px;padding:6px 8px}#controles{padding:7px}#controles button{width:48px;min-width:48px;min-height:48px;font-size:12px}#controles .interacao{bottom:61px}#controles #interagir{min-height:38px;font-size:10px}#dialogo{padding:12px}#dialogo p{font-size:11px}.intro-arte{height:160px}.intro-arte .pedro-intro{height:155px}}
 @media(orientation:landscape) and (max-height:550px){body.jogando #partida{position:relative;max-width:min(100vw,calc(100svh * 16/9));margin:auto}body.jogando #hud{position:absolute;z-index:6;left:0;right:0;top:0;background:#304f3deb;padding:3px 10px;height:34px;font-size:11px;flex-wrap:nowrap}body.jogando #objetivo-panel{position:absolute;z-index:6;left:0;right:0;top:34px;background:#f4eddbeb;padding:4px 10px;font-size:10px}body.jogando #controles{padding:8px}body.jogando #controles button{min-height:54px;min-width:58px}body.jogando #controles .interacao{bottom:70px}body.jogando #dialogo{max-width:520px;margin:auto}}
 #loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#304f3d;z-index:9;color:#fff1d5}#tentar-carga{padding:12px 18px;background:#942c39;color:#fff1d5;border:1px solid #dcb66e;border-radius:4px}
+
+/* Abertura encenada e passagem para o showroom. */
+.acoes-dialogo{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}.acoes-dialogo #pular-intro{font:inherit;font-size:12px;cursor:pointer;border:1px solid #b18b4588;background:transparent;color:var(--verde);border-radius:4px;padding:10px 14px}
+#dialogo-titulo{color:var(--vermelho)}
+#transicao{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff1d5;text-align:center;pointer-events:none;animation:transicao .9s ease both}
+#transicao p{margin:0;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#e6b84a}#transicao strong{font:400 clamp(24px,4vw,40px) Georgia,serif}#transicao span{font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+@keyframes transicao{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+#dialogo.no-alto{top:12px;bottom:auto}
+@media(orientation:landscape) and (max-height:550px){body.jogando #dialogo.no-alto{top:62px}}

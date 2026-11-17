@@ -9,11 +9,11 @@ test('cada textura nova da cena tem arquivo real e folhas têm células completa
   for (const [nome, w, h] of Object.values(FOLHAS)) { const [pw, ph] = png(`sprites-nativos/${nome}.png`); assert.equal(ph, h); assert.equal(pw % w, 0); }
   for (const nome of Object.values(OBJETOS)) png(`sprites-nativos/${nome}.png`);
 });
-test('intro, HUD, diálogo e interações têm IDs únicos presentes na página', () => {
+test('HUD, diálogo da abertura, transição e interações têm IDs únicos presentes na página', () => {
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
   assert.equal(new Set(ids).size, ids.length);
-  for (const id of ['intro','intro-titulo','intro-proximo','objetivo','kits','interagir','dialogo','dialogo-texto','fechar-dialogo']) assert.ok(ids.includes(id), id);
+  for (const id of ['transicao','pular-intro','dialogo-titulo','objetivo','kits','interagir','dialogo','dialogo-texto','fechar-dialogo']) assert.ok(ids.includes(id), id);
 });
 function dimensoesWebp(path) {
   const b = readFileSync(new URL(path, root));

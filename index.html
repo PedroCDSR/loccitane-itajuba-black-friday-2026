@@ -13,24 +13,17 @@
     <p class="eyebrow">NOVEMBRO DE 2026 · UMA HISTÓRIA PARA GUARDAR</p>
     <h1>A Última<br><em>Aventura</em></h1>
     <p class="subtitulo">Última Black Friday L’Occitane Itajubá</p><p id="despedida"></p>
-    <div class="convite"><span>01 · Reúna Caju e Romã</span><span>02 · Encontre Pedro</span><span>03 · Monte os kits</span></div>
-    <button id="jogar" class="principal">Conhecer a missão <span aria-hidden="true">→</span></button>
+    <div class="convite"><span>01 · Recupere Caju e Romã pela cidade</span><span>02 · Encontre Pedro no showroom</span><span>03 · Monte três kits</span></div>
+    <button id="jogar" class="principal">Começar a aventura <span aria-hidden="true">→</span></button>
     <p class="ajuda">Modo fácil · 75 segundos de jogo ativo · cinco corações.<br>Teclado e controles de toque. As conversas não gastam tempo.</p>
     <p class="nota">Campanha em preparação · condições do benefício ainda serão definidas pela loja.</p>
-  </section>
-  <section id="intro" class="cartao" hidden aria-labelledby="intro-titulo">
-    <p class="eyebrow" id="intro-etapa">SUA MISSÃO · 1/3</p>
-    <div class="intro-arte" aria-hidden="true"><img src="/assets/showroom/caju.png" alt=""><img class="pedro-intro" src="/assets/showroom/pedro-intro.webp" alt=""><img src="/assets/showroom/roma.png" alt=""></div>
-    <h2 id="intro-titulo" tabindex="-1"></h2><p id="intro-texto"></p>
-    <div class="acoes"><button id="intro-proximo" class="principal">Continuar →</button><button id="intro-pular">Ir direto para a cidade</button></div>
-    <p class="ajuda">Andar: ← → ou A/D · Saltar: espaço/W · Oferecer fruta: X/J<br>Conversar e montar kits: E/Enter ou botão na tela.</p>
-    <p id="carregamento" role="status"></p>
   </section>
   <section id="partida" hidden aria-label="Jogo de plataforma">
     <div id="hud"><span id="local">Itajubá</span><span id="presentes">Caju 0 · Romã 0</span><span id="vida">5 ♥</span><span id="tempo">75s</span><button id="pausar" hidden aria-label="Pausar aventura">Ⅱ</button></div>
     <div id="objetivo-panel"><span id="objetivo">Reúna os produtos</span><span id="kits">Kits 0/3</span></div>
     <div id="palco">
       <div id="jogo"></div>
+      <div id="transicao" hidden aria-live="polite"><p>Showroom</p><strong>L’Occitane au Brésil</strong><span>Itajubá</span></div>
       <div id="loading" hidden role="status"><p id="loading-texto">Preparando a aventura…</p><button id="tentar-carga" hidden>Tentar novamente</button></div>
       <div id="controles" hidden aria-label="Controles de toque">
         <div><button data-controle="esquerda" aria-label="Andar para esquerda">←</button><button data-controle="direita" aria-label="Andar para direita">→</button></div>
@@ -38,7 +31,7 @@
         <div><button data-controle="fruta">Caju</button><button data-controle="pular">Pular</button></div>
       </div>
       <section id="dialogo" hidden role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
-        <p class="eyebrow" id="dialogo-titulo">PEDRO · SHOWROOM ITAJUBÁ</p><p id="dialogo-texto"></p><button id="fechar-dialogo" class="principal">Vamos montar os kits →</button>
+        <p class="eyebrow" id="dialogo-titulo">PEDRO · SHOWROOM ITAJUBÁ</p><p id="dialogo-texto"></p><div class="acoes-dialogo"><button id="fechar-dialogo" class="principal">Vamos montar os kits →</button><button id="pular-intro" hidden>Pular abertura</button></div>
       </section>
     </div>
     <p class="ajuda">Caju e Romã são os produtos da missão. O botão Caju oferece a fruta às capivaras e não gasta os produtos coletados.</p>
