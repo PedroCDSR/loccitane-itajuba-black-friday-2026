@@ -4,19 +4,18 @@ export const CAMPANHA = {
   subtitulo: 'Última Black Friday L’Occitane Itajubá',
   periodo: 'Novembro de 2026',
   despedida: 'Nossa loja vai encerrar este ciclo. Vamos celebrar os encontros e os presentes que fizeram parte dessa história.',
-  // Conversas do jogo. Pedro: texto dele mesmo (17/11/2026). Karina: só instruções da missão, sem falas pessoais.
+  // Conversas do jogo. Pedro: texto dele mesmo (17/11/2026). Karina: texto ditado pelo Pedro (pedido de ajuda com os kits).
   conversas: {
     pedro: { titulo: 'PEDRO · L’OCCITANE ITAJUBÁ', texto: 'Oi! Eu sou o Pedro. Em janeiro de 2023 nós trouxemos a L’Occitane para Itajubá, com o objetivo de trazer uma nova forma de autocuidado para a cidade.', botao: 'Continuar →' },
-    carina: { titulo: 'KARINA · SHOWROOM ITAJUBÁ', botao: 'Vamos montar os kits →', texto: 'Você chegou! Cada kit leva um Caju, uma Romã e uma caixa de presente. As três caixas estão no alto das estantes, lá dentro: suba pelas prateleiras. Depois é só passar na bancada.' },
+    carina: { titulo: 'KARINA · SHOWROOM ITAJUBÁ', botao: 'Vamos montar os kits →', texto: 'Que bom que você chegou! Preciso da sua ajuda para montar os kits de presente: cada um leva um Caju, uma Romã e uma caixa. As caixas estão no alto das estantes, lá dentro. Você consegue pegar para mim, por favor? Depois é só passar na bancada.' },
   },
   // Abertura encenada no jogo. Ficção de jogo: não descreve um incidente real da loja.
+  // A abertura só conta a história e dá a missão da rua. As instruções aparecem ao longo da jornada, na hora de usar:
+  // toldo, capivaras e dano nas dicas da rua (src/game/Tutorial.js); caixas e bancada com a Karina, no showroom.
   introCena: [
     { titulo: 'ITAJUBÁ · NOVEMBRO DE 2026', texto: 'Fim de tarde em Itajubá. Hoje é a última Black Friday do showroom L’Occitane au Brésil, e a entrega de Caju e Romã acabou de chegar!' },
-    { titulo: 'OPA!', texto: 'Uma capivara curiosa sentiu o cheirinho de caju e derrubou a entrega. Os frascos voaram pela cidade!' },
-    { titulo: 'MENSAGEM DA KARINA', texto: '“Preciso de você! Traga Caju e Romã até o showroom e me ajude a montar três kits para a vitrine.”' },
-    { titulo: 'NA RUA', texto: 'Pegue Caju e Romã pelo caminho. Pule no toldo das tendinhas: ele quica alto e alcança os frascos lá de cima.' },
-    { titulo: 'CAPIVARAS', texto: 'Pise numa capivara e ela dorme. Dê caju e ela come feliz. Ou pule por cima. Só não encoste de lado: tira 1 ♥.' },
-    { titulo: 'NO SHOWROOM', texto: 'Fale com a Karina, pegue as caixas de presente no alto e passe pela bancada para montar 3 kits. Sem pressa: passeie à vontade!' },
+    { titulo: 'OPA!', texto: 'Uma capivara curiosa sentiu o cheirinho de caju e derrubou a entrega. Os produtos da L’Occitane se espalharam pela cidade!' },
+    { titulo: 'SUA MISSÃO', texto: 'Recupere os produtos espalhados por Itajubá e leve tudo ao showroom da L’Occitane. É só seguir sempre em frente. Sem pressa!' },
   ],
   instagram: 'https://www.instagram.com/loccitane.itajuba/',
   whatsapp: '', // DDI + DDD + número. Nunca usar o contato do espetáculo anterior.

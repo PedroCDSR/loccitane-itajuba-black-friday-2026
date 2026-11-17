@@ -34,7 +34,7 @@ export function objetivoMissao(missao, sala) {
     if (!missao.conversouCarina) return 'Fale com a Karina na porta do showroom →';
     return 'Entre no showroom pela porta: as caixas estão no alto das estantes';
   }
-  return 'Reúna Caju e Romã · pule nas tendinhas →';
+  return 'Recupere os produtos e siga em frente até o showroom →';
 }
 // Produtos da cidade a partir do traçado da rua (posições das tendas e dos cestos).
 // - chão: um par garantido no caminho, para nunca faltar o mínimo da missão;

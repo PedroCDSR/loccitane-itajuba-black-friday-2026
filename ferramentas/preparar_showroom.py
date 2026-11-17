@@ -59,6 +59,17 @@ def sprite(origem,nome,altura):
 sprite('produtos/caju-sabonete-pixel-art.png','caju.png',78)
 sprite('produtos/roma-chantilly-pixel-art.png','roma.png',78)
 
+# Os quadros da folha do Pedro tinham de 5 a 11 px sem pixel visível embaixo dos pés, diferentes por quadro: no jogo ele flutuava
+# e subia e descia conforme a animação. Aqui o recorte de cada quadro é deslocado para o último pixel opaco tocar
+# a base (origem .5, 1 = pés no chão), sem mexer nos pixels.
+def alinhar_pes(atlas_jogo, imagem):
+    for f in atlas_jogo['frames'].values():
+        r, ss, src = f['frame'], f['spriteSourceSize'], f['sourceSize']
+        # só pixels visíveis (alfa > 128): a redução deixa linhas quase transparentes embaixo dos tênis
+        fundo = imagem.crop((r['x'], r['y'], r['x'] + r['w'], r['y'] + r['h'])).split()[-1].point(lambda v: 255 if v > 128 else 0).getbbox()[3]
+        ss['y'] = src['h'] - fundo
+    return atlas_jogo
+
 # ---------- Pedro: folha do jogo em metade da resolução e quadro da intro ----------
 # (a folha original e o atlas ficam em public/assets/personagens/, sem alteração)
 import json
@@ -72,6 +83,7 @@ novo = {'frames': {}, 'meta': dict(atlas['meta'], image='pedro-jogo.webp', size=
         note='Derivado de pedro-spritesheet.png em metade da resolução, gerado por ferramentas/preparar_showroom.py.')}
 for n, f in atlas['frames'].items():
     novo['frames'][n] = dict(f, frame=esc(f['frame']), spriteSourceSize=esc(f['spriteSourceSize']), sourceSize=esc(f['sourceSize']))
+alinhar_pes(novo, Image.open(OUT + '/pedro-jogo.webp').convert('RGBA'))
 json.dump(novo, open(OUT + '/pedro-jogo.json', 'w'), ensure_ascii=False, indent=1)
 fr = atlas['frames']['parado-0']['frame']
 q = folha.crop((fr['x'], fr['y'], fr['x'] + fr['w'], fr['y'] + fr['h']))

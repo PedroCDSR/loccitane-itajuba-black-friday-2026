@@ -158,7 +158,7 @@ export class Aventura extends Phaser.Scene {
       const toldo = this.umSentido(this.toldos, x, topo + TENDA.toldo + 3, TENDA.largura - 4);
       toldo.setData('visual', visual);
     }
-    this.pedro = criarPedro(this, PEDRO_PRACA, CHAO + 1, PEDRO_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
+    this.pedro = criarPedro(this, PEDRO_PRACA, CHAO, PEDRO_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
     this.pedro.on('pointerup', () => { if (this.pedroPerto) this.pedidoInteracao = true; });
     this.add.image(PORTAL - 70, CHAO, 'placa').setOrigin(.5, 1).setScale(1 / 3).setDepth(2);
     // a mesma bandeira do jardim do showroom, recortada da arte da fachada (ferramentas/recortar_bandeira.py)
@@ -226,7 +226,7 @@ export class Aventura extends Phaser.Scene {
     ];
     // Karina recebe na porta; depois da conversa ela entra e espera ao lado da bancada.
     this.carinaX = FACHADA + 122; // ao lado da porta, na frente do pilar de pedra
-    this.carina = criarCarina(this, this.carinaX, chaoFachada(this.carinaX) + 1, CARINA_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
+    this.carina = criarCarina(this, this.carinaX, chaoFachada(this.carinaX), CARINA_ESCALA).setDepth(3).setInteractive({ useHandCursor: true });
     this.carina.off('animationcomplete-carina-aceno');
     this.carina.on('animationcomplete-carina-aceno', () => this.carina.play(this.dialogoAberto ? 'carina-conversa' : 'carina-parada'));
     this.carina.on('pointerup', () => { if (this.carinaPerto) this.pedidoInteracao = true; });
@@ -313,30 +313,6 @@ export class Aventura extends Phaser.Scene {
       } });
     }
     if (n === 2) this.jogador.setFlipX(false);
-    if (n === 4) this.demonstrarPisao();
-  }
-  // Enquanto a fala explica as capivaras, a exploradora mostra o pisão: a capivara chega perto, ela pula em cima,
-  // quica e a capivara dorme com "zzz".
-  demonstrarPisao() {
-    const c = this.capivaraIntro, j = this.jogador, alvo = j.x + 46;
-    c.play('capivara-andar');
-    this.tweens.add({ targets: c, x: alvo, duration: 700, onComplete: () => {
-      if (this.estado !== 'intro') return;
-      c.anims.stop(); j.play('pulando');
-      this.tweens.add({ targets: j, x: alvo - 4, duration: 520 });
-      this.tweens.add({ targets: j, y: CHAO - 52, duration: 260, ease: 'Sine.out', onComplete: () => {
-        j.play('caindo');
-        this.tweens.add({ targets: j, y: CHAO - 14, duration: 260, ease: 'Sine.in', onComplete: () => {
-          if (this.estado !== 'intro') return;
-          this.dormir(c); tocar('dormir'); j.play('pulando');
-          this.tweens.add({ targets: j, x: alvo - 34, duration: 560 });
-          this.tweens.add({ targets: j, y: CHAO - 44, duration: 260, ease: 'Sine.out', onComplete: () => {
-            j.play('caindo');
-            this.tweens.add({ targets: j, y: CHAO, duration: 300, ease: 'Sine.in', onComplete: () => { if (this.estado === 'intro') j.play('parado'); } });
-          } });
-        } });
-      } });
-    } });
   }
   avancarDialogo() {
     if (this.estado === 'intro') {

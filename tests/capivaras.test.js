@@ -57,14 +57,22 @@ test('Aventura.adormecer: quica a exploradora, deixa a capivara parada, de olhos
   assert.deepEqual(feitos, ['pisao']); assert.ok(zs.includes('zzz'), 'o "zzz" aparece sobre a cabeça');
 });
 
-test('dicas e abertura explicam as três formas de lidar com a capivara, o toldo e o showroom', () => {
+test('instruções aos poucos: abertura curta, regras da rua nas dicas e do showroom com a Karina', () => {
   assert.equal(PASSOS.pisao.toque, 'Pule em cima da capivara para ela dormir!');
   assert.match(PASSOS.caju.toque, /CAJU/); assert.match(PASSOS.dano.toque, /1 ♥/);
   assert.match(PASSOS.toldo.toque, /toldo/); assert.match(PASSOS.caixas.toque, /caixas/); assert.match(PASSOS.bancada.toque, /bancada/);
   for (const p of Object.values(PASSOS)) assert.ok(p.toque.length <= 80 && p.teclado.length <= 80, `dica curta: ${p.toque}`);
+  // Nenhuma instrução foi eliminada: só a ordem mudou. A abertura conta a história e dá a missão da rua;
+  // toldo, capivaras e dano vêm nas dicas da rua; caixas e bancada, com a Karina no showroom.
   const intro = CAMPANHA.introCena.map(l => l.texto).join(' ');
-  for (const termo of [/[Pp]ise/, /caju/, /pule por cima/, /toldo/, /tira 1 ♥/, /bancada/, /Sem pressa/]) assert.match(intro, termo);
+  assert.ok(CAMPANHA.introCena.length <= 3, 'abertura curta');
+  assert.match(intro, /espalhados por Itajubá/); assert.match(intro, /showroom/, 'a pessoa sabe que o destino é o showroom'); assert.match(intro, /Sem pressa/);
+  for (const termo of [/toldo/, /[Pp]ise/, /tira 1/, /bancada/, /caixa/, /Karina/]) assert.doesNotMatch(intro, termo, `a abertura não adianta: ${termo}`);
   for (const l of CAMPANHA.introCena) assert.ok(l.texto.length <= 140, `fala curta: ${l.titulo}`);
+  const dicasRua = [PASSOS.toldo, PASSOS.pisao, PASSOS.caju, PASSOS.dano].map(p => p.toque).join(' ');
+  for (const termo of [/toldo/, /em cima da capivara/, /CAJU/, /pule por cima/, /tira 1 ♥/]) assert.match(dicasRua, termo);
+  const karina = CAMPANHA.conversas.carina.texto;
+  for (const termo of [/Caju/, /Romã/, /caixa/, /no alto das estantes/, /bancada/]) assert.match(karina, termo);
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
-  assert.match(html, /Pise, dê caju ou pule por cima/); assert.match(html, /tira 1 coração/);
+  assert.match(html, /Recupere os produtos espalhados pela cidade/); assert.doesNotMatch(html, /tira 1 coração/, 'a tela inicial não adianta as regras');
 });

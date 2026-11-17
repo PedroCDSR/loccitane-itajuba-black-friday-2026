@@ -128,3 +128,27 @@ Testado no Chromium em 390×844:
 - sem erros nem 4xx/5xx.
 
 `npm test` passou (52 de 52) e `npm run build` também. Capturas: `revisao-bandeira-rua.png`, `revisao-estante-meio.png` e `revisao-karina-bancada.png`.
+
+## Instruções aos poucos e Pedro com os pés no chão (mesmo dia)
+
+Pedido do Pedro: "muita informação no início e pouco jogo". Nenhuma instrução saiu; mudou só a ordem em que aparecem.
+
+- **Tela inicial:** três passos, só o convite: recuperar os produtos espalhados pela cidade, levar tudo ao showroom, ajudar a Karina a montar os kits. As regras da capivara saíram daqui e ficam nas dicas da rua.
+- **Abertura:** 3 falas em vez de 6.
+  - "ITAJUBÁ · NOVEMBRO DE 2026";
+  - "OPA!": a capivara derruba a entrega e os produtos se espalham pela cidade;
+  - "SUA MISSÃO": "Recupere os produtos espalhados por Itajubá e leve tudo ao showroom da L’Occitane. É só seguir sempre em frente. Sem pressa!"
+  
+  Saíram da abertura as falas NA RUA, CAPIVARAS e NO SHOWROOM, além da demonstração do pisão. Objetivo da rua: "Recupere os produtos e siga em frente até o showroom →".
+- **Na rua**, as dicas que já existiam, cada uma na hora da ação: andar → pular → toldo na 1ª tendinha → pisão na 1ª capivara → caju na 2ª → "encostar de lado tira 1 ♥ · pise, dê caju ou pule por cima" na primeira vez que acontece. O Pedro aparece na praça, entre a 1ª e a 2ª capivara.
+- **No showroom**, a Karina explica, com o texto ditado pelo Pedro: "Que bom que você chegou! Preciso da sua ajuda para montar os kits de presente: cada um leva um Caju, uma Romã e uma caixa. As caixas estão no alto das estantes, lá dentro. Você consegue pegar para mim, por favor? Depois é só passar na bancada." Depois vêm as dicas das caixas e da bancada.
+- **Pedro flutuando.** Os quadros da folha do Pedro tinham de 5 a 11 px sem pixel visível embaixo dos tênis: linhas quase transparentes que sobraram da redução da imagem, diferentes em cada quadro. `ferramentas/preparar_showroom.py` agora alinha o recorte de cada quadro pelo último pixel visível (`alinhar_pes`), e `public/assets/showroom/pedro-jogo.json` foi regenerado. Pedro e Karina, na fachada, pisam na mesma linha que a exploradora; na bancada, a Karina continua um pouco à frente, sobre o piso. Os quadros da Karina já tocavam a base.
+
+Testado no Chromium em 390×844:
+- textos da tela inicial e da abertura (3 falas);
+- dicas na ordem andar, pular, toldo, pisão, caju e dano de lado;
+- conversa da Karina na porta e objetivo da fachada;
+- pés do Pedro na mesma linha que os da exploradora, em todos os quadros da conversa (zoom em `revisao-pedro-pes.png`);
+- sem erros nem 4xx/5xx.
+
+`npm test` passou (52 de 52, com o teste dos textos refeito para "instruções aos poucos") e `npm run build` também. Capturas: `revisao-ritmo-*.png` e `revisao-pedro-pes.png`.
