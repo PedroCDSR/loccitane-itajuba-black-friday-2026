@@ -38,7 +38,7 @@ test('segurar ou repetir interação não duplica kits nem produz estoque negati
   assert.equal(montarKit(m, 0), true); assert.equal(montarKit(m, 0), false);
   assert.equal(montarKit(m, 1), true); assert.equal(montarKit(m, 2), true);
   assert.equal(m.kits, META_KITS); assert.deepEqual(m.estoque, { caju: 0, capim: 0, roma: 0, caixa: 0 });
-  assert.match(objetivoMissao(m), /Vitrine pronta/);
+  assert.match(objetivoMissao(m), /surpresa/);
 });
 test('a cidade garante a missão pelo chão e guarda o resto para saltos e tendas', () => {
   const itens = criarProdutosCidade({ chao: 240, tendas: [870, 1630], cestos: [[1065, 1], [1830, 2]], topoToldo: 168 });

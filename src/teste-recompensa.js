@@ -37,12 +37,13 @@ function abrirFinal(resultado = {}, teste = false) {
   atual = RECOMPENSAS[chave] || RECOMPENSAS[RECOMPENSA_FINAL];
   pagina = 0;
   $('placar-produtos').textContent = `${placar.produtos} produtos × 10 = ${placar.pontosProdutos} pontos`;
-  $('placar-kits').textContent = `${placar.kits} kits × 50 = ${placar.pontosKits} pontos`;
+  $('placar-kits').textContent = `${placar.vida} vidas ao chegar · menor vida: ${placar.vidaMinima} · produtos fora do showroom: ${placar.brindes}/2`;
   $('placar-total').textContent = `${placar.total} pontos`;
   for (const faixa of FAIXAS) {
     const linha = $(`faixa-${faixa.chave}`);
     linha.classList.toggle('faixa-liberada', faixa.chave === chave);
-    linha.querySelector('td:last-child').textContent = faixa.chave === chave ? 'Seu cupom ✦' : (placar.total < faixa.minimo ? `Faltaram ${faixa.minimo - placar.total} pontos` : 'Faixa alcançada');
+    linha.querySelector('td:first-child').textContent = faixa.regra;
+    linha.querySelector('td:last-child').textContent = faixa.chave === chave ? 'Seu cupom ✦' : 'Não selecionado';
   }
   $('inicio').hidden = true;
   $('partida').hidden = true;

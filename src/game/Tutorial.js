@@ -12,8 +12,6 @@ export const PASSOS = {
   caju: { alvo: 'fruta', toque: 'Outra capivara! Toque em CAJU: ela come feliz e deixa você passar.', teclado: 'Outra capivara! Aperte X: ela come o caju feliz e deixa você passar.', espera: 8000 },
   dano: { alvo: 'pular', toque: 'Encostar de lado tira 1 ♥. Pise nela, dê caju ou pule por cima!', teclado: 'Encostar de lado tira 1 ♥. Pise nela, dê caju (X) ou pule por cima!', espera: 6000 },
   caixas: { alvo: 'pular', toque: 'As caixas de presente estão no alto: suba pelas prateleiras!', teclado: 'As caixas de presente estão no alto: suba pelas prateleiras!', espera: 7000 },
-  bancada: { alvo: 'direita', toque: 'Com Caju, Romã e caixa, passe pela bancada: o kit se monta sozinho!', teclado: 'Com Caju, Romã e caixa, passe pela bancada: o kit se monta sozinho!', espera: 7000 },
-  saida: { alvo: 'direita', toque: 'Vitrine pronta! Siga para a SAÍDA →', teclado: 'Vitrine pronta! Siga para a SAÍDA → (D)', espera: 6000 },
 };
 export class Tutorial {
   constructor(ativo) { this.ativo = ativo; this.feitos = new Set(); this.atual = null; this.ate = 0; }

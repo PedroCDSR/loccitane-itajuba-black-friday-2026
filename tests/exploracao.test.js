@@ -46,16 +46,17 @@ test('tempo longo de passeio não encerra a partida', () => {
   assert.doesNotMatch(readFileSync(new URL('../src/game/Aventura.js', import.meta.url), 'utf8'), /concluir\('tempo'\)|DURACAO_SEGUNDOS/);
 });
 
-test('a partida só termina saindo do showroom com os três kits', () => {
+test('última caixa inicia agradecimento da Karina sem exigir saída ou produtos', () => {
   const { s } = cena(); s.sala = 'showroom'; s.missao.fase = 'showroom'; s.jogador.x = MUNDO - 5;
   s.update(0, 16); assert.equal(s.fim, false, 'sem kits a saída não conclui');
   s.mostrarFala = (titulo, texto, botao) => { s.falaFinal = { titulo, texto, botao }; };
   s.esconderFala = () => {}; s.avancarFala = () => false;
-  s.missao.kits = META_KITS; s.update(0, 16);
+  s.karinaInteriorFalou = true; s.karinaBancada = {play(){}};
+  s.missao.coletados.caixa = META_KITS; s.update(0, 16);
   assert.equal(s.fim, false); assert.equal(s.emitidos.length, 0);
   assert.equal(s.dialogoAberto, 'karina-final');
-  assert.equal(s.falaFinal.botao, 'REVELAR CUPOM');
-  assert.match(s.falaFinal.texto, /toda a loja/);
+  assert.equal(s.falaFinal.botao, 'REVELAR MEU PRESENTE');
+  assert.match(s.falaFinal.texto, /Muito obrigada/);
   s.avancarDialogo();
   assert.equal(s.fim, true); assert.equal(s.emitidos[0][1].motivo, 'vitrine');
 });
@@ -95,7 +96,7 @@ test('voltar à cidade e retornar ao showroom preserva missão, itens e capivara
 
 test('fachada e interior são duas telas: entra pela porta, volta pela esquerda do interior, sem loop', () => {
   const { s, elements, mundo, cam } = cena();
-  s.aviso = () => {}; s.karinaEntra = () => { s.karinaConversou = true; };
+  s.karinaInteriorFalou = true; s.karinaInteriorFalou = true; s.aviso = () => {}; s.karinaEntra = () => { s.karinaConversou = true; };
   s.jogador.x = SHOWROOM.x - 30; s.update(0, 16);
   assert.equal(s.trecho, 'fachada'); assert.deepEqual(mundo.bounds, [SHOWROOM.x, 0, SHOWROOM.largura, ALTURA]);
   assert.equal(cam.bounds[0], SHOWROOM.x); assert.equal(cam.bounds[2], SHOWROOM.largura, 'a câmera não mostra o interior junto da fachada');

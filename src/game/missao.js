@@ -27,10 +27,10 @@ export function objetivoMissao(missao, sala) {
     if (missao.estoque.caju < faltam || missao.estoque.roma < faltam) return 'Reúna mais Caju e Romã · a bandeira leva ao showroom →';
     return 'Passeie à vontade · a bandeira leva de volta ao showroom →';
   }
-  if (missao.kits === META_KITS) return 'Vitrine pronta! Siga para a saída à direita →';
+  if (missao.kits === META_KITS) return 'A Karina preparou uma surpresa para você!';
   if (missao.fase === 'showroom') {
     if (missao.estoque.caixa < 1 && missao.coletados.caixa < META_KITS) return `Pegue as caixas de presente no alto das estantes · kits ${missao.kits}/${META_KITS}`;
-    return `Leve tudo à bancada para montar os kits · ${missao.kits}/${META_KITS}`;
+    return `Ajude a Karina: pegue as caixas nas prateleiras · ${missao.kits}/${META_KITS}`;
   }
   if (missao.fase === 'fachada') {
     if (!missao.conversouKarina) return 'Fale com a Karina na porta do showroom →';

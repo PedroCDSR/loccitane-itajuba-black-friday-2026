@@ -60,7 +60,7 @@ test('Aventura.adormecer: quica a exploradora, deixa a capivara parada, de olhos
 test('instruções aos poucos: abertura curta, regras da rua nas dicas e do showroom com a Karina', () => {
   assert.equal(PASSOS.pisao.toque, 'Pule em cima da capivara para ela dormir!');
   assert.match(PASSOS.caju.toque, /CAJU/); assert.match(PASSOS.dano.toque, /1 ♥/);
-  assert.match(PASSOS.toldo.toque, /toldo/); assert.match(PASSOS.caixas.toque, /caixas/); assert.match(PASSOS.bancada.toque, /bancada/);
+  assert.match(PASSOS.toldo.toque, /toldo/); assert.match(PASSOS.caixas.toque, /caixas/); assert.equal(PASSOS.bancada, undefined);
   for (const p of Object.values(PASSOS)) assert.ok(p.toque.length <= 80 && p.teclado.length <= 80, `dica curta: ${p.toque}`);
   // Nenhuma instrução foi eliminada: só a ordem mudou. A abertura conta a história e dá a missão da rua;
   // toldo, capivaras e dano vêm nas dicas da rua; caixas e bancada, com a Karina no showroom.
@@ -71,8 +71,8 @@ test('instruções aos poucos: abertura curta, regras da rua nas dicas e do show
   for (const l of CAMPANHA.introCena) assert.ok(l.texto.length <= 140, `fala curta: ${l.titulo}`);
   const dicasRua = [PASSOS.toldo, PASSOS.pisao, PASSOS.caju, PASSOS.dano].map(p => p.toque).join(' ');
   for (const termo of [/toldo/, /em cima da capivara/, /CAJU/, /pule por cima/, /tira 1 ♥/]) assert.match(dicasRua, termo);
-  const karina = CAMPANHA.conversas.karina.texto;
-  for (const termo of [/Caju/, /Romã/, /caixa/, /no alto das estantes/, /bancada/]) assert.match(karina, termo);
+  const karina = CAMPANHA.conversas.karinaInterior.texto;
+  for (const termo of [/caixas/, /alto das prateleiras/, /montando os kits/]) assert.match(karina, termo);
   const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
   assert.match(html, /última aventura/); assert.doesNotMatch(html, /tira 1 coração/, 'a tela inicial não adianta as regras');
 });
