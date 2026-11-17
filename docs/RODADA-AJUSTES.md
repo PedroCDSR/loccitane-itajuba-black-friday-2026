@@ -173,4 +173,23 @@ Pedido: "o showroom tem duas partes, a da frente com o Pedro e a de dentro, que 
 
 Testado no Chromium em 390×844: percurso completo do showroom com teclado, fachada → transição → interior → três kits → final "Vitrine pronta!", sem erros nem 4xx/5xx; `npm test` 47 de 47 e `npm run build`. Capturas: `v5-depois-fachada-caixa.png` (fachada sozinha com "ENTRAR →"), `v5-depois-entrando.png` e `v5-depois-interior-tela-propria.png` (interior com "← JARDIM" e mapa só do interior).
 
-**Próximo passo:** o Pedro está subindo uma fachada nova, fechada, com a porta no centro e sem as estantes à mostra. Quando ela chegar, a caixa de presente que hoje fica no alto da estante da fachada precisa ir para o interior, e a passagem pode ser pela porta.
+## Fachada nova, fechada, com entrada pela porta (mesmo dia)
+
+O Pedro enviou a arte nova da fachada pelo GitHub (upload na `main`, `public/assets/showroom/fachada loccitane.png`, 1672×941): prédio fechado, toldo vermelho sobre a porta de vidro, muro de pedra, jardim, bandeira e calçada. O interior só aparece depois de entrar. Na `dev`, o original foi guardado em `references/propostas/fachada-fechada-original.png` e o jogo usa o derivado 960×540 gerado por `ferramentas/preparar_showroom.py` (`public/assets/showroom/fachada.png`). A fachada aberta antiga continua em `references/propostas/` como referência. O arquivo enviado na `main` não foi mexido.
+
+- **Entrada pela porta.** Na frente da porta aparece o botão "Entrar no showroom" (E ou Enter no teclado); a tela escurece com "Entrando no · Showroom" e abre no interior. Andar até o fim da fachada não entra. Voltando pela esquerda do interior (placa "← FACHADA"), a exploradora reaparece na frente da porta.
+- **Pedro** fica ao lado da porta, na frente do pilar de pedra; a conversa continua abrindo sozinha quando ela chega perto.
+- **A caixa da fachada agora fica no alto da marquise.** O toldo vermelho quica como os das tendinhas da cidade: pula-se no toldo, o quique leva à marquise e anda-se até a caixa, no canto direito, perto do letreiro redondo. A mesa e as estantes da fachada antiga saíram (não existem na arte nova). O par de reserva de Caju e Romã foi para o canteiro à direita da porta.
+- **Textos:** fala do Pedro ("Uma caixa ficou aqui fora, no alto da marquise: quique no toldo vermelho. As outras duas estão no alto das estantes lá dentro."), objetivo da fachada ("Quique no toldo e pegue a caixa no alto da marquise · depois entre pela porta", e depois "Entre no showroom pela porta") e abertura ("pegue as caixas de presente no alto"). Nenhuma condição comercial mudou.
+- As setas de objetivo apontam para a porta quando o próximo alvo está lá dentro.
+
+### Testado (Chromium, 390×844 com toque emulado)
+
+- `npm test` 47 de 47 (teste de duas telas refeito para a porta: longe dela não há botão; na frente aparece "Entrar no showroom"; voltar deixa a exploradora na porta) e `npm run build`.
+- Robô com teclado: chegada na fachada; conversa com o Pedro; pulo no toldo → quique → marquise (y 146) → caixa; em cima da marquise, sobre a porta, o botão **não** aparece (bug achado e corrigido nesta rodada); descida e porta com Enter; interior, prateleiras, três kits, saída e final "Vitrine pronta!", sem erros nem 4xx/5xx. Volta à fachada segurando ← no começo do interior: reaparece na frente da porta com o botão "Entrar no showroom", sem voltar sozinha para a rua. Uma das três rodadas do robô falhou por ele mesmo (a ~14 quadros por segundo, toques de 40 ms nas setas às vezes se perdem e ele ficou parado na marquise); as outras duas passaram.
+- Capturas: `docs/capturas/v6-fachada-chegada.png`, `v6-fachada-pedro.png`, `v6-fachada-quique.png`, `v6-fachada-marquise.png`, `v6-fachada-porta.png`, `v6-entrando.png`, `v6-interior.png`, `v6-bancada.png`, `v6-saida.png`, `v6-volta-fachada.png`.
+
+### Não testado
+
+- Aparelho real. Falta ver com gente se a marquise fica fácil de descobrir sem a fala do Pedro (a seta dourada aponta para a caixa).
+- As capturas `v5-*` mostram a fachada aberta antiga.

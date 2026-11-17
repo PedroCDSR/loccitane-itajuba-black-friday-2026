@@ -46,7 +46,10 @@ b.paste(ob.crop((752,745,838,816)),(646,745))
 # ---------- saída ----------
 def fundo_jogo(im,nome):
     im.resize((960,540),Image.LANCZOS).quantize(255,method=Image.Quantize.MEDIANCUT,dither=Image.Dither.NONE).save(OUT+'/'+nome,optimize=True)
-fundo_jogo(b,'fachada.png'); fundo_jogo(a,'interior.png')
+# A fachada do jogo agora é a fachada fechada (porta no centro, sem estantes à mostra), enviada pelo Pedro em
+# 17/11/2026; o interior só aparece depois da porta. A fachada aberta antiga (acima) fica como referência.
+nova=abrir('fachada-fechada-original.png')
+fundo_jogo(nova,'fachada.png'); fundo_jogo(a,'interior.png')
 def sprite(origem,nome,altura):
     im=Image.open(R+'/public/assets/'+origem).convert('RGBA'); im=im.crop(im.getbbox())
     w=round(im.width*altura/im.height)

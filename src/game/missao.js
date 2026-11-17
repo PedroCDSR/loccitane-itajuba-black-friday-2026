@@ -1,5 +1,5 @@
 export const META_KITS = 3;
-// Cada kit leva 1 Caju, 1 Romã e 1 caixa de presente. As caixas ficam no alto das estantes do showroom.
+// Cada kit leva 1 Caju, 1 Romã e 1 caixa de presente. As caixas ficam no alto: uma na marquise da fachada, duas nas estantes do interior.
 export const ITENS_MISSAO = ['caju', 'roma', 'caixa'];
 export function criarMissao() {
   return { coletados: { caju: 0, roma: 0, caixa: 0 }, estoque: { caju: 0, roma: 0, caixa: 0 }, kits: 0, estacoes: [], fase: 'cidade', conversouPedro: false };
@@ -30,7 +30,10 @@ export function objetivoMissao(missao, sala) {
     if (missao.estoque.caixa < 1 && missao.coletados.caixa < META_KITS) return `Pegue as caixas de presente no alto das estantes · kits ${missao.kits}/${META_KITS}`;
     return `Leve tudo à bancada para montar os kits · ${missao.kits}/${META_KITS}`;
   }
-  if (missao.fase === 'fachada') return missao.conversouPedro ? 'Entre no showroom: as caixas estão no alto das estantes →' : 'Fale com Pedro na porta do showroom →';
+  if (missao.fase === 'fachada') {
+    if (!missao.conversouPedro) return 'Fale com Pedro na porta do showroom →';
+    return missao.coletados.caixa < 1 ? 'Quique no toldo e pegue a caixa no alto da marquise · depois entre pela porta' : 'Entre no showroom pela porta';
+  }
   return 'Reúna Caju e Romã · pule nas tendinhas →';
 }
 // Produtos da cidade a partir do traçado da rua (posições das tendas e dos cestos).

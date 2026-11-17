@@ -29,7 +29,8 @@ const PORTAL = FACHADA - 46; // a bandeira do fim da rua: passou dela, a tela es
 const VOLTA = FACHADA + 12, CHEGADA_SHOWROOM = FACHADA + 34, CHEGADA_CIDADE = PORTAL - 40;
 // Fachada (jardim, porta e Pedro) e interior são duas telas separadas, com transição entre elas: andando para a
 // direita no fim da fachada entra no showroom; para a esquerda no começo do interior volta ao jardim.
-const PASSAGEM = 14, CHEGADA_INTERIOR = INTERIOR + 34, CHEGADA_JARDIM = INTERIOR - 34;
+// A fachada nova é fechada: entra-se pela porta (botão "Entrar no showroom", E ou Enter), no centro da arte.
+const PORTA = FACHADA + 157, PASSAGEM = 14, CHEGADA_INTERIOR = INTERIOR + 34, CHEGADA_JARDIM = PORTA;
 const TRECHO = { fachada: FACHADA, interior: INTERIOR };
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
@@ -70,8 +71,8 @@ export class Aventura extends Phaser.Scene {
     this.physics.add.collider(this.jogador, this.toldos, (j, toldo) => {
       if (!j.body.touching.down) return;
       j.quicar(this.entrada.pular ? 430 : 360); tocar('toldo'); this.tutorial?.concluir('toldo');
-      const t = toldo.getData('visual');
-      this.tweens.add({ targets: t, scaleY: t.scaleY * .94, duration: 70, yoyo: true });
+      const t = toldo.getData('visual'); // o toldo da fachada faz parte da arte de fundo: só quica
+      if (t) this.tweens.add({ targets: t, scaleY: t.scaleY * .94, duration: 70, yoyo: true });
     });
 
     this.itens = this.physics.add.staticGroup();
@@ -191,20 +192,20 @@ export class Aventura extends Phaser.Scene {
     this.physics.add.existing(piso, true);
     this.pisoShowroom = piso;
     const tampo = (x1, x2, y) => this.umSentido(this.plataformas, (x1 + x2) / 2, y + 3, x2 - x1);
-    // fachada: mesa de presentes e topo das estantes
-    tampo(px(FACHADA, 846), px(FACHADA, 1082), py(657));
-    tampo(px(FACHADA, 1040), px(FACHADA, 1640), py(432));
+    // fachada fechada: o toldo vermelho sobre a porta quica (como o das tendinhas) e leva à marquise
+    this.umSentido(this.toldos, FACHADA + 155, 177, 84);
+    tampo(FACHADA + 113, FACHADA + 318, 146);
     // interior: mesa e duas prateleiras de cada estante (medidas sobre a arte, ver docs/SHOWROOM-JOGAVEL.md)
     tampo(px(INTERIOR, 745), px(INTERIOR, 1132), py(646));
     for (const [x1, x2] of [[52, 153], [234, 314]]) for (const y of [183, 150]) tampo(INTERIOR + x1, INTERIOR + x2, y);
-    // Itens do showroom: as três caixas de presente no alto e um par de reserva na mesa da fachada.
+    // Itens do showroom: uma caixa no alto da marquise, duas no alto das estantes e um par de reserva no jardim.
     this.itensShowroom = [
-      ['caixa', px(FACHADA, 1420), py(432) - 12], ['caixa', INTERIOR + 72, 138], ['caixa', INTERIOR + 296, 138],
-      ['caju', px(FACHADA, 930), py(657) - 20], ['roma', px(FACHADA, 1010), py(657) - 20],
+      ['caixa', FACHADA + 290, 132], ['caixa', INTERIOR + 72, 138], ['caixa', INTERIOR + 296, 138],
+      ['caju', FACHADA + 238, 222], ['roma', FACHADA + 262, 222],
     ];
     // Pedro recebe na porta; depois da conversa ele entra e espera ao lado da bancada.
-    this.pedroX = px(FACHADA, 694);
-    this.pedro = criarPedro(this, this.pedroX, py(792) + 3, .316).setDepth(3).setInteractive({ useHandCursor: true });
+    this.pedroX = FACHADA + 122; // ao lado da porta, na frente do pilar de pedra
+    this.pedro = criarPedro(this, this.pedroX, CHAO + 1, .316).setDepth(3).setInteractive({ useHandCursor: true });
     this.pedro.off('animationcomplete-pedro-aceno');
     this.pedro.on('animationcomplete-pedro-aceno', () => this.pedro.play(this.dialogoAberto ? 'pedro-conversa' : 'pedro-parado'));
     this.pedro.on('pointerup', () => { if (this.pedroPerto) this.pedidoInteracao = true; });
@@ -220,8 +221,7 @@ export class Aventura extends Phaser.Scene {
       .setOrigin(.5).setDepth(6).setAlpha(.9); // no alto: não cobre a exploradora na chegada e aparece no celular em pé
     // placas das passagens entre o jardim e o interior
     const placa = { fontFamily: 'Georgia, serif', fontSize: '7px', color: '#fff4df', backgroundColor: '#7d2029', padding: { x: 3, y: 2 }, resolution: 4 };
-    this.add.text(INTERIOR - 30, 196, 'ENTRAR →', placa).setOrigin(.5).setDepth(6).setAlpha(.92);
-    this.add.text(INTERIOR + 28, 128, '← JARDIM', { ...placa, backgroundColor: '#304f3d' }).setOrigin(.5).setDepth(6).setAlpha(.9);
+    this.add.text(INTERIOR + 28, 128, '← FACHADA', { ...placa, backgroundColor: '#304f3d' }).setOrigin(.5).setDepth(6).setAlpha(.9);
     this.saida = this.add.text(MUNDO - 22, 186, 'SAÍDA →', { fontFamily: 'Georgia, serif', fontSize: '9px', color: '#fff4df', backgroundColor: '#7d2029', padding: { x: 3, y: 2 }, resolution: 4 })
       .setOrigin(.5).setDepth(6).setAlpha(0);
   }
@@ -360,7 +360,7 @@ export class Aventura extends Phaser.Scene {
       showroom: ['Showroom', 'L’Occitane au Brésil', 'Itajubá'],
       cidade: ['De volta a', 'Itajubá', 'Passeie à vontade'],
       interior: ['Entrando no', 'Showroom', 'Os presentes estão lá dentro'],
-      jardim: ['De volta ao', 'Jardim', 'A rua de Itajubá fica à esquerda'],
+      jardim: ['De volta à', 'Fachada', 'A rua de Itajubá fica à esquerda'],
     }[destino];
     $('transicao-titulo').textContent = textos[0]; $('transicao-nome').textContent = textos[1]; $('transicao-sub').textContent = textos[2];
     $('transicao').hidden = false; tocar('transicao');
@@ -371,7 +371,7 @@ export class Aventura extends Phaser.Scene {
       if (this.sala === 'showroom') {
         if (this.missao.fase === 'cidade') { this.missao.fase = 'fachada'; registrar('chegada_showroom'); }
         if (!this.solidos.contains(this.pisoShowroom)) this.solidos.add(this.pisoShowroom);
-        const [trecho, chegada, direita] = { showroom: ['fachada', CHEGADA_SHOWROOM, true], interior: ['interior', CHEGADA_INTERIOR, true], jardim: ['fachada', CHEGADA_JARDIM, false] }[destino];
+        const [trecho, chegada, direita] = { showroom: ['fachada', CHEGADA_SHOWROOM, true], interior: ['interior', CHEGADA_INTERIOR, true], jardim: ['fachada', CHEGADA_JARDIM, true] }[destino];
         this.trecho = trecho;
         if (trecho === 'interior') {
           if (!this.pedroConversou) this.pedroEntra();
@@ -459,10 +459,12 @@ export class Aventura extends Phaser.Scene {
 
   contextoInteracao() {
     if (this.pedroPerto && !this.pedroConversou && !this.dialogoAberto) return { tipo: 'pedro', texto: 'Conversar com Pedro' };
+    if (this.sala === 'showroom' && this.trecho === 'fachada' && Math.abs(this.jogador.x - PORTA) < 20 && this.jogador.y > CHAO - 4 && (this.jogador.body.blocked?.down ?? true)) return { tipo: 'porta', texto: 'Entrar no showroom' };
     return null;
   }
   interagir(contexto) {
     if (contexto?.tipo === 'pedro') this.abrirDialogo();
+    if (contexto?.tipo === 'porta') this.entrarNoInterior();
   }
 
   // Ordem das dicas (Tutorial.js): andar → pular → toldo na 1ª tendinha → pisão na 1ª capivara → caju na 2ª.
@@ -542,7 +544,7 @@ export class Aventura extends Phaser.Scene {
   alvosNestaTela(alvos) {
     const interior = this.trecho === 'interior', nesta = [], passagem = [];
     for (const a of alvos) (a.x >= INTERIOR) === interior ? nesta.push(a) : passagem.push(a);
-    if (passagem.length) nesta.push({ ...passagem[0], x: interior ? INTERIOR + 8 : INTERIOR - 8, y: 205 });
+    if (passagem.length) nesta.push({ ...passagem[0], x: interior ? INTERIOR + 8 : PORTA, y: interior ? 205 : 196 });
     return nesta;
   }
   // Zoom pela altura da tela (que muda com o celular) e câmera um pouco à frente de quem anda.
@@ -590,13 +592,12 @@ export class Aventura extends Phaser.Scene {
     } else {
       // andando para a esquerda no começo da fachada, volta para a rua
       if (this.trecho !== 'interior' && x < VOLTA && this.entrada.esquerda) { this.voltarParaCidade(); return; }
-      if (this.trecho === 'fachada' && x > INTERIOR - PASSAGEM && this.entrada.direita) { this.entrarNoInterior(); return; }
       if (this.trecho === 'interior' && x < INTERIOR + PASSAGEM && this.entrada.esquerda) { this.voltarAoJardim(); return; }
       const perto = !this.pedroConversou && Math.abs(x - this.pedroX) < 45;
       if (perto !== this.pedroPerto) { this.pedroPerto = perto; this.pedro.play(perto ? 'pedro-aceno' : 'pedro-parado'); }
       // a primeira passagem pela porta abre a conversa sozinha: é ela que explica as caixas de presente
       if (perto && !this.pedroConversou && Math.abs(x - this.pedroX) < 20) { this.abrirDialogo(); return; }
-      if (x > this.pedroX + 30 && !this.pedroConversou) this.pedroEntra();
+      if (x > PORTA + 30 && !this.pedroConversou) this.pedroEntra();
       if (this.missao.fase === 'showroom') this.verificarBancada();
       this.guia.atualizar(this.alvosShowroom(), this.jogador, agora);
     }

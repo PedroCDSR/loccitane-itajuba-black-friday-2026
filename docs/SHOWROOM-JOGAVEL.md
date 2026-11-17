@@ -1,5 +1,7 @@
 # Cena jogável do showroom
 
+> **Atualização (17/11/2026):** a fachada agora é a arte fechada enviada pelo Pedro, com entrada pela porta, e fachada e interior são duas telas com transição. A mesa e as estantes da fachada descritas abaixo não existem mais; a caixa da fachada fica no alto da marquise (pula-se no toldo, que quica). Ver `docs/RODADA-AJUSTES.md`.
+
 Data: 17/11/2026. A cena faz parte do percurso normal: depois da rua, a exploradora passa pelo jardim, entra pela porta (onde o Pedro a recebe), atravessa a sala dos presentes e sai pela direita, o que leva à tela final.
 
 Capturas reais do jogo (canvas do Phaser, não são os conceitos):
