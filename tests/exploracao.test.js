@@ -83,3 +83,25 @@ test('voltar à cidade e retornar ao showroom preserva missão, itens e capivara
   assert.equal(mundo.pausado, mundo.retomado, 'toda transição retoma a física');
   assert.equal(s.fim, false);
 });
+
+test('fachada e interior são duas telas, com transição nos dois sentidos e sem loop', () => {
+  const { s, elements, mundo, cam } = cena();
+  s.aviso = () => {}; s.pedroEntra = () => { s.pedroConversou = true; };
+  s.jogador.x = SHOWROOM.x - 30; s.update(0, 16);
+  assert.equal(s.trecho, 'fachada'); assert.deepEqual(mundo.bounds, [SHOWROOM.x, 0, SHOWROOM.largura, ALTURA]);
+  assert.equal(cam.bounds[0], SHOWROOM.x); assert.equal(cam.bounds[2], SHOWROOM.largura, 'a câmera não mostra o interior junto da fachada');
+  const interior = SHOWROOM.x + SHOWROOM.largura;
+  // parado no fim da fachada não entra; andando para a direita entra
+  s.jogador.x = interior - 10; s.update(0, 16); assert.equal(s.trecho, 'fachada');
+  s.entrada.direita = true; s.update(0, 16);
+  assert.equal(s.trecho, 'interior'); assert.equal(elements['transicao-nome'].textContent, 'Showroom');
+  assert.equal(s.missao.fase, 'showroom'); assert.deepEqual(mundo.bounds, [interior, 0, SHOWROOM.largura, ALTURA]);
+  assert.equal(cam.bounds[0], interior); assert.ok(s.jogador.x > interior + 14, 'chega longe da passagem');
+  for (let i = 0; i < 5; i++) s.update(0, 16); assert.equal(s.trecho, 'interior', 'segurar a direita não volta');
+  // de volta ao jardim pela esquerda do interior; não volta à rua de imediato
+  s.entrada.direita = false; s.entrada.esquerda = true; s.jogador.x = interior + 8; s.update(0, 16);
+  assert.equal(s.trecho, 'fachada'); assert.equal(s.sala, 'showroom'); assert.equal(elements['transicao-nome'].textContent, 'Jardim');
+  assert.ok(s.jogador.x < interior - 14); assert.equal(s.missao.fase, 'showroom', 'a fase não regride');
+  for (let i = 0; i < 5; i++) s.update(0, 16); assert.equal(s.sala, 'showroom');
+  assert.equal(mundo.pausado, mundo.retomado);
+});

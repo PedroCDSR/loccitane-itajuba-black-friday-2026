@@ -2,10 +2,10 @@ import { SHOWROOM, ALTURA_SHOWROOM } from './config.js';
 
 // Showroom no celular em pé: com o zoom pela altura sobravam ~110 unidades de largura.
 // Aqui ficam o enquadramento do celular em pé, o "mapa da loja" no alto (uma segunda câmera que mostra
-// o showroom inteiro com as próprias artes) e as setas que apontam para o próximo objetivo.
-export const MAPA = { y1: 125, y2: 255 }; // faixa vertical do showroom que aparece no mapa (estantes e chão)
+// a tela atual do showroom, fachada ou interior, com as próprias artes) e as setas que apontam para o próximo objetivo.
+export const MAPA = { y1: 128, y2: 246 }; // faixa vertical do showroom que aparece no mapa (estantes e chão)
 export const LARGURA_MIN_SHOWROOM = 150; // largura mínima visível (unidades) no celular em pé
-const LARGURA_TOTAL = SHOWROOM.largura * 2;
+const LARGURA_TELA = SHOWROOM.largura, LARGURA_TOTAL = SHOWROOM.largura * 2;
 const CORES = { alvo: 0xf2c14e, jogadora: 0xc8323f, moldura: 0xfff4df, escuro: 0x1f3329 };
 
 // Celular em pé: a tela do jogo é bem mais alta que larga.
@@ -14,7 +14,7 @@ export const emPe = (largura, altura) => altura > largura * 1.15;
 // Enquadramento por tamanho de tela, sem Phaser (testável): altura do mapa, zoom e área visível do jogo.
 export function enquadramento(largura, altura) {
   if (!emPe(largura, altura)) return { mapa: 0, zoom: altura / ALTURA_SHOWROOM };
-  const mapa = Math.round(largura * (MAPA.y2 - MAPA.y1) / LARGURA_TOTAL);
+  const mapa = Math.round(largura * (MAPA.y2 - MAPA.y1) / LARGURA_TELA);
   const zoom = Math.min((altura - mapa) / ALTURA_SHOWROOM, largura / LARGURA_MIN_SHOWROOM);
   return { mapa, zoom };
 }
@@ -68,16 +68,16 @@ export class GuiaShowroom {
   }
 
   // Liga o mapa e ajusta a câmera principal ao tamanho da tela; devolve o zoom usado.
-  layout(ativo) {
+  layout(ativo, x0 = SHOWROOM.x) {
     const s = this.scene, cam = s.cameras.main, w = s.scale.width, h = s.scale.height;
     const { mapa, zoom } = ativo ? enquadramento(w, h) : { mapa: 0, zoom: 0 };
     const mostrar = ativo && mapa > 0;
-    if (this.alturaMapa !== (mostrar ? mapa : 0) || cam.height !== h - (mostrar ? mapa : 0) || cam.width !== w) {
-      this.alturaMapa = mostrar ? mapa : 0;
+    if (this.alturaMapa !== (mostrar ? mapa : 0) || cam.height !== h - (mostrar ? mapa : 0) || cam.width !== w || this.x0 !== x0) {
+      this.alturaMapa = mostrar ? mapa : 0; this.x0 = x0;
       cam.setViewport(0, this.alturaMapa, w, h - this.alturaMapa);
       if (mostrar) {
-        this.mapa.setViewport(0, 0, w, mapa).setZoom(w / LARGURA_TOTAL);
-        this.mapa.centerOn(SHOWROOM.x + LARGURA_TOTAL / 2, (MAPA.y1 + MAPA.y2) / 2);
+        this.mapa.setViewport(0, 0, w, mapa).setZoom(w / LARGURA_TELA);
+        this.mapa.centerOn(x0 + LARGURA_TELA / 2, (MAPA.y1 + MAPA.y2) / 2);
       }
     }
     this.mapa.setVisible(mostrar);

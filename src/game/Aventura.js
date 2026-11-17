@@ -27,6 +27,10 @@ const PORTAL = FACHADA - 46; // a bandeira do fim da rua: passou dela, a tela es
 // Volta ao showroom → cidade: andando para a esquerda no começo da fachada. As posições de chegada ficam longe
 // dos dois gatilhos (PORTAL + 8 na rua, VOLTA na fachada) para a passagem nunca disparar em seguida, em loop.
 const VOLTA = FACHADA + 12, CHEGADA_SHOWROOM = FACHADA + 34, CHEGADA_CIDADE = PORTAL - 40;
+// Fachada (jardim, porta e Pedro) e interior são duas telas separadas, com transição entre elas: andando para a
+// direita no fim da fachada entra no showroom; para a esquerda no começo do interior volta ao jardim.
+const PASSAGEM = 14, CHEGADA_INTERIOR = INTERIOR + 34, CHEGADA_JARDIM = INTERIOR - 34;
+const TRECHO = { fachada: FACHADA, interior: INTERIOR };
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
@@ -104,7 +108,7 @@ export class Aventura extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, FACHADA, ALTURA);
     const cam = this.cameras.main;
     cam.setZoom(this.scale.height / ALTURA_CIDADE); cam.setBounds(0, 0, FACHADA, ALTURA); cam.startFollow(this.jogador, true, .15, .15); cam.setDeadzone(64, 56);
-    this.sala = 'cidade';
+    this.sala = 'cidade'; this.trecho = 'fachada';
     this.guia = new GuiaShowroom(this); // mapa da loja e setas (celular em pé)
     this.entrada = new Entrada(this);
     this.events.once('shutdown', () => {
@@ -183,8 +187,6 @@ export class Aventura extends Phaser.Scene {
     const { topo } = SHOWROOM;
     this.add.image(FACHADA, topo, 'fachada').setOrigin(0).setScale(1 / 3);
     this.add.image(INTERIOR, topo, 'interior').setOrigin(0).setScale(1 / 3);
-    const g = this.add.graphics();
-    g.fillStyle(0x4a2c1c).fillRect(INTERIOR - 3, topo, 6, 150); g.fillStyle(0xd9a765).fillRect(INTERIOR - 2, topo, 2, 150);
     const piso = this.add.zone(FACHADA + SHOWROOM.largura, 255, SHOWROOM.largura * 2, 30);
     this.physics.add.existing(piso, true);
     this.pisoShowroom = piso;
@@ -216,6 +218,10 @@ export class Aventura extends Phaser.Scene {
     }
     this.placaCidade = this.add.text(FACHADA + 46, 128, '← ITAJUBÁ', { fontFamily: 'Georgia, serif', fontSize: '7px', color: '#fff4df', backgroundColor: '#304f3d', padding: { x: 3, y: 2 }, resolution: 4 })
       .setOrigin(.5).setDepth(6).setAlpha(.9); // no alto: não cobre a exploradora na chegada e aparece no celular em pé
+    // placas das passagens entre o jardim e o interior
+    const placa = { fontFamily: 'Georgia, serif', fontSize: '7px', color: '#fff4df', backgroundColor: '#7d2029', padding: { x: 3, y: 2 }, resolution: 4 };
+    this.add.text(INTERIOR - 30, 196, 'ENTRAR →', placa).setOrigin(.5).setDepth(6).setAlpha(.92);
+    this.add.text(INTERIOR + 28, 128, '← JARDIM', { ...placa, backgroundColor: '#304f3d' }).setOrigin(.5).setDepth(6).setAlpha(.9);
     this.saida = this.add.text(MUNDO - 22, 186, 'SAÍDA →', { fontFamily: 'Georgia, serif', fontSize: '9px', color: '#fff4df', backgroundColor: '#7d2029', padding: { x: 3, y: 2 }, resolution: 4 })
       .setOrigin(.5).setDepth(6).setAlpha(0);
   }
@@ -346,24 +352,34 @@ export class Aventura extends Phaser.Scene {
   // ---------- Passagem entre a rua e o showroom (nos dois sentidos) ----------
   // A tela escurece, troca a "sala" (limites de câmera e de física) e reabre. Missão, itens já pegos e capivaras
   // alimentadas ficam como estão: só a exploradora muda de lugar.
+  // Destinos: 'cidade', 'showroom' (chega à fachada vindo da rua), 'interior' e 'jardim' (as duas telas do showroom).
   trocarSala(destino) {
     this.estado = 'transicao';
     this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.entrada.limpar(); this.tutorial?.esconder(); this.guia.esconder();
-    const showroom = destino === 'showroom';
-    $('transicao-titulo').textContent = showroom ? 'Showroom' : 'De volta a';
-    $('transicao-nome').textContent = showroom ? 'L’Occitane au Brésil' : 'Itajubá';
-    $('transicao-sub').textContent = showroom ? 'Itajubá' : 'Passeie à vontade';
+    const textos = {
+      showroom: ['Showroom', 'L’Occitane au Brésil', 'Itajubá'],
+      cidade: ['De volta a', 'Itajubá', 'Passeie à vontade'],
+      interior: ['Entrando no', 'Showroom', 'Os presentes estão lá dentro'],
+      jardim: ['De volta ao', 'Jardim', 'A rua de Itajubá fica à esquerda'],
+    }[destino];
+    $('transicao-titulo').textContent = textos[0]; $('transicao-nome').textContent = textos[1]; $('transicao-sub').textContent = textos[2];
     $('transicao').hidden = false; tocar('transicao');
-    const cam = this.cameras.main;
-    cam.fadeOut(380, 30, 16, 22);
+    const cam = this.cameras.main, dentroDaLoja = destino === 'interior' || destino === 'jardim';
+    cam.fadeOut(dentroDaLoja ? 300 : 380, 30, 16, 22);
     cam.once('camerafadeoutcomplete', () => {
-      this.sala = destino;
-      if (showroom) {
+      this.sala = destino === 'cidade' ? 'cidade' : 'showroom';
+      if (this.sala === 'showroom') {
         if (this.missao.fase === 'cidade') { this.missao.fase = 'fachada'; registrar('chegada_showroom'); }
-        this.physics.world.setBounds(FACHADA, 0, MUNDO - FACHADA, ALTURA);
         if (!this.solidos.contains(this.pisoShowroom)) this.solidos.add(this.pisoShowroom);
-        this.jogador.body.reset(CHEGADA_SHOWROOM, CHAO); this.jogador.olhandoDireita = true; this.checkpoint = CHEGADA_SHOWROOM;
-        this.enquadrar(); cam.centerOn(CHEGADA_SHOWROOM + 40, 180);
+        const [trecho, chegada, direita] = { showroom: ['fachada', CHEGADA_SHOWROOM, true], interior: ['interior', CHEGADA_INTERIOR, true], jardim: ['fachada', CHEGADA_JARDIM, false] }[destino];
+        this.trecho = trecho;
+        if (trecho === 'interior') {
+          if (!this.pedroConversou) this.pedroEntra();
+          if (this.missao.fase !== 'showroom') { this.missao.fase = 'showroom'; this.time.delayedCall(900, () => this.aviso('Caixas no alto das estantes!')); }
+        }
+        this.physics.world.setBounds(TRECHO[trecho], 0, SHOWROOM.largura, ALTURA);
+        this.jogador.body.reset(chegada, CHAO); this.jogador.olhandoDireita = direita; this.checkpoint = chegada;
+        this.enquadrar(); cam.centerOn(chegada + (direita ? 40 : -40), 180);
       } else {
         this.physics.world.setBounds(0, 0, FACHADA, ALTURA);
         this.jogador.body.reset(CHEGADA_CIDADE, CHAO); this.jogador.olhandoDireita = false; this.checkpoint = CHEGADA_CIDADE;
@@ -371,13 +387,15 @@ export class Aventura extends Phaser.Scene {
         cam.centerOn(CHEGADA_CIDADE - 40, ALTURA / 2);
       }
       this.ultimoHUD = ''; this.atualizarHUD();
-      this.time.delayedCall(650, () => {
+      this.time.delayedCall(dentroDaLoja ? 450 : 650, () => {
         $('transicao').hidden = true; cam.fadeIn(420, 30, 16, 22);
         this.physics.world.resume(); this.estado = 'jogo'; this.entrada.ignorarAteSoltar();
       });
     });
   }
   entrarNoShowroom() { this.trocarSala('showroom'); }
+  entrarNoInterior() { this.trocarSala('interior'); }
+  voltarAoJardim() { this.trocarSala('jardim'); }
   voltarParaCidade() { this.trocarSala('cidade'); }
 
   // ---------- Conversa com Pedro ----------
@@ -492,9 +510,10 @@ export class Aventura extends Phaser.Scene {
   // mostrar ao menos 150 unidades de largura (antes ~110); o que sobra embaixo é um reflexo do piso.
   enquadrar() {
     const cam = this.cameras.main, showroom = this.sala === 'showroom';
-    const zoom = showroom ? this.guia.layout(true) : (this.guia.layout(false), this.scale.height / ALTURA_CIDADE);
+    const x0 = TRECHO[this.trecho] ?? FACHADA;
+    const zoom = showroom ? this.guia.layout(true, x0) : (this.guia.layout(false), this.scale.height / ALTURA_CIDADE);
     if (Math.abs(cam.zoom - zoom) > .001) cam.setZoom(zoom);
-    const limites = showroom ? [FACHADA, SHOWROOM.topo, MUNDO - FACHADA, Math.max(SHOWROOM.altura, cam.height / zoom)] : [0, 0, FACHADA, ALTURA];
+    const limites = showroom ? [x0, SHOWROOM.topo, SHOWROOM.largura, Math.max(SHOWROOM.altura, cam.height / zoom)] : [0, 0, FACHADA, ALTURA];
     const b = cam.getBounds();
     if (b.x !== limites[0] || Math.abs(b.height - limites[3]) > .01 || b.width !== limites[2]) cam.setBounds(...limites);
     return zoom;
@@ -502,7 +521,7 @@ export class Aventura extends Phaser.Scene {
   // Para onde ir no showroom: Pedro, caixas, produtos de reserva, o próximo lugar livre da bancada e a saída.
   alvosShowroom() {
     if (!this.pedroConversou) return [{ x: this.pedroX, y: py(792) - 58, icone: 'pedro-npc', frame: 'parado-0', escala: .075 }];
-    if (this.missao.kits >= META_KITS) return [{ x: MUNDO - 22, y: 200, icone: 'sacola', escala: .22 }];
+    if (this.missao.kits >= META_KITS) return this.alvosNestaTela([{ x: MUNDO - 22, y: 200, icone: 'sacola', escala: .22 }]);
     const alvos = [];
     const falta = faltaParaKit(this.missao);
     for (const item of this.itens.getChildren()) {
@@ -517,7 +536,14 @@ export class Aventura extends Phaser.Scene {
       // faltam frutas e não há reserva no showroom: o caminho é a cidade
       if (!alvos.some(a => a.icone === 'caju' || a.icone === 'roma')) alvos.push({ x: FACHADA + 46, y: 128, icone: falta.includes('caju') ? 'caju' : 'roma', escala: .26 });
     }
-    return alvos;
+    return this.alvosNestaTela(alvos);
+  }
+  // O que fica na outra tela do showroom vira um alvo na passagem (uma seta só, com o ícone do primeiro).
+  alvosNestaTela(alvos) {
+    const interior = this.trecho === 'interior', nesta = [], passagem = [];
+    for (const a of alvos) (a.x >= INTERIOR) === interior ? nesta.push(a) : passagem.push(a);
+    if (passagem.length) nesta.push({ ...passagem[0], x: interior ? INTERIOR + 8 : INTERIOR - 8, y: 205 });
+    return nesta;
   }
   // Zoom pela altura da tela (que muda com o celular) e câmera um pouco à frente de quem anda.
   atualizarCamera() {
@@ -563,13 +589,14 @@ export class Aventura extends Phaser.Scene {
       if (x > this.checkpoint + MODO_FACIL.checkpointDistancia) this.checkpoint = x;
     } else {
       // andando para a esquerda no começo da fachada, volta para a rua
-      if (x < VOLTA && this.entrada.esquerda) { this.voltarParaCidade(); return; }
+      if (this.trecho !== 'interior' && x < VOLTA && this.entrada.esquerda) { this.voltarParaCidade(); return; }
+      if (this.trecho === 'fachada' && x > INTERIOR - PASSAGEM && this.entrada.direita) { this.entrarNoInterior(); return; }
+      if (this.trecho === 'interior' && x < INTERIOR + PASSAGEM && this.entrada.esquerda) { this.voltarAoJardim(); return; }
       const perto = !this.pedroConversou && Math.abs(x - this.pedroX) < 45;
       if (perto !== this.pedroPerto) { this.pedroPerto = perto; this.pedro.play(perto ? 'pedro-aceno' : 'pedro-parado'); }
       // a primeira passagem pela porta abre a conversa sozinha: é ela que explica as caixas de presente
       if (perto && !this.pedroConversou && Math.abs(x - this.pedroX) < 20) { this.abrirDialogo(); return; }
       if (x > this.pedroX + 30 && !this.pedroConversou) this.pedroEntra();
-      if (x > INTERIOR && this.missao.fase !== 'showroom') { this.missao.fase = 'showroom'; this.aviso('Caixas no alto das estantes!'); }
       if (this.missao.fase === 'showroom') this.verificarBancada();
       this.guia.atualizar(this.alvosShowroom(), this.jogador, agora);
     }
@@ -577,7 +604,7 @@ export class Aventura extends Phaser.Scene {
     $('interagir').hidden = !contexto;
     if (contexto && $('interagir').textContent !== contexto.texto) $('interagir').textContent = contexto.texto;
     if (this.entrada.interagirApertou || this.pedidoInteracao) { this.pedidoInteracao = false; this.interagir(contexto); }
-    const local = this.sala === 'cidade' ? 'Pelas ruas de Itajubá' : x > INTERIOR ? 'Showroom · monte a vitrine' : 'Showroom L’Occitane';
+    const local = this.sala === 'cidade' ? 'Pelas ruas de Itajubá' : this.trecho === 'interior' ? 'Showroom · monte a vitrine' : 'Showroom L’Occitane';
     if ($('local').textContent !== local) $('local').textContent = local;
     this.atualizarHUD();
     // A partida só termina saindo à direita com os três kits; não há fim por tempo.

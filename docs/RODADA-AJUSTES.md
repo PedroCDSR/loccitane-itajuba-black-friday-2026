@@ -160,3 +160,17 @@ Pedido: cair em cima da capivara deve fazê-la dormir, com quique e "zzz"; dar m
 - Não refeita nesta rodada: a partida completa até a vitrine. Nada testado em aparelho real.
 
 Capturas: `docs/capturas/v4-*.png`.
+
+## Fachada e interior em telas separadas (mesmo dia, pedido do Pedro)
+
+Pedido: "o showroom tem duas partes, a da frente com o Pedro e a de dentro, que tem até o teto maior; do jeito que está parece um showroom enorme com o teto aumentando. Preciso de uma transição entre telas, não de uma junção."
+
+- **Duas telas.** A câmera, a física e o mapa da loja passam a mostrar uma tela por vez: a fachada (jardim, porta, Pedro) ou o interior. Nunca as duas lado a lado. O batente desenhado entre as duas artes saiu.
+- **Transição.** Andando para a direita no fim da fachada (placa "ENTRAR →"), a tela escurece com "Entrando no · Showroom" e reabre no interior. Andando para a esquerda no começo do interior (placa "← JARDIM"), volta à fachada com "De volta ao · Jardim". Mais curta que a da rua (300 + 450 ms). Os pontos de chegada ficam 34 unidades para dentro, longe dos gatilhos, então a passagem não se repete sozinha (teste novo em `tests/exploracao.test.js`).
+- Entrar no interior conta como chegar à bancada (fase `showroom`) e, se a pessoa passou direto, o Pedro já espera lá dentro. Missão, itens e kits não mudam ao ir e voltar.
+- **Setas:** o que está na outra tela vira uma seta na passagem, com o ícone do alvo (ex.: no interior, falta a caixa da fachada → seta para "← JARDIM").
+- **Mapa da loja** mostra só a tela atual (faixa y 128–246), maior e mais legível.
+
+Testado no Chromium em 390×844: percurso completo do showroom com teclado, fachada → transição → interior → três kits → final "Vitrine pronta!", sem erros nem 4xx/5xx; `npm test` 47 de 47 e `npm run build`. Capturas: `v5-depois-fachada-caixa.png` (fachada sozinha com "ENTRAR →"), `v5-depois-entrando.png` e `v5-depois-interior-tela-propria.png` (interior com "← JARDIM" e mapa só do interior).
+
+**Próximo passo:** o Pedro está subindo uma fachada nova, fechada, com a porta no centro e sem as estantes à mostra. Quando ela chegar, a caixa de presente que hoje fica no alto da estante da fachada precisa ir para o interior, e a passagem pode ser pela porta.
