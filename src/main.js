@@ -32,6 +32,7 @@ function concluir({presentes, caju=0, capim=0, roma=0, kits=0, tempo}){
   $('resultado').textContent=`Vitrine pronta! Você reuniu ${caju} Caju, ${capim?`${capim} Capim-Limão, `:''}${roma} Romã e montou ${kits} kits com a Karina.${passeio(tempo)} Obrigada por fazer parte desta história!`;
   $('beneficio').textContent=podeResgatar(CAMPANHA)?`Seu benefício: ${percentualSeguro(CAMPANHA.oferta.descontoPercentual)}% de desconto.`:'Prévia do benefício: até 10% de desconto. Resgate em preparação.';
   $('condicoes').textContent=podeResgatar(CAMPANHA)?`Validade: ${CAMPANHA.oferta.validade}. ${CAMPANHA.oferta.condicoes}`:'A oferta será ativada após a definição de validade e condições pela loja.';
+  if(typeof window.dispatchEvent==='function')window.dispatchEvent(new CustomEvent('aventura:encerramento',{detail:{presentes,caju,capim,roma,kits,tempo}}));
 }
 // Altura da tela do jogo na proporção da área livre (largura fixa em 960 px de jogo).
 function tamanhoTela(){

@@ -16,8 +16,8 @@
     <div class="convite"><span>01 · Recupere os produtos espalhados pela cidade</span><span>02 · Leve tudo ao showroom</span><span>03 · Ajude a Karina a montar os kits</span></div>
     <button id="jogar" class="principal">Começar a aventura <span aria-hidden="true">→</span></button>
     <div class="teste-recompensa">
-      <button id="testar-recompensa" class="principal" type="button">Resgatar Recompensa</button>
-      <p class="nota">Envie a mensagem no WhatsApp da loja para solicitar seu desconto.</p>
+      <button id="testar-recompensa" class="principal" type="button">Testar final e recompensa</button>
+      <label for="cupom-teste">Cupom para o teste</label><select id="cupom-teste"><option value="bresil">Brésil · 10%</option><option value="caju">Caju · 7%</option><option value="roma">Romã · 5%</option></select>
     </div>
     <p class="ajuda">Modo fácil · sem pressa: passeie pela cidade e pelo showroom · cinco corações.<br>As dicas aparecem pelo caminho. Teclado e controles de toque.</p>
     <p class="nota">Campanha em preparação · condições do benefício ainda serão definidas pela loja.</p>
@@ -52,6 +52,32 @@
     <p class="ajuda">Caju e Romã são os produtos da missão. Capivara no caminho: pule em cima para ela dormir, use o botão Caju para ela comer (não gasta os produtos coletados) ou pule por cima.</p>
   </section>
   <section id="final" class="cartao" hidden>
+    <div id="encerramento" class="encerramento">
+      <p class="eyebrow">UMA AVENTURA PARA GUARDAR</p>
+      <h2 id="encerramento-titulo" tabindex="-1">Vitrine pronta!</h2>
+      <div id="fala-final" class="fala-final">
+        <div class="karina-final" aria-hidden="true"></div>
+        <div class="balao-final"><p class="eyebrow">KARINA · SHOWROOM ITAJUBÁ</p><p id="fala-karina" aria-live="polite"></p><p id="pagina-fala" class="nota"></p></div>
+      </div>
+      <button id="avancar-final" class="principal">Continuar →</button>
+      <div id="premio-final" hidden>
+        <p class="selo-conquista">✦ RECOMPENSA DESBLOQUEADA ✦</p>
+        <h3 id="titulo-premio"></h3>
+        <p>Um carinho da nossa loja para você.</p>
+
+        <div class="cupom-palco"><div id="confetes" aria-hidden="true"></div><img id="imagem-premio" alt="" hidden width="1254" height="1254"></div>
+        <p id="estado-premio" role="status">Preparando sua recompensa…</p>
+        <button id="recarregar-premio" hidden>Tentar carregar novamente</button>
+        <a id="resgatar-premio" class="principal" hidden>Resgatar desconto no WhatsApp →</a>
+        <p id="codigo-premio"></p>
+        <div class="placar-final"><h4>Seu placar</h4><p id="placar-produtos"></p><p id="placar-kits"></p><strong id="placar-total"></strong>
+        <table><caption>Seu desempenho libera o maior desconto alcançado</caption><thead><tr><th>Pontos</th><th>Desconto</th><th>Conquista</th></tr></thead><tbody><tr id="faixa-roma"><td>0–299</td><td>5%</td><td></td></tr><tr id="faixa-caju"><td>300–399</td><td>7%</td><td></td></tr><tr id="faixa-bresil"><td>400 ou mais</td><td>10%</td><td></td></tr></tbody></table></div>
+        <p class="nota">Envie a mensagem para a loja no WhatsApp para solicitar o resgate.</p>
+        <p class="nota">Prévia de teste · validade de 26/11/26 ilustrativa. Condições oficiais ainda serão confirmadas.</p>
+      </div>
+      <button id="voltar-inicio" class="voltar-inicio">Voltar ao início</button>
+    </div>
+    <div id="final-legado" hidden>
     <p class="eyebrow">ITAJUBÁ, OBRIGADA POR CADA ENCONTRO</p><h1 id="final-titulo">O melhor<br><em>é compartilhar.</em></h1>
     <p id="resultado"></p><p id="beneficio"></p><p id="condicoes" class="nota"></p>
     <button id="ver-oferta" class="principal">Ver meu benefício</button>
@@ -64,6 +90,7 @@
       <button id="enviar" type="submit" class="principal">Continuar no WhatsApp</button>
     </form>
     <div class="acoes"><a id="compartilhar" target="_blank" rel="noopener noreferrer">Compartilhar no WhatsApp</a><button id="novamente">Jogar novamente</button></div>
+    </div>
   </section>
   <div id="pausa" class="modal" hidden><div><h2>Respire um pouquinho.</h2><p>A aventura está pausada.</p><button id="continuar" class="principal">Continuar</button></div></div>
 </main>
