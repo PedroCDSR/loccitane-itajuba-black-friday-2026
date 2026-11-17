@@ -11,7 +11,7 @@ function executarUI() {
   const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
   const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
   const elements=Object.fromEntries(ids.map(id=>[id,{hidden:true,textContent:'',disabled:false,checked:false,value:'',classList:{add(){},remove(){},toggle(){}},focus(){},setAttribute(){},reset(){},reportValidity(){return true;}}]));
-  const games=[], events=[];
+  const games=[], events=[], audio=[];
   class Game {
     constructor(config){this.config=config;this.events=new EventEmitter();this.starts=0;this.cleans=0;this.pauses=0;this.resumes=0;this.destroyed=false;
       this.registry=new Map();this.scene={start:()=>this.starts++,pause:()=>this.pauses++,resume:()=>this.resumes++,getScene:()=>({entrada:{limpar:()=>this.cleans++}})};games.push(this);}
@@ -20,10 +20,10 @@ function executarUI() {
   const context={document:{getElementById:id=>{assert.ok(elements[id],id);return elements[id];},body:{classList:{add(){},remove(){},toggle(){}}},addEventListener(){}},
     window:{addEventListener(){},location:{href:'https://example.com/jogo/',assign(){throw new Error('Contato externo indevido');}}},
     Phaser:{AUTO:0,Scale:{FIT:0,CENTER_BOTH:0},Game},Aventura:class{},CAMPANHA,LARGURA,ALTURA,JOGADOR,TELA,
-    percentualSeguro,podeResgatar,linkResgate,linkCompartilhar,registrar:n=>events.push(n),alternarSom:()=>false};
+    percentualSeguro,podeResgatar,linkResgate,linkCompartilhar,registrar:n=>events.push(n),alternarSom:()=>false,somLigado:()=>true,aoMudarSom(){},prepararSom(){},definirAtivo:v=>audio.push(v?'ativo':'parado'),musica:v=>audio.push(v?'musica':'sem-musica'),historico:[]};
   const source=readFileSync(new URL('../src/main.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/gm,'').replaceAll('import.meta.env.DEV','false');
   vm.runInNewContext(source,context);
-  return {elements,games,events};
+  return {elements,games,events,audio};
 }
 test('começar abre a partida com a abertura encenada; jogar de novo reaproveita a instância sem abertura',async()=>{
   const {elements:e,games,events}=executarUI();
@@ -53,4 +53,16 @@ test('pausa e retomada são idempotentes e erro de assets permite nova tentativa
   e.continuar.onclick();assert.equal(games[0].resumes,1);assert.equal(e.pausa.hidden,true);
   games[0].events.emit('falha-assets');assert.equal(e['tentar-carga'].hidden,false);
   await e['tentar-carga'].onclick();assert.equal(games[0].destroyed,true);assert.equal(games.length,2);
+});
+test('áudio acompanha a partida: música no início, para na pausa, volta no continuar e acaba no final',async()=>{
+  const {elements:e,games,audio}=executarUI();await e.jogar.onclick();
+  assert.deepEqual(audio,['ativo','musica']);
+  e.pausar.onclick();assert.equal(audio.at(-1),'parado');
+  e.continuar.onclick();assert.equal(audio.at(-1),'ativo');
+  games[0].events.emit('conclusao',{presentes:1,caju:3,roma:3,kits:3,motivo:'vitrine'});assert.equal(audio.at(-1),'sem-musica');
+});
+test('há botão de som no HUD da partida, além do cabeçalho',()=>{
+  const html=readFileSync(new URL('../index.html',import.meta.url),'utf8');
+  const hud=html.match(/<div id="hud">([\s\S]*?)<\/div>/)[1];
+  assert.match(hud,/id="som-hud"/);assert.match(html,/id="som" class="som-alternar"/);
 });

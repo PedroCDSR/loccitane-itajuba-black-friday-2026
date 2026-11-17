@@ -1,0 +1,32 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+
+const memoria = new Map();
+globalThis.localStorage = { getItem: k => memoria.get(k) ?? null, setItem: (k, v) => memoria.set(k, String(v)) };
+const som = await import('../src/services/som.js');
+
+test('todos os eventos do jogo têm som próprio', () => {
+  for (const nome of ['pulo', 'toldo', 'arremesso', 'capivara', 'caju', 'roma', 'caixa', 'kit', 'vitrine', 'dano', 'transicao', 'pedro', 'falta', 'derruba', 'botao'])
+    assert.equal(typeof som.SONS[nome], 'function', nome);
+  const aventura = readFileSync(new URL('../src/game/Aventura.js', import.meta.url), 'utf8');
+  for (const nome of [...aventura.matchAll(/tocar\('(\w+)'\)/g)].map(m => m[1])) assert.ok(som.SONS[nome], `som inexistente: ${nome}`);
+});
+
+test('a escolha de som fica guardada e começa ligada', () => {
+  assert.equal(som.somLigado(), true);
+  let avisado;
+  som.aoMudarSom(v => { avisado = v; });
+  assert.equal(som.alternarSom(), false); assert.equal(memoria.get('aventura-som'), 'desligado'); assert.equal(avisado, false);
+  assert.equal(som.alternarSom(), true); assert.equal(memoria.get('aventura-som'), 'ligado');
+});
+
+test('sem gesto da pessoa nenhum contexto de áudio é criado e tocar não quebra', () => {
+  som.tocar('pulo'); som.tocar('nao-existe'); som.definirAtivo(false); som.definirAtivo(true);
+  assert.deepEqual(som.historico, []);
+});
+
+test('nenhum arquivo de áudio externo no código do jogo', () => {
+  const fonte = readFileSync(new URL('../src/services/som.js', import.meta.url), 'utf8');
+  assert.doesNotMatch(fonte, /\.(mp3|ogg|wav|m4a)\b|fetch\(|new Audio\(/);
+});

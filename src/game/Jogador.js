@@ -64,6 +64,7 @@ export class Jogador extends Phaser.Physics.Arcade.Sprite {
     const corpo = this.body;
     const dt = delta / 1000;
     const noChao = corpo.blocked.down || corpo.touching.down;
+    this.pulou = false; // vira true no quadro em que o pulo sai de verdade (para o som)
     if (noChao) this.ultimoNoChao = agora;
 
     // pisca enquanto está invencível
@@ -91,6 +92,7 @@ export class Jogador extends Phaser.Physics.Arcade.Sprite {
       this.ultimoPedidoPulo = -Infinity;
       this.ultimoNoChao = -Infinity; // não deixa pular duas vezes no mesmo coyote
       this.subindoComBotao = true;
+      this.pulou = true;
     }
     // pulo variável: soltou o botão ainda subindo => corta a subida (uma vez só)
     if (this.subindoComBotao && (!entrada.pular || corpo.velocity.y >= 0)) {

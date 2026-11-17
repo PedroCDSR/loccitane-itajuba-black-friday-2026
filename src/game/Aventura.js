@@ -63,7 +63,7 @@ export class Aventura extends Phaser.Scene {
     // Toldo das tendas: ao cair sobre ele, quica alto (segurando PULAR vai mais alto).
     this.physics.add.collider(this.jogador, this.toldos, (j, toldo) => {
       if (!j.body.touching.down) return;
-      j.quicar(this.entrada.pular ? 430 : 360); tocar('pulo'); this.tutorial?.concluir('toldo');
+      j.quicar(this.entrada.pular ? 430 : 360); tocar('toldo'); this.tutorial?.concluir('toldo');
       const t = toldo.getData('visual');
       this.tweens.add({ targets: t, scaleY: t.scaleY * .94, duration: 70, yoyo: true });
     });
@@ -81,7 +81,7 @@ export class Aventura extends Phaser.Scene {
     this.physics.add.collider(this.capivaras, this.solidos);
     this.physics.add.overlap(this.jogador, this.capivaras, (j, c) => {
       if (c.getData('alimentada') || j.estaInvencivel(this.tempo * 1000)) return;
-      const vida = j.levarDano(c.x, this.tempo * 1000);
+      const vida = j.levarDano(c.x, this.tempo * 1000); tocar('dano');
       this.aviso('Ai! Seus produtos estão guardados.', '#fff0d2');
       if (vida === 0) j.reposicionar(this.checkpoint, 200, this.tempo * 1000);
       this.atualizarHUD();
@@ -89,7 +89,7 @@ export class Aventura extends Phaser.Scene {
     this.frutas = this.physics.add.group();
     this.physics.add.overlap(this.frutas, this.capivaras, (f, c) => {
       if (c.getData('alimentada')) return;
-      f.destroy(); c.setData('alimentada', true); c.setVelocityX(0); c.play('capivara-comer'); this.tutorial?.concluir('caju');
+      f.destroy(); c.setData('alimentada', true); c.setVelocityX(0); c.play('capivara-comer'); tocar('capivara'); this.tutorial?.concluir('caju');
       this.aviso('A capivara gostou do caju!', '#f5c875');
     });
 
@@ -199,7 +199,7 @@ export class Aventura extends Phaser.Scene {
     if (!item.active || this.estado !== 'jogo') return;
     const tipo = item.getData('tipo');
     item.getData('sinal')?.destroy(); item.destroy();
-    coletarProduto(this.missao, tipo); this.presentes++; tocar('coleta');
+    coletarProduto(this.missao, tipo); this.presentes++; tocar(tipo);
     this.aviso({ caju: '+1 Caju', roma: '+1 Romã', caixa: '+1 caixa de presente' }[tipo], { caju: '#f5cc73', roma: '#ffa5c0', caixa: '#fff1d5' }[tipo]);
     this.atualizarHUD();
   }
@@ -233,7 +233,7 @@ export class Aventura extends Phaser.Scene {
       // capivara entra, derruba a entrega e os frascos voam pela rua
       this.capivaraIntro.play('capivara-andar');
       this.tweens.add({ targets: this.capivaraIntro, x: 196, duration: 900, onComplete: () => {
-        tocar('pulo');
+        tocar('derruba');
         this.tweens.add({ targets: this.entregaIntro, angle: { from: 0, to: 70 }, x: '+=14', y: '+=4', duration: 260 });
         this.frascosIntro.forEach((f, i) => {
           const destinoX = 300 + i * 90, altura = 60 + (i % 3) * 25;
@@ -250,6 +250,7 @@ export class Aventura extends Phaser.Scene {
     if (this.estado === 'intro') {
       this.passoIntro++;
       const linhas = CAMPANHA.introCena;
+      if (this.passoIntro > 0) tocar('botao');
       if (this.passoIntro >= linhas.length) { this.terminarIntro(); return; }
       this.passoDaIntro(this.passoIntro);
       const l = linhas[this.passoIntro];
@@ -288,7 +289,7 @@ export class Aventura extends Phaser.Scene {
     $('transicao-titulo').textContent = showroom ? 'Showroom' : 'De volta a';
     $('transicao-nome').textContent = showroom ? 'L’Occitane au Brésil' : 'Itajubá';
     $('transicao-sub').textContent = showroom ? 'Itajubá' : 'Passeie à vontade';
-    $('transicao').hidden = false;
+    $('transicao').hidden = false; tocar('transicao');
     const cam = this.cameras.main;
     cam.fadeOut(380, 30, 16, 22);
     cam.once('camerafadeoutcomplete', () => {
@@ -320,7 +321,7 @@ export class Aventura extends Phaser.Scene {
   abrirDialogo() {
     this.dialogoAberto = true; this.entrada.ignorarAteSoltar();
     this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
-    this.pedro.play('pedro-conversa');
+    this.pedro.play('pedro-conversa'); tocar('pedro');
     $('dialogo-titulo').textContent = 'PEDRO · SHOWROOM ITAJUBÁ';
     $('dialogo-texto').textContent = CAMPANHA.boasVindasPedro;
     $('fechar-dialogo').textContent = 'Vamos montar os kits →';
@@ -352,11 +353,11 @@ export class Aventura extends Phaser.Scene {
       if (this.tempo * 1000 > this.avisoFaltaAte) {
         this.avisoFaltaAte = this.tempo * 1000 + 1800;
         const nomes = { caju: 'Caju', roma: 'Romã', caixa: 'caixa de presente' };
-        this.aviso(`Falta: ${falta.map(f => nomes[f]).join(', ')}`);
+        this.aviso(`Falta: ${falta.map(f => nomes[f]).join(', ')}`); tocar('falta');
       }
       return;
     }
-    montarKit(this.missao, estacao.id); tocar('coleta'); this.atualizarHUD();
+    montarKit(this.missao, estacao.id); tocar('kit'); this.atualizarHUD();
     const pronto = this.missao.kits === META_KITS, numero = this.missao.kits;
     // os três itens voam até a bancada; o kit aparece com um brilho
     const voos = ['caju', 'roma', 'embalagem'].map(t => this.add.image(this.jogador.x, this.jogador.y - 30, t)
@@ -371,7 +372,7 @@ export class Aventura extends Phaser.Scene {
       }
       this.pedroBancada.play('pedro-aceno');
       this.aviso(pronto ? 'Vitrine pronta! Obrigado pela ajuda!' : `Kit ${numero} pronto!`, '#ffe7a6');
-      if (pronto) this.tweens.add({ targets: this.saida, alpha: 1, duration: 400 });
+      if (pronto) { tocar('vitrine'); this.tweens.add({ targets: this.saida, alpha: 1, duration: 400 }); }
     });
   }
 
@@ -434,14 +435,15 @@ export class Aventura extends Phaser.Scene {
     this.tempo += delta / 1000;
     const agora = this.tempo * 1000; // relógio de jogo ativo (invencibilidade, avisos): pausa, intro, transição e conversa não contam
     const soltou = this.jogador.atualizar(this.entrada, agora, delta, true);
-    if (this.entrada.pularApertou) { tocar('pulo'); this.tutorial?.concluir('pular'); }
+    if (this.jogador.pulou) tocar('pulo');
+    if (this.entrada.pularApertou) this.tutorial?.concluir('pular');
     if (this.entrada.frutaApertou) this.tutorial?.concluir('caju');
     this.atualizarTutorial(agora);
     if (soltou && agora >= this.proximoArremesso) {
       this.proximoArremesso = agora + 350;
       const dir = this.jogador.olhandoDireita ? 1 : -1;
       const f = this.frutas.create(this.jogador.x + dir * 22, this.jogador.y - 20, 'caju-fruta').setScale(1 / 3);
-      f.body.setAllowGravity(false); f.setVelocityX(dir * 260);
+      f.body.setAllowGravity(false); f.setVelocityX(dir * 260); tocar('arremesso');
       this.time.delayedCall(1500, () => { if (f.active) f.destroy(); });
     }
     for (const c of this.capivaras.getChildren()) if (!c.getData('alimentada')) {

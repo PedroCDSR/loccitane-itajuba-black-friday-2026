@@ -72,3 +72,31 @@ Pedido do Pedro: "Não limite o jogo a 75 segundos, dê espaço para a pessoa ex
 ## Não testado
 
 - Aparelho real. Falta ver com gente jogando se a volta pela borda esquerda da fachada é fácil de descobrir.
+
+# Efeitos sonoros e música (17/11/2026, quarta rodada)
+
+Pedido: sons em tudo, botão de som visível durante a partida, áudio só depois do primeiro toque e pausa junto com o jogo.
+
+- **Tudo gerado em código** (`src/services/som.js`, Web Audio puro). Nenhum arquivo de áudio, nada de terceiros: preferimos escrever um sintetizador pequeno a trazer o ZzFX. Sons curtos, em tons maiores e timbres macios (triângulo e seno com filtro), passando por um compressor.
+- **Onde toca:** pulo (só quando o pulo sai de verdade, não ao apertar no ar), quique no toldo ("boing"), arremesso do caju, capivara comendo (mordidinhas e um "hm!"), Caju e Romã (sininhos diferentes), caixa de presente (arpejo), kit montado (arpejo com brilho), "falta algo" na bancada, dano (um "ops" grave, sem susto), passagem cidade ↔ showroom, conversa com o Pedro (dois bipes de "olá"), vitrine pronta (fanfarra), entrega derrubada na abertura, avanço das falas e cliques em botões da página. Os botões do jogo (setas, Caju, Pular) não fazem clique: o próprio pulo e o arremesso já soam.
+- **Capivara dormindo:** não existe pisão no jogo, então não há som para isso.
+- **Música de fundo:** 8 compassos originais em Dó maior (Dó, Lá menor, Fá, Sol), 92 bpm, cerca de 10 s em loop, a 1/5 do volume dos efeitos. Começa com a partida e para no final.
+- **Botão de som no HUD** (alto-falante, ao lado da pausa), sincronizado com o "Som" do cabeçalho. A escolha fica no `localStorage` (`aventura-som`); começa ligado; se o navegador bloquear o armazenamento, vale só na visita.
+- **Desbloqueio e pausa:** o contexto de áudio só é criado num gesto (toque, clique ou tecla), com o buffer mudo que o iOS antigo exige, e é retomado a cada gesto. Pausa, aba escondida e janela sem foco suspendem tudo; volta no "Continuar".
+
+## Testado (Chromium, Playwright, servidor `vite` local)
+
+- `npm test` 38 de 38 (testes novos em `tests/som.test.js` e `tests/fluxo-ui.test.js`) e `npm run build`.
+- Computador 1280×800: nenhum contexto de áudio antes do primeiro clique; "Jogar" cria o contexto já tocando (`running`). Partida conduzida por teclado com teletransportes do teste: tocaram, nesta ordem, botao, derruba, pulo, arremesso, capivara, caju, roma, toldo, dano, transicao, pedro, kit ×3 e vitrine.
+- Perda de foco (`blur`): jogo pausado e áudio `suspended`; "Continuar" volta a `running`.
+- Botão do HUD desliga: `localStorage` = `desligado`, nenhum som novo ao pular; depois de recarregar, o cabeçalho mostra "Som: desligado".
+- Celular em pé emulado 390×844 (toque, `isMobile`): toque em "Jogar" libera o áudio; toques em Pular e Caju soam; botão do HUD com 40×30 px ao lado da pausa, ícone muda para mudo.
+- Volume medido renderizando cada som fora do jogo (pico de amplitude, já com o barramento de efeitos): 0,04 (botão) a 0,16 (Caju); música 0,09. Um estalo no início do ruído do kit (pico 0,46) foi achado e corrigido.
+- Sem erros no console.
+
+Capturas: `docs/capturas/som-celular-hud.png`, `som-celular-hud-mudo.png`, `som-computador-cidade.png`, `som-computador-vitrine.png`.
+
+## Não testado
+
+- **Ninguém ouviu os sons**: a máquina de teste não tem saída de áudio. O que foi conferido é que cada som dispara no momento certo, o estado do áudio e o volume medido. O gosto (timbre, música) precisa ser ouvido pelo Pedro.
+- iPhone real: o desbloqueio segue o que o Safari exige, mas só um aparelho confirma. No iPhone, a chave de silencioso pode calar o áudio da página.
