@@ -34,3 +34,7 @@ Pedro usa o atlas de14 quadros existente, sem ser recriado. Fundos de showroom d
 ## Entrega esperada
 
 Corrigir problemas reproduzidos e salvar capturas reais em docs/capturas com nomes novos. Registrar versão, testes e limitações. Commit/push sem sobrescrever alterações. Nenhum deploy nesta etapa. Não ativar oferta, inventar contato, validade, condições, CRM ou cupom único; teto10% permanece.
+
+## Assets de Carina disponíveis
+
+A dona do showroom tem coleção própria em `public/assets/personagens/carina/` (parada4, aceno6, conversa4; células90×180), helper opcional `src/game/carina-animacoes.js` e referências de rosto aprovadas em `references/carina/`. Use somente as duas opções da coluna esquerda aprovadas pelo usuário como identidade; a coleção derivada ainda requer revisão visual. Não substituir Pedro ou a exploradora automaticamente: integração da Carina na cena não foi feita nesta entrega.

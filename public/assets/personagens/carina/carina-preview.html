@@ -1,0 +1,17 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Carina · prévia das animações</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#f4eddb;color:#352f27;font:15px system-ui;padding:24px}main{max-width:880px;margin:auto}h1{font:32px Georgia;color:#942c39}p{line-height:1.6}.cards{display:flex;gap:24px;flex-wrap:wrap;justify-content:center}.card{padding:16px;border:1px solid #b18b4555;border-radius:6px;background:#fff9ed;text-align:center}.stage{position:relative;width:180px;height:360px;background:#304f3d;overflow:hidden}.sprite{position:absolute;top:0;left:0;width:90px;height:180px;transform:scale(2);transform-origin:top left;image-rendering:pixelated;background-repeat:no-repeat}.line{position:absolute;left:0;right:0;bottom:0;border-top:1px dashed #eec678}button{padding:10px 15px;background:#942c39;border:0;color:#fff0d4;border-radius:4px;cursor:pointer;margin:10px 8px 20px 0}.small{font-size:12px}</style></head>
+<body><main><h1>Carina · dona do showroom</h1><p>Parada, aceno e conversa com os rostos aprovados como referência. A prévia amplia os pixels em 2×; o aceno repete aqui para inspeção, mas toca uma vez no helper Phaser.</p><button id="pause">Pausar</button><button id="bg">Trocar fundo</button><div id="cards" class="cards"></div><p id="status" role="status"></p><p class="small">Coleção preparada para avaliação. Não confirma integração ou fluidez no jogo. As fontes em alta resolução e os dois rostos aprovados estão em references/carina no GitHub.</p></main>
+<script type="module">
+try {
+  const response=await fetch('carina-animacoes.json');if(!response.ok)throw Error('manifesto indisponível');const config=await response.json();
+  let paused=false,begin=performance.now(),saved=0,light=false;
+  const cards=config.animations.map(a=>{
+    const card=document.createElement('section');card.className='card';const title=document.createElement('h2');title.textContent=a.key.replace('carina-','');
+    const stage=document.createElement('div');stage.className='stage';const sprite=document.createElement('div');sprite.className='sprite';sprite.style.backgroundImage=`url('${a.texture}.png')`;
+    const line=document.createElement('div');line.className='line';const caption=document.createElement('p');caption.className='small';stage.append(line,sprite);card.append(title,stage,caption);document.getElementById('cards').append(card);return {a,sprite,caption};
+  });
+  function update(now){const t=paused?saved:now-begin;for(const c of cards){const index=Math.floor(t/1000*c.a.frameRate)%(c.a.end-c.a.start+1)+c.a.start;c.sprite.style.backgroundPosition=`-${index*90}px 0`;c.caption.textContent=`Quadro ${index+1} · ${c.a.frameRate} fps`;}requestAnimationFrame(update);}
+  document.getElementById('pause').onclick=e=>{if(!paused){saved=performance.now()-begin;paused=true;}else{begin=performance.now()-saved;paused=false;}e.target.textContent=paused?'Continuar':'Pausar';};
+  document.getElementById('bg').onclick=()=>{light=!light;document.querySelectorAll('.stage').forEach(s=>s.style.background=light?'#f4eddb':'#304f3d');};requestAnimationFrame(update);
+} catch(e){document.getElementById('status').textContent='Abra esta página pelo servidor Vite, não por file://. '+e.message;}
+</script></body></html>
