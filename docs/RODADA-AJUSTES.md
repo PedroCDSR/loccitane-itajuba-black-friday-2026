@@ -72,3 +72,42 @@ Pedido do Pedro: "Não limite o jogo a 75 segundos, dê espaço para a pessoa ex
 ## Não testado
 
 - Aparelho real. Falta ver com gente jogando se a volta pela borda esquerda da fachada é fácil de descobrir.
+
+# Showroom no celular em pé (17/11/2026, quarta rodada)
+
+Pedido: com o zoom pela altura, o showroom mostrava só ~108 unidades de largura no celular em pé (390×844). Joguei no Chromium antes de mudar e anotei:
+
+- **Enquadramento apertado.** Zoom 8,9: a exploradora ocupava quase meia tela, as caixas no alto das estantes quase nunca apareciam junto com ela, e não havia como saber para que lado ficavam as caixas ou a bancada.
+- **Chegada cortada.** A exploradora aparecia pela metade na borda esquerda da fachada.
+- **Avisos grandes e cortados.** "Falta: caixa de presente" saía da tela pela direita; a placa "← ITAJUBÁ" ficava enorme.
+- Escalada, conversa, montagem dos kits e saída funcionavam, mas às cegas.
+
+Capturas reais do antes: `docs/capturas/v5-antes-fachada.png`, `v5-antes-pedro.png`, `v5-antes-interior.png`, `v5-antes-bancada.png`.
+
+## O que mudou (`src/game/guiaShowroom.js`, novo, e `src/game/Aventura.js`)
+
+- **Mapa da loja no alto da tela** (só no celular em pé e só no showroom). É uma segunda câmera do Phaser que mostra o showroom inteiro, fachada e interior, com as próprias artes de `public/assets/showroom/` (faixa das estantes ao chão). Uma moldura clara marca o pedaço visível, um losango vermelho marca a exploradora e círculos dourados piscam nos objetivos.
+- **Zoom do showroom diferente da cidade.** No celular em pé, o showroom mostra pelo menos **150 unidades de largura** (antes ~108; zoom 6,4 em vez de 8,9), sempre com a altura inteira (180). O espaço que sobra embaixo vira um reflexo escurecido do piso de cada arte que se funde ao verde do painel. Cidade, computador e celular deitado continuam como antes (zoom pela altura, sem mapa). A regra fica em `enquadramento()`, testada em `tests/guia-showroom.test.js`.
+- **Setas para o próximo objetivo**, no celular e no computador: fora da tela, uma seta dourada na borda com o ícone do alvo; dentro da tela, um triângulo que balança em cima dele. Os alvos seguem a missão (`alvosShowroom()`): Pedro na porta → caixas de presente que faltam (e os produtos de reserva da mesa, se faltar fruta) → o próximo lugar livre da bancada quando há Caju, Romã e caixa → a saída com os três kits. Se faltar fruta e não houver reserva, a seta aponta para "← ITAJUBÁ". A seta tem ~38 px na tela em qualquer aparelho.
+- **Avisos** do showroom ficam menores e sempre inteiros dentro da tela; o mapa não os mostra. Placa "← ITAJUBÁ" menor.
+- **Chegada** 10 unidades mais para dentro da fachada (`CHEGADA_SHOWROOM = FACHADA + 34`), longe do gatilho de volta (+12).
+- Sem mudança em física, prateleiras, posições das caixas, conversa com o Pedro, oferta ou condições.
+
+## Testado de verdade (Chromium com Playwright, 17/11/2026)
+
+- `npm test` 34 de 34 (2 novos para o enquadramento; os testes de exploração ganharam o adaptador do guia) e `npm run build`.
+- **Celular em pé 390×844** (toque emulado, isMobile), jogando o showroom com teclado a partir da chegada (a cidade foi pulada com atalho de teste e 3 Caju/3 Romã no estoque): conversa com o Pedro abre sozinha na porta e fecha; da mesa da fachada ao topo da estante e caixa 1; prateleiras da estante esquerda (caixa 2 já se alcança da primeira prateleira); dois kits montados de passagem na bancada; prateleiras da estante direita, caixa 3; terceiro kit; seta para a saída; tela final "Vitrine pronta!". Sem erros no console e sem respostas 4xx/5xx.
+- Toque real (`touchscreen.tap`) no botão Pular dentro do showroom faz a exploradora saltar; sem rolagem da página.
+- Botão "Vamos montar os kits" tocado no diálogo do Pedro.
+- 412×915: zoom 6,4, 150 de largura, 224 de altura visível.
+- Celular deitado 844×390: sem mapa, zoom 3 (320 de largura), como antes.
+- Computador 1280×800: sem mapa, zoom pela altura (220 de largura); setas aparecem e têm o mesmo tamanho na tela. Volta à cidade pela esquerda da fachada: zoom da cidade restaurado e mapa escondido.
+
+Capturas reais do depois: `docs/capturas/v5-depois-pedro.png`, `v5-depois-dialogo.png`, `v5-depois-fachada-setas.png`, `v5-depois-fachada-caixa.png`, `v5-depois-interior.png`, `v5-depois-estante.png`, `v5-depois-bancada.png`, `v5-depois-saida.png`, `v5-depois-412x915.png`, `v5-depois-deitado-844x390.png`, `v5-depois-computador.png`.
+
+## Não testado e pendências
+
+- Aparelho real; desempenho de duas câmeras num celular fraco (o Chromium sem GPU daqui roda a ~14 quadros por segundo em 390×844 com densidade 2, antes e depois).
+- A escalada foi feita por robô, que acerta os pulos de primeira; falta ver com gente se as prateleiras ficam confortáveis com o novo zoom.
+- O mapa não mostra rótulo ("mapa da loja"): em 390 px o texto ficaria pequeno demais dentro do canvas. Se faltar clareza com gente jogando, dá para pôr um rótulo em HTML sobre ele.
+- O reflexo do piso embaixo é uma solução com as próprias artes; se o Pedro preferir, dá para trocar por uma faixa lisa ou estender os fundos com um gerador de imagem nas mesmas medidas.
