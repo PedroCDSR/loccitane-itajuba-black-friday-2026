@@ -18,7 +18,7 @@ test('conversa interrompe física/cronômetro e retoma uma vez descartando o inp
   s.update(999999,2000);assert.equal(s.tempo,22);
   s.fecharDialogo();s.fecharDialogo();assert.equal(resumes,1);assert.equal(entrou,2,'Karina sai da porta e aparece na bancada uma vez só');assert.equal(s.missao.conversouKarina,true);assert.equal(elements.dialogo.hidden,true);assert.equal(discard,2);
 });
-test('Pedro na praça: conta a chegada da L’Occitane a Itajubá e não mexe na missão do showroom',()=>{
+test('Pedro na praça: convida a fazer parte da história e não mexe na missão do showroom',()=>{
   const elements={dialogo:{hidden:true},'dialogo-texto':{},'dialogo-titulo':{},'fechar-dialogo':{hidden:true,focus(){}},controles:{hidden:false},interagir:{hidden:false}};
   const source=readFileSync(new URL('../src/game/Aventura.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/gm,'').replace('export class Aventura','class Aventura');
   const Klass=vm.runInNewContext(source+'\nAventura;',{Phaser:{Scene:class{}},CAMPANHA,SHOWROOM,paginar,tocar(){},document:{getElementById:id=>elements[id]}});
@@ -26,7 +26,7 @@ test('Pedro na praça: conta a chegada da L’Occitane a Itajubá e não mexe na
   Object.assign(s,{tempo:5,fim:false,missao:{conversouKarina:false},tweens:{add(){entrou++;}},entrada:{ignorarAteSoltar(){}},jogador:{body:{setVelocity(){}},play(){}},pedro:{play:a=>tocadas.push(a),disableInteractive(){}},karina:{play(){}},physics:{world:{pause(){},resume(){}}}});
   s.abrirDialogo('pedro');
   assert.match(elements['dialogo-titulo'].textContent,/Pedro/);
-  assert.match(elements['dialogo-texto'].textContent,/Sabe o que fez esse lugar especial/);
+  assert.match(elements['dialogo-texto'].textContent,/Sabe o que tornou nosso showroom especial/);
   s.avancarDialogo();assert.match(elements['dialogo-texto'].textContent,/nossa história/,'segunda página');assert.equal(s.dialogoAberto,'pedro','avançar a página não fecha a conversa');
   for(let i=0;i<20&&s.dialogoAberto;i++)s.avancarDialogo();
   assert.equal(s.dialogoAberto,false,'depois da última página, avançar fecha');
