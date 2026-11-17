@@ -16,11 +16,15 @@ $('continuar').onclick=()=>{if(!emPartida)return;$('pausa').hidden=true;pausado=
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pausar();});
 window.addEventListener('blur',pausar);
 window.addEventListener('keydown',e=>{if(e.code==='Escape'&&emPartida)pausar();});
-function concluir({presentes, caju=0, roma=0, kits=0, motivo}){
+// Sem limite de tempo, a partida só termina com a vitrine pronta (motivo 'vitrine'). O tempo de passeio é só lembrança.
+function passeio(segundos){
+  if(!Number.isFinite(segundos)||segundos<=0)return '';
+  const t=Math.round(segundos),m=Math.floor(t/60),s=t%60;
+  return ` Seu passeio por Itajubá durou ${m?`${m} min `:''}${s} s.`;
+}
+function concluir({presentes, caju=0, roma=0, kits=0, tempo}){
   total=presentes;emPartida=false;document.body.classList.remove('jogando');$('partida').hidden=true;$('pausar').hidden=true;$('final').hidden=false;
-  $('resultado').textContent=motivo==='vitrine'
-    ? `Vitrine pronta! Você reuniu ${caju} Caju, ${roma} Romã e montou ${kits} kits com Pedro. Obrigada por fazer parte desta história!`
-    : `O tempo terminou! Você reuniu ${caju} Caju, ${roma} Romã e preparou ${kits} de 3 kits. Pedro guardou seus produtos. Jogue de novo para completar a vitrine!`;
+  $('resultado').textContent=`Vitrine pronta! Você reuniu ${caju} Caju, ${roma} Romã e montou ${kits} kits com Pedro.${passeio(tempo)} Obrigada por fazer parte desta história!`;
   $('beneficio').textContent=podeResgatar(CAMPANHA)?`Seu benefício: ${percentualSeguro(CAMPANHA.oferta.descontoPercentual)}% de desconto.`:'Prévia do benefício: até 10% de desconto. Resgate em preparação.';
   $('condicoes').textContent=podeResgatar(CAMPANHA)?`Validade: ${CAMPANHA.oferta.validade}. ${CAMPANHA.oferta.condicoes}`:'A oferta será ativada após a definição de validade e condições pela loja.';
 }
