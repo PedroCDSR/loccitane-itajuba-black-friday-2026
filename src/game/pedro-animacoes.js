@@ -1,6 +1,7 @@
 // Integração opcional: não altera a cena existente automaticamente.
 export function carregarPedro(scene) {
-  scene.load.atlas('pedro-npc', 'assets/personagens/pedro-spritesheet.png', 'assets/personagens/pedro-atlas.json');
+  // No jogo usa a folha em metade da resolução (0,18 MB, em vez de 1,18 MB); o original continua em personagens/.
+  scene.load.atlas('pedro-npc', 'assets/showroom/pedro-jogo.webp', 'assets/showroom/pedro-jogo.json');
   scene.load.json('pedro-animacoes', 'assets/personagens/pedro-animacoes.json');
 }
 export function criarPedro(scene, x, y, escala = 0.2) {

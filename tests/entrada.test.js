@@ -22,3 +22,11 @@ test('dois toques combinam andar e saltar; ações opostas cancelam direção',(
   assert.equal(e.direita,true);assert.equal(e.pularApertou,true);
   e.toques.set(3,'esquerda');e.atualizar();assert.equal(e.direita,false);assert.equal(e.esquerda,false);assert.equal(e.pularApertou,false);
 });
+test('toque curto, iniciado e solto entre dois quadros, ainda dispara a ação uma vez',()=>{
+  const {e}=criarEntrada();
+  for(const acao of ['interagir','pular','fruta']){
+    e.toques.set(9,acao);e.tocouAgora.add(acao);e.toques.delete(9);
+    e.atualizar();assert.equal(e[acao+'Apertou'],true);
+    e.atualizar();assert.equal(e[acao+'Apertou'],false);assert.equal(e[acao],false);
+  }
+});

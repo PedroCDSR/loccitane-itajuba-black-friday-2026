@@ -13,7 +13,11 @@ Leia AGENTS.md e docs/EVOLUCAO-MISSAO.md. A integração já foi feita: não rec
 - `src/data/campanha.js`: três etapas da intro e dados comerciais ainda incompletos.
 - `src/main.js`/`index.html`/`src/style.css`: intro, HUD, diálogo e controles sobre o canvas.
 
-## Sua primeira tarefa
+## Feito pelo Claude (17/11/2026)
+
+QA real em navegador concluído e quatro correções; ver `docs/QA-NAVEGADOR.md`.
+
+## Sua primeira tarefa (registro do Codex)
 
 Última verificação: 26 testes Node e build passaram. Os testes de fluxo usam adaptadores em memória, sem renderização. Execute npm test e npm run build; depois faça QA real em navegador. Esta rodada não teve navegador controlável. Testes anteriores de Chromium não validam a nova versão. Faça uma partida completa com cidade e showroom, usando teclado e toque emulado. Verifique console, 404, novas animações, body do jogador/capivara, pulo sobre cestos, alcance dos produtos e interação com as três estações.
 

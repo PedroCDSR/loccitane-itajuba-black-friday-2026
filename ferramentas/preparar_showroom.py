@@ -2,7 +2,7 @@
 # Uso: python3 ferramentas/preparar_showroom.py . public/assets/showroom
 # - fachada.png / interior.png: conceitos sem a exploradora desenhada, reduzidos a 960x540 (320x180 no mundo, zoom 3)
 # - caju.png / roma.png: versões na escala do jogo (3 pixels de textura por unidade do mundo)
-# O Pedro usa direto a spritesheet de public/assets/personagens/ (atlas), sem derivado.
+# - pedro-jogo.webp/.json e pedro-intro.webp: folha do Pedro em metade da resolução e quadro parado da intro
 import sys
 from PIL import Image, ImageOps
 R,OUT=sys.argv[1],sys.argv[2]
@@ -55,3 +55,21 @@ def sprite(origem,nome,altura):
     Image.merge('RGBA',(r,g,bb,al)).save(OUT+'/'+nome,optimize=True); print(nome,w,altura)
 sprite('produtos/caju-sabonete-pixel-art.png','caju.png',78)
 sprite('produtos/roma-chantilly-pixel-art.png','roma.png',78)
+
+# ---------- Pedro: folha do jogo em metade da resolução e quadro da intro ----------
+# (a folha original e o atlas ficam em public/assets/personagens/, sem alteração)
+import json
+P = R + '/public/assets/personagens/'
+atlas = json.load(open(P + 'pedro-atlas.json')); folha = Image.open(P + 'pedro-spritesheet.png').convert('RGBA')
+F = 0.5
+W, H = round(folha.width * F), round(folha.height * F)
+folha.resize((W, H), Image.LANCZOS).save(OUT + '/pedro-jogo.webp', lossless=True, method=6)
+esc = lambda d: {k: round(v * F) for k, v in d.items()}
+novo = {'frames': {}, 'meta': dict(atlas['meta'], image='pedro-jogo.webp', size={'w': W, 'h': H}, scale=str(F),
+        note='Derivado de pedro-spritesheet.png em metade da resolução, gerado por ferramentas/preparar_showroom.py.')}
+for n, f in atlas['frames'].items():
+    novo['frames'][n] = dict(f, frame=esc(f['frame']), spriteSourceSize=esc(f['spriteSourceSize']), sourceSize=esc(f['sourceSize']))
+json.dump(novo, open(OUT + '/pedro-jogo.json', 'w'), ensure_ascii=False, indent=1)
+fr = atlas['frames']['parado-0']['frame']
+q = folha.crop((fr['x'], fr['y'], fr['x'] + fr['w'], fr['y'] + fr['h']))
+q.resize((round(q.width * 185 / q.height), 185), Image.LANCZOS).save(OUT + '/pedro-intro.webp', lossless=True, method=6)

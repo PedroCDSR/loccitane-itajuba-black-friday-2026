@@ -1,0 +1,296 @@
+{
+ "frames": {
+  "parado-0": {
+   "frame": {
+    "x": 26,
+    "y": 30,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 9,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "parado-1": {
+   "frame": {
+    "x": 140,
+    "y": 30,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "parado-2": {
+   "frame": {
+    "x": 251,
+    "y": 30,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "parado-3": {
+   "frame": {
+    "x": 360,
+    "y": 30,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "aceno-0": {
+   "frame": {
+    "x": 468,
+    "y": 30,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "aceno-1": {
+   "frame": {
+    "x": 582,
+    "y": 30,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "aceno-2": {
+   "frame": {
+    "x": 696,
+    "y": 30,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "aceno-3": {
+   "frame": {
+    "x": 26,
+    "y": 258,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 9,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "aceno-4": {
+   "frame": {
+    "x": 140,
+    "y": 258,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "aceno-5": {
+   "frame": {
+    "x": 251,
+    "y": 258,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "conversa-0": {
+   "frame": {
+    "x": 360,
+    "y": 258,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 9,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "conversa-1": {
+   "frame": {
+    "x": 468,
+    "y": 258,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "conversa-2": {
+   "frame": {
+    "x": 582,
+    "y": 258,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  },
+  "conversa-3": {
+   "frame": {
+    "x": 696,
+    "y": 258,
+    "w": 112,
+    "h": 190
+   },
+   "rotated": false,
+   "trimmed": true,
+   "spriteSourceSize": {
+    "x": 8,
+    "y": 8,
+    "w": 112,
+    "h": 190
+   },
+   "sourceSize": {
+    "w": 128,
+    "h": 200
+   }
+  }
+ },
+ "meta": {
+  "app": "A Última Aventura — atlas Pedro",
+  "version": "1.0",
+  "image": "pedro-jogo.webp",
+  "format": "RGBA8888",
+  "size": {
+   "w": 830,
+   "h": 474
+  },
+  "scale": "0.5",
+  "note": "Derivado de pedro-spritesheet.png em metade da resolução, gerado por ferramentas/preparar_showroom.py."
+ }
+}

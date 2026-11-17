@@ -93,10 +93,10 @@ export class Aventura extends Phaser.Scene {
   adicionarProduto(tipo, x, y) {
     const item = this.itens.create(x, y, tipo).setScale(.42).setDepth(4).setData('tipo', tipo);
     item.refreshBody();
-    // Contorno discreto de UI, sem halo borrado ou nova arte sobre o produto.
-    const sinal = this.add.rectangle(x, y, item.displayWidth + 6, item.displayHeight + 6, 0, 0)
-      .setStrokeStyle(.7, tipo === 'caju' ? 0xecc778 : 0xf3a5b1).setDepth(3);
+    // Sombra oval sob o produto e flutuação leve: destaca sem caixa nem halo sobre a arte.
+    const sinal = this.add.ellipse(x, y + item.displayHeight/2 + 3, item.displayWidth + 4, 3, 0x2a1626, .35).setDepth(3);
     item.setData('sinal', sinal);
+    this.tweens.add({ targets: item, y: y - 2, duration: 700 + (x*13) % 300, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
   }
   pegarProduto(item) {
     if (!item.active) return;
@@ -141,7 +141,7 @@ export class Aventura extends Phaser.Scene {
       ['caju',px(INTERIOR,1330),210], ['roma',px(INTERIOR,1520),210],
     ];
     const pedroX = px(FACHADA,694);
-    this.pedro = criarPedro(this, pedroX, py(792)+3, .158).setDepth(2).setInteractive({ useHandCursor: true });
+    this.pedro = criarPedro(this, pedroX, py(792)+3, .316).setDepth(2).setInteractive({ useHandCursor: true });
     this.pedro.off('animationcomplete-pedro-aceno');
     this.pedro.on('animationcomplete-pedro-aceno', () => this.pedro.play(this.dialogoAberto ? 'pedro-conversa' : 'pedro-parado'));
     this.pedro.on('pointerup', () => { if (this.pedroPerto) this.pedidoInteracao = true; });
