@@ -7,7 +7,7 @@ globalThis.localStorage = { getItem: k => memoria.get(k) ?? null, setItem: (k, v
 const som = await import('../src/services/som.js');
 
 test('todos os eventos do jogo têm som próprio', () => {
-  for (const nome of ['pulo', 'toldo', 'arremesso', 'capivara', 'caju', 'roma', 'caixa', 'kit', 'vitrine', 'dano', 'transicao', 'pedro', 'falta', 'derruba', 'botao'])
+  for (const nome of ['pulo', 'toldo', 'arremesso', 'capivara', 'caju', 'roma', 'caixa', 'kit', 'vitrine', 'dano', 'transicao', 'pedro', 'falta', 'derruba', 'botao', 'dormir'])
     assert.equal(typeof som.SONS[nome], 'function', nome);
   const aventura = readFileSync(new URL('../src/game/Aventura.js', import.meta.url), 'utf8');
   for (const nome of [...aventura.matchAll(/tocar\('(\w+)'\)/g)].map(m => m[1])) assert.ok(som.SONS[nome], `som inexistente: ${nome}`);
@@ -29,4 +29,10 @@ test('sem gesto da pessoa nenhum contexto de áudio é criado e tocar não quebr
 test('nenhum arquivo de áudio externo no código do jogo', () => {
   const fonte = readFileSync(new URL('../src/services/som.js', import.meta.url), 'utf8');
   assert.doesNotMatch(fonte, /\.(mp3|ogg|wav|m4a)\b|fetch\(|new Audio\(/);
+});
+
+test('cada nota tem queda de volume no código, não dentro de comentário (sem estalo no fim)', () => {
+  const fonte = readFileSync(new URL('../src/services/som.js', import.meta.url), 'utf8');
+  const ativas = fonte.split('\n').map(l => l.replace(/\/\/.*$/, ''));
+  assert.equal(ativas.filter(l => /exponentialRampToValueAtTime\(\.0001, t \+ dur\)/.test(l)).length, 2);
 });

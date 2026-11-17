@@ -161,7 +161,7 @@ export class Aventura extends Phaser.Scene {
   adormecer(c) {
     const j = this.jogador;
     c.setData('dormindo', true); c.setVelocityX(0);
-    j.quicar(forcaQuique(this.entrada.pular)); tocar('toldo'); this.tutorial?.concluir('pisao');
+    j.quicar(forcaQuique(this.entrada.pular)); tocar('dormir'); this.tutorial?.concluir('pisao');
     this.aviso('Zzz… a capivara dormiu!', '#d8e6ff');
     this.dormir(c);
   }
@@ -306,7 +306,7 @@ export class Aventura extends Phaser.Scene {
         j.play('caindo');
         this.tweens.add({ targets: j, y: CHAO - 14, duration: 260, ease: 'Sine.in', onComplete: () => {
           if (this.estado !== 'intro') return;
-          this.dormir(c); tocar('pulo'); j.play('pulando');
+          this.dormir(c); tocar('dormir'); j.play('pulando');
           this.tweens.add({ targets: j, x: alvo - 34, duration: 560 });
           this.tweens.add({ targets: j, y: CHAO - 44, duration: 260, ease: 'Sine.out', onComplete: () => {
             j.play('caindo');

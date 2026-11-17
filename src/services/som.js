@@ -26,7 +26,7 @@ function tom(c, saida, t, { f, ate, dur, tipo = 'triangle', vol = .2, ataque = .
   const o = c.createOscillator(), g = c.createGain();
   o.type = tipo; o.frequency.setValueAtTime(f, t);
   if (ate) o.frequency.exponentialRampToValueAtTime(ate, t + dur);
-  g.gain.value = 0; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + ataque); // começa mudo: sem estalo g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  g.gain.value = 0; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + ataque); g.gain.exponentialRampToValueAtTime(.0001, t + dur); // começa e termina mudo: sem estalo
   let fim = o;
   if (filtro) { const fl = c.createBiquadFilter(); fl.type = 'lowpass'; fl.frequency.value = filtro; o.connect(fl); fim = fl; }
   fim.connect(g); g.connect(saida); o.start(t); o.stop(t + dur + .03);
@@ -40,7 +40,7 @@ function ruido(c, saida, t, { dur, vol = .12, de = 600, ate = 2400, tipo = 'band
   const b = c.createBufferSource(), fl = c.createBiquadFilter(), g = c.createGain();
   b.buffer = ruidoBuffer; fl.type = tipo; fl.Q.value = q;
   fl.frequency.setValueAtTime(de, t); fl.frequency.exponentialRampToValueAtTime(ate, t + dur);
-  g.gain.value = 0; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + ataque); // começa mudo: sem estalo g.gain.exponentialRampToValueAtTime(.0001, t + dur);
+  g.gain.value = 0; g.gain.setValueAtTime(.0001, t); g.gain.linearRampToValueAtTime(vol, t + ataque); g.gain.exponentialRampToValueAtTime(.0001, t + dur); // começa e termina mudo: sem estalo
   b.connect(fl); fl.connect(g); g.connect(saida); b.start(t); b.stop(t + dur + .03);
 }
 const sino = (c, s, t, nota, dur = .28, vol = .16) => { // timbre de "coleta": triângulo com um brilho de seno uma oitava acima
@@ -70,6 +70,10 @@ export const SONS = {
     [72, 76, 79].forEach((n, i) => sino(c, s, t + i * .13, n, .16, .13));
     for (const n of [72, 76, 79, 84]) tom(c, s, t + .4, { f: N(n), dur: .9, vol: .07, ataque: .03 });
     ruido(c, s, t + .4, { dur: .6, vol: .04, de: 6000, ate: 9000, tipo: 'highpass', q: .7 });
+  },
+  dormir: (c, s, t) => { // pisão: quique fofo e um "zzz" que desce devagar
+    tom(c, s, t, { f: 180, ate: 420, dur: .16, vol: .16, filtro: 1400 });
+    [74, 71, 67].forEach((n, i) => tom(c, s, t + .2 + i * .17, { f: N(n), ate: N(n - 2), dur: .22, tipo: 'sine', vol: .08, ataque: .03 }));
   },
   dano: (c, s, t) => { // "ops" grave e redondo, sem susto
     tom(c, s, t, { f: 330, ate: 150, dur: .24, vol: .2, filtro: 1400 }); tom(c, s, t, { f: 165, ate: 95, dur: .26, tipo: 'sine', vol: .14 });
