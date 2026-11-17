@@ -5,10 +5,11 @@ import { criarArte, criarCapivaraDormindo, criarZ } from './arte.js';
 import { contatoCapivara, capivaraInofensiva, forcaQuique } from './capivaras.js';
 import { criarCenario, TENDA } from './cenario.js';
 import { Tutorial } from './Tutorial.js';
+import { GuiaShowroom } from './guiaShowroom.js';
 import { carregarArte } from './assets.js';
 import { carregarPedro, criarPedro } from './pedro-animacoes.js';
 import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, faltaParaKit, META_KITS } from './missao.js';
-import { ALTURA, MUNDO, SHOWROOM, ALTURA_CIDADE, ALTURA_SHOWROOM, MODO_FACIL } from './config.js';
+import { ALTURA, MUNDO, SHOWROOM, ALTURA_CIDADE, MODO_FACIL } from './config.js';
 import { CAMPANHA } from '../data/campanha.js';
 import { registrar } from '../services/metricas.js';
 import { tocar } from '../services/som.js';
@@ -25,7 +26,7 @@ const FACHADA = SHOWROOM.x, INTERIOR = SHOWROOM.x + SHOWROOM.largura;
 const PORTAL = FACHADA - 46; // a bandeira do fim da rua: passou dela, a tela escurece e abre no showroom
 // Volta ao showroom → cidade: andando para a esquerda no começo da fachada. As posições de chegada ficam longe
 // dos dois gatilhos (PORTAL + 8 na rua, VOLTA na fachada) para a passagem nunca disparar em seguida, em loop.
-const VOLTA = FACHADA + 12, CHEGADA_SHOWROOM = FACHADA + 24, CHEGADA_CIDADE = PORTAL - 40;
+const VOLTA = FACHADA + 12, CHEGADA_SHOWROOM = FACHADA + 34, CHEGADA_CIDADE = PORTAL - 40;
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
@@ -104,6 +105,7 @@ export class Aventura extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.setZoom(this.scale.height / ALTURA_CIDADE); cam.setBounds(0, 0, FACHADA, ALTURA); cam.startFollow(this.jogador, true, .15, .15); cam.setDeadzone(64, 56);
     this.sala = 'cidade';
+    this.guia = new GuiaShowroom(this); // mapa da loja e setas (celular em pé)
     this.entrada = new Entrada(this);
     this.events.once('shutdown', () => {
       this.uiAbort.abort(); $('controles').hidden = true; $('dialogo').hidden = true; $('interagir').hidden = true;
@@ -212,7 +214,7 @@ export class Aventura extends Phaser.Scene {
       const visual = this.add.image(x, py(646), 'presente').setOrigin(.5, 1).setScale(.3).setAlpha(.28).setDepth(4);
       this.estacoes.push({ id: i, x, visual });
     }
-    this.placaCidade = this.add.text(FACHADA + 46, 128, '← ITAJUBÁ', { fontFamily: 'Georgia, serif', fontSize: '9px', color: '#fff4df', backgroundColor: '#304f3d', padding: { x: 3, y: 2 }, resolution: 4 })
+    this.placaCidade = this.add.text(FACHADA + 46, 128, '← ITAJUBÁ', { fontFamily: 'Georgia, serif', fontSize: '7px', color: '#fff4df', backgroundColor: '#304f3d', padding: { x: 3, y: 2 }, resolution: 4 })
       .setOrigin(.5).setDepth(6).setAlpha(.9); // no alto: não cobre a exploradora na chegada e aparece no celular em pé
     this.saida = this.add.text(MUNDO - 22, 186, 'SAÍDA →', { fontFamily: 'Georgia, serif', fontSize: '9px', color: '#fff4df', backgroundColor: '#7d2029', padding: { x: 3, y: 2 }, resolution: 4 })
       .setOrigin(.5).setDepth(6).setAlpha(0);
@@ -241,6 +243,11 @@ export class Aventura extends Phaser.Scene {
     const t = this.add.text(this.jogador.x, this.jogador.y - 62, texto, {
       fontFamily: 'system-ui', fontSize: '8px', color: cor, backgroundColor: '#35263b', padding: { x: 3, y: 2 }, resolution: 4,
     }).setOrigin(.5).setDepth(10);
+    // No showroom o zoom é maior: aviso menor e sempre inteiro dentro da tela.
+    if (this.sala === 'showroom') t.setScale(.72);
+    const v = this.cameras.main.worldView, meia = t.displayWidth / 2 + 2;
+    if (v.width > meia * 2) t.x = Math.max(v.x + meia, Math.min(v.right - meia, t.x));
+    this.guia?.soNaPrincipal(t);
     this.tweens.add({ targets: t, y: t.y - 12, alpha: 0, delay: 500, duration: 500, onComplete: () => t.destroy() });
   }
 
@@ -340,7 +347,7 @@ export class Aventura extends Phaser.Scene {
   // alimentadas ficam como estão: só a exploradora muda de lugar.
   trocarSala(destino) {
     this.estado = 'transicao';
-    this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.entrada.limpar(); this.tutorial?.esconder();
+    this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.entrada.limpar(); this.tutorial?.esconder(); this.guia.esconder();
     const showroom = destino === 'showroom';
     $('transicao-titulo').textContent = showroom ? 'Showroom' : 'De volta a';
     $('transicao-nome').textContent = showroom ? 'L’Occitane au Brésil' : 'Itajubá';
@@ -355,12 +362,11 @@ export class Aventura extends Phaser.Scene {
         this.physics.world.setBounds(FACHADA, 0, MUNDO - FACHADA, ALTURA);
         if (!this.solidos.contains(this.pisoShowroom)) this.solidos.add(this.pisoShowroom);
         this.jogador.body.reset(CHEGADA_SHOWROOM, CHAO); this.jogador.olhandoDireita = true; this.checkpoint = CHEGADA_SHOWROOM;
-        cam.setZoom(this.scale.height / ALTURA_SHOWROOM); cam.setBounds(FACHADA, SHOWROOM.topo, MUNDO - FACHADA, SHOWROOM.altura);
-        cam.centerOn(FACHADA + 80, 180);
+        this.enquadrar(); cam.centerOn(CHEGADA_SHOWROOM + 40, 180);
       } else {
         this.physics.world.setBounds(0, 0, FACHADA, ALTURA);
         this.jogador.body.reset(CHEGADA_CIDADE, CHAO); this.jogador.olhandoDireita = false; this.checkpoint = CHEGADA_CIDADE;
-        cam.setZoom(this.scale.height / ALTURA_CIDADE); cam.setBounds(0, 0, FACHADA, ALTURA);
+        this.enquadrar();
         cam.centerOn(CHEGADA_CIDADE - 40, ALTURA / 2);
       }
       this.ultimoHUD = ''; this.atualizarHUD();
@@ -481,11 +487,41 @@ export class Aventura extends Phaser.Scene {
       caju: this.missao.coletados.caju, roma: this.missao.coletados.roma, kits: this.missao.kits });
     this.scene.stop();
   }
+  // Cidade: zoom pela altura da tela. Showroom no celular em pé: mapa da loja no alto e zoom limitado para
+  // mostrar ao menos 150 unidades de largura (antes ~110); o que sobra embaixo é um reflexo do piso.
+  enquadrar() {
+    const cam = this.cameras.main, showroom = this.sala === 'showroom';
+    const zoom = showroom ? this.guia.layout(true) : (this.guia.layout(false), this.scale.height / ALTURA_CIDADE);
+    if (Math.abs(cam.zoom - zoom) > .001) cam.setZoom(zoom);
+    const limites = showroom ? [FACHADA, SHOWROOM.topo, MUNDO - FACHADA, Math.max(SHOWROOM.altura, cam.height / zoom)] : [0, 0, FACHADA, ALTURA];
+    const b = cam.getBounds();
+    if (b.x !== limites[0] || Math.abs(b.height - limites[3]) > .01 || b.width !== limites[2]) cam.setBounds(...limites);
+    return zoom;
+  }
+  // Para onde ir no showroom: Pedro, caixas, produtos de reserva, o próximo lugar livre da bancada e a saída.
+  alvosShowroom() {
+    if (!this.pedroConversou) return [{ x: this.pedroX, y: py(792) - 34, icone: 'pedro-npc', frame: 'parado-0', escala: .075 }];
+    if (this.missao.kits >= META_KITS) return [{ x: MUNDO - 22, y: 200, icone: 'sacola', escala: .22 }];
+    const alvos = [];
+    const falta = faltaParaKit(this.missao);
+    for (const item of this.itens.getChildren()) {
+      const tipo = item.getData('tipo');
+      if (!item.active || item.x < FACHADA) continue;
+      if (tipo === 'caixa' || falta.includes(tipo)) alvos.push({ x: item.x, y: item.y - 4, icone: item.texture.key, escala: tipo === 'caixa' ? .18 : .26 });
+    }
+    if (!falta.length) {
+      const livre = this.estacoes.find(e => !this.missao.estacoes.includes(e.id));
+      if (livre) alvos.push({ x: livre.x, y: py(646) - 8, icone: 'presente', escala: .22 });
+    } else if (!falta.includes('caixa') || !alvos.length) {
+      // faltam frutas e não há reserva no showroom: o caminho é a cidade
+      if (!alvos.some(a => a.icone === 'caju' || a.icone === 'roma')) alvos.push({ x: FACHADA + 46, y: 128, icone: falta.includes('caju') ? 'caju' : 'roma', escala: .26 });
+    }
+    return alvos;
+  }
   // Zoom pela altura da tela (que muda com o celular) e câmera um pouco à frente de quem anda.
   atualizarCamera() {
     const cam = this.cameras.main;
-    const zoom = this.scale.height / (this.sala === 'showroom' ? ALTURA_SHOWROOM : ALTURA_CIDADE);
-    if (Math.abs(cam.zoom - zoom) > .001) cam.setZoom(zoom);
+    const zoom = this.enquadrar();
     const frente = Math.min(40, (this.scale.width / zoom) * .2);
     cam.setFollowOffset(this.jogador.olhandoDireita ? -frente : frente, 0);
     this.morros.tilePositionX = cam.scrollX * .15 * 3; this.casas.tilePositionX = cam.scrollX * .4 * 3;
@@ -520,6 +556,7 @@ export class Aventura extends Phaser.Scene {
     this.atualizarCamera();
     const x = this.jogador.x;
     if (this.sala === 'cidade') {
+      this.guia.esconder();
       if (x > PORTAL + 8) { this.entrarNoShowroom(); return; }
       if (x > this.checkpoint + MODO_FACIL.checkpointDistancia) this.checkpoint = x;
     } else {
@@ -532,6 +569,7 @@ export class Aventura extends Phaser.Scene {
       if (x > this.pedroX + 30 && !this.pedroConversou) this.pedroEntra();
       if (x > INTERIOR && this.missao.fase !== 'showroom') { this.missao.fase = 'showroom'; this.aviso('Caixas no alto das estantes!'); }
       if (this.missao.fase === 'showroom') this.verificarBancada();
+      this.guia.atualizar(this.alvosShowroom(), this.jogador, agora);
     }
     const contexto = this.contextoInteracao();
     $('interagir').hidden = !contexto;
