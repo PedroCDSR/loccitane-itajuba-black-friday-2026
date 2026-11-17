@@ -24,7 +24,7 @@ export function objetivoMissao(missao) {
     return `Leve tudo à bancada para montar os kits · ${missao.kits}/${META_KITS}`;
   }
   if (missao.fase === 'fachada') return 'Fale com Pedro na porta do showroom →';
-  return 'Reúna Caju e Romã pela cidade · pule nas tendinhas →';
+  return 'Reúna Caju e Romã · pule nas tendinhas →';
 }
 // Produtos da cidade a partir do traçado da rua (posições das tendas e dos cestos).
 // - chão: um par garantido no caminho, para nunca faltar o mínimo da missão;

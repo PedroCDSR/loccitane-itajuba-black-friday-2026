@@ -25,14 +25,19 @@
       <div id="jogo"></div>
       <div id="transicao" hidden aria-live="polite"><p>Showroom</p><strong>L’Occitane au Brésil</strong><span>Itajubá</span></div>
       <div id="loading" hidden role="status"><p id="loading-texto">Preparando a aventura…</p><button id="tentar-carga" hidden>Tentar novamente</button></div>
-      <div id="controles" hidden aria-label="Controles de toque">
-        <div><button data-controle="esquerda" aria-label="Andar para esquerda">←</button><button data-controle="direita" aria-label="Andar para direita">→</button></div>
-        <div class="interacao"><button id="interagir" data-controle="interagir" hidden>Conversar</button></div>
-        <div><button data-controle="fruta">Caju</button><button data-controle="pular">Pular</button></div>
-      </div>
+    </div>
+    <div id="painel">
       <section id="dialogo" hidden role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
         <p class="eyebrow" id="dialogo-titulo">PEDRO · SHOWROOM ITAJUBÁ</p><p id="dialogo-texto"></p><div class="acoes-dialogo"><button id="fechar-dialogo" class="principal">Vamos montar os kits →</button><button id="pular-intro" hidden>Pular abertura</button></div>
       </section>
+      <div id="dica" hidden role="status"><p id="dica-texto"></p></div>
+      <div id="controles" hidden aria-label="Controles">
+        <button id="interagir" data-controle="interagir" hidden>Conversar</button>
+        <div class="botoes">
+          <div class="grupo"><button data-controle="esquerda" aria-label="Andar para a esquerda"><span aria-hidden="true">◀</span></button><button data-controle="direita" aria-label="Andar para a direita"><span aria-hidden="true">▶</span></button></div>
+          <div class="grupo"><button data-controle="fruta" class="caju"><span class="icone" aria-hidden="true"></span>Caju</button><button data-controle="pular" class="pular">Pular</button></div>
+        </div>
+      </div>
     </div>
     <p class="ajuda">Caju e Romã são os produtos da missão. O botão Caju oferece a fruta às capivaras e não gasta os produtos coletados.</p>
   </section>

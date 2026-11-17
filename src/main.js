@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import './style.css';
 import { CAMPANHA } from './data/campanha.js';
 import { Aventura } from './game/Aventura.js';
-import { LARGURA, ALTURA, JOGADOR } from './game/config.js';
+import { LARGURA, ALTURA, JOGADOR, TELA } from './game/config.js';
 import { percentualSeguro, podeResgatar, linkResgate, linkCompartilhar } from './services/oferta.js';
 import { registrar } from './services/metricas.js';
 import { alternarSom } from './services/som.js';
@@ -29,7 +29,7 @@ async function iniciar(comIntro=false){
   $('loading').hidden=false;$('tentar-carga').hidden=true;$('loading-texto').textContent='Preparando a aventura…';
   registrar('inicio');
   if(jogo){jogo.registry.set('comIntro',comIntro);jogo.scene.start('Aventura');return;}
-  jogo=new Phaser.Game({type:Phaser.AUTO,parent:'jogo',width:LARGURA*2,height:ALTURA*2,pixelArt:true,roundPixels:true,backgroundColor:'#cdd7b0',scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},input:{activePointers:4},audio:{noAudio:true},physics:{default:'arcade',arcade:{gravity:{x:0,y:JOGADOR.gravidade},debug:false}},scene:[Aventura]});
+  jogo=new Phaser.Game({type:Phaser.AUTO,parent:'jogo',width:TELA.largura,height:TELA.altura,pixelArt:true,roundPixels:true,backgroundColor:'#cdd7b0',scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},input:{activePointers:4},audio:{noAudio:true},physics:{default:'arcade',arcade:{gravity:{x:0,y:JOGADOR.gravidade},debug:false}},scene:[Aventura]});
   jogo.registry.set('comIntro',comIntro);
   jogo.events.on('conclusao',concluir);
   jogo.events.on('falha-assets',()=>{emPartida=false;$('loading-texto').textContent='Não foi possível carregar todas as imagens. Confira sua conexão e tente novamente.';$('tentar-carga').hidden=false;});
@@ -49,3 +49,8 @@ $('resgate').onsubmit=e=>{
   const url=linkResgate(CAMPANHA,$('nome').value,total,$('marketing').checked);registrar('encaminhamento_whatsapp',{presentes:total});window.location.assign(url);
 };
 $('compartilhar').href=linkCompartilhar(window.location.href);$('compartilhar').onclick=()=>registrar('clique_compartilhar');
+
+// O selo do plano gratuito do Netlify fica fixo no canto de baixo. Sem escondê-lo, o painel ganha folga embaixo
+// para o selo não cobrir os botões.
+const verSelo=()=>document.body.classList.toggle('com-selo',!!document.getElementById('nl-badge-frame'));
+if(typeof MutationObserver!=='undefined'){new MutationObserver(verSelo).observe(document.body,{childList:true});verSelo();}

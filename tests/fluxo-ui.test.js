@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import { EventEmitter } from 'node:events';
 import { CAMPANHA } from '../src/data/campanha.js';
-import { LARGURA, ALTURA, JOGADOR } from '../src/game/config.js';
+import { LARGURA, ALTURA, JOGADOR, TELA } from '../src/game/config.js';
 import { percentualSeguro, podeResgatar, linkResgate, linkCompartilhar } from '../src/services/oferta.js';
 
 function executarUI() {
@@ -17,9 +17,9 @@ function executarUI() {
       this.registry=new Map();this.scene={start:()=>this.starts++,pause:()=>this.pauses++,resume:()=>this.resumes++,getScene:()=>({entrada:{limpar:()=>this.cleans++}})};games.push(this);}
     destroy(){this.destroyed=true;}
   }
-  const context={document:{getElementById:id=>{assert.ok(elements[id],id);return elements[id];},body:{classList:{add(){},remove(){}}},addEventListener(){}},
+  const context={document:{getElementById:id=>{assert.ok(elements[id],id);return elements[id];},body:{classList:{add(){},remove(){},toggle(){}}},addEventListener(){}},
     window:{addEventListener(){},location:{href:'https://example.com/jogo/',assign(){throw new Error('Contato externo indevido');}}},
-    Phaser:{AUTO:0,Scale:{FIT:0,CENTER_BOTH:0},Game},Aventura:class{},CAMPANHA,LARGURA,ALTURA,JOGADOR,
+    Phaser:{AUTO:0,Scale:{FIT:0,CENTER_BOTH:0},Game},Aventura:class{},CAMPANHA,LARGURA,ALTURA,JOGADOR,TELA,
     percentualSeguro,podeResgatar,linkResgate,linkCompartilhar,registrar:n=>events.push(n),alternarSom:()=>false};
   const source=readFileSync(new URL('../src/main.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/gm,'').replaceAll('import.meta.env.DEV','false');
   vm.runInNewContext(source,context);

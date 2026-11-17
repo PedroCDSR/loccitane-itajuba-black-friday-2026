@@ -7,7 +7,6 @@
 /* Missão, intro e controles sobre o canvas. */
 #intro h2{font:clamp(30px,5vw,46px) Georgia;color:var(--vermelho);margin:20px 0}#intro-texto{max-width:540px;margin:20px auto}.intro-arte{display:flex;align-items:flex-end;justify-content:center;gap:38px;height:190px;margin:20px auto}.intro-arte img{height:105px;width:auto;image-rendering:pixelated}.intro-arte .pedro-intro{height:185px}.acoes button,#intro-pular{font:inherit;cursor:pointer;border:1px solid #b18b4555;background:transparent;color:var(--verde);border-radius:4px;padding:12px}#intro-proximo{background:var(--vermelho);color:var(--creme)}#palco{position:relative}#hud{display:flex;gap:12px}#hud #pausar{background:#f4eddb1a;color:var(--creme);border:1px solid #f4eddb66;min-width:40px;min-height:30px;border-radius:4px}#objetivo-panel{display:flex;justify-content:space-between;gap:14px;padding:8px 12px;font-size:11px;background:#e5ddc6;color:var(--verde)}#kits{white-space:nowrap;font-weight:700}#tempo.urgente{background:#942c39;color:#fff1d5;padding:3px 6px;border-radius:3px}#controles{position:absolute;left:0;right:0;bottom:0;background:transparent;padding:12px;pointer-events:none;align-items:flex-end}#controles>div{pointer-events:auto;gap:10px}#controles button{background:#304f3de6;border:1px solid #f4eddb99;min-height:58px;min-width:58px;text-shadow:0 1px #15231a}#controles button.pressed{background:#942c39}#controles .interacao{position:absolute;left:50%;bottom:80px;transform:translateX(-50%)}#controles #interagir{width:auto;min-width:140px;min-height:48px;font-size:12px;padding:10px 14px;background:#942c39}#dialogo{position:absolute;z-index:8;left:12px;right:12px;bottom:12px;padding:18px;background:#fff4df;border:2px solid #b18b45;border-radius:6px;box-shadow:0 8px 24px #20151a55;text-align:center}#dialogo p{margin:5px 0 12px;font-size:13px}#dialogo .eyebrow{font-size:10px}#dialogo .principal{font-size:12px;min-height:44px;padding:11px 18px}
 @media(max-width:600px){#hud{flex-wrap:wrap;gap:7px}#hud #local{flex:1;max-width:none}#hud #pausar{min-height:28px}#objetivo-panel{font-size:10px;padding:6px 8px}#controles{padding:7px}#controles button{width:48px;min-width:48px;min-height:48px;font-size:12px}#controles .interacao{bottom:61px}#controles #interagir{min-height:38px;font-size:10px}#dialogo{padding:12px}#dialogo p{font-size:11px}.intro-arte{height:160px}.intro-arte .pedro-intro{height:155px}}
-@media(orientation:landscape) and (max-height:550px){body.jogando #partida{position:relative;max-width:min(100vw,calc(100svh * 16/9));margin:auto}body.jogando #hud{position:absolute;z-index:6;left:0;right:0;top:0;background:#304f3deb;padding:3px 10px;height:34px;font-size:11px;flex-wrap:nowrap}body.jogando #objetivo-panel{position:absolute;z-index:6;left:0;right:0;top:34px;background:#f4eddbeb;padding:4px 10px;font-size:10px}body.jogando #controles{padding:8px}body.jogando #controles button{min-height:54px;min-width:58px}body.jogando #controles .interacao{bottom:70px}body.jogando #dialogo{max-width:520px;margin:auto}}
 #loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#304f3d;z-index:9;color:#fff1d5}#tentar-carga{padding:12px 18px;background:#942c39;color:#fff1d5;border:1px solid #dcb66e;border-radius:4px}
 
 /* Abertura encenada e passagem para o showroom. */
@@ -17,4 +16,50 @@
 #transicao p{margin:0;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#e6b84a}#transicao strong{font:400 clamp(24px,4vw,40px) Georgia,serif}#transicao span{font-size:11px;letter-spacing:.2em;text-transform:uppercase}
 @keyframes transicao{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 #dialogo.no-alto{top:12px;bottom:auto}
-@media(orientation:landscape) and (max-height:550px){body.jogando #dialogo.no-alto{top:62px}}
+
+/* ===== Partida em coluna, pensada para o celular em pé =====
+   HUD no alto, tela do jogo 4:3 e, embaixo, um painel próprio com as falas, as dicas e os botões grandes.
+   Nada fica por cima do jogo. */
+body.jogando header,body.jogando footer,body.jogando #partida>.ajuda{display:none}
+body.jogando main{padding:0;max-width:none}
+body.jogando{background:#20301f}
+#partida{--painel-min:190px;--hud:76px}
+body.jogando #partida{display:flex;flex-direction:column;height:100dvh;max-width:760px;margin:0 auto;background:var(--verde);padding-top:env(safe-area-inset-top,0px)}
+#partida #hud{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;border-radius:0;padding:8px 12px;font-size:13px;height:auto}
+#partida #hud #local{display:none}
+#partida #hud #presentes{grid-column:2;justify-self:center;font-weight:600}
+#partida #hud #vida{grid-column:1;grid-row:1}
+#partida #hud #tempo{font-variant-numeric:tabular-nums;font-weight:700}
+#partida #objetivo-panel{border-radius:0;padding:6px 12px;font-size:12px}
+#partida #palco{position:relative;width:min(100%,calc(100dvh - var(--hud) - var(--painel-min)));margin:0 auto;flex:none}
+#partida #jogo{aspect-ratio:1/1;width:100%}
+#partida #painel{position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;min-height:var(--painel-min);
+  padding:12px max(12px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));background:linear-gradient(#304f3d,#26402f)}
+body.com-selo #partida #painel{padding-bottom:calc(82px + env(safe-area-inset-bottom,0px))}
+/* falas da abertura e do Pedro: no painel, no lugar dos botões */
+#partida #dialogo{position:static;margin:0;max-width:none;left:auto;right:auto;bottom:auto;top:auto;padding:14px 16px;text-align:left;box-shadow:none}
+#partida #dialogo p{font-size:15px;line-height:1.5;margin:4px 0 12px}#partida #dialogo .eyebrow{font-size:11px}
+#partida #dialogo .acoes-dialogo{justify-content:flex-start}#partida #dialogo .principal{font-size:14px;min-height:48px}
+/* botões */
+#partida #controles{position:static;display:flex;flex-direction:column;gap:10px;padding:0;background:none;pointer-events:auto}
+#partida #controles .botoes{display:flex;justify-content:space-between;align-items:flex-end;gap:12px}
+#partida #controles .grupo{display:flex;gap:10px;align-items:flex-end}
+#partida #controles button{width:auto;min-width:0;height:auto;min-height:0;border-radius:18px;border:2px solid #f4eddb66;background:#f4eddb1f;color:#fff6e3;font-size:16px;font-weight:700;touch-action:none;user-select:none;-webkit-user-select:none}
+#partida #controles [data-controle=esquerda],#partida #controles [data-controle=direita]{width:clamp(66px,19vw,88px);height:clamp(66px,19vw,88px);font-size:24px}
+#partida #controles .caju{width:clamp(66px,19vw,84px);height:clamp(66px,19vw,84px);background:#c8762f;border-color:#f5c875;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:13px}
+#partida #controles .caju .icone{width:22px;height:22px;background:url('/assets/runtime-sprites/caju-fruta.webp') center/contain no-repeat;image-rendering:pixelated}
+#partida #controles .pular{width:clamp(84px,25vw,112px);height:clamp(84px,25vw,112px);border-radius:50%;background:#942c39;border-color:#f3a5b1;font-size:17px}
+#partida #controles button.pressed{background:#b18b45;transform:scale(.96)}
+#partida #controles #interagir{align-self:stretch;min-height:50px;border-radius:12px;background:#942c39;border-color:#f3a5b1;font-size:15px}
+#partida #controles .interacao{position:static;transform:none}
+/* balão de dica com seta para o botão */
+#dica{position:absolute;left:12px;right:12px;bottom:calc(100% - 4px);z-index:5;pointer-events:none}
+#painel #dica{position:relative;left:auto;right:auto;bottom:auto}
+#dica p{margin:0;background:#fff4df;color:#3a2a22;border:2px solid #e6b84a;border-radius:12px;padding:10px 14px;font-size:15px;font-weight:600;line-height:1.35;text-align:center;box-shadow:0 6px 18px #0005}
+#dica::after{content:"";position:absolute;top:100%;left:var(--seta,50%);transform:translateX(-50%);border:12px solid transparent;border-top-color:#e6b84a;animation:quica .8s ease-in-out infinite}
+@keyframes quica{50%{transform:translate(-50%,6px)}}
+#partida #controles button.destaque{box-shadow:0 0 0 4px #ffd86b,0 0 18px 6px #ffd86b99;animation:pulsa 1s ease-in-out infinite}
+@keyframes pulsa{50%{box-shadow:0 0 0 7px #ffd86b,0 0 22px 10px #ffd86baa}}
+@media(prefers-reduced-motion:reduce){#dica::after,#partida #controles button.destaque{animation:none}}
+/* computador: coluna mais estreita, botões menores (o teclado é o principal) */
+@media(pointer:fine){#partida{--painel-min:150px}#partida #controles [data-controle=esquerda],#partida #controles [data-controle=direita],#partida #controles .caju{width:64px;height:64px}#partida #controles .pular{width:80px;height:80px}}

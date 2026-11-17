@@ -3,6 +3,7 @@ import { Jogador } from './Jogador.js';
 import { Entrada } from './Entrada.js';
 import { criarArte } from './arte.js';
 import { criarCenario, TENDA } from './cenario.js';
+import { Tutorial } from './Tutorial.js';
 import { carregarArte } from './assets.js';
 import { carregarPedro, criarPedro } from './pedro-animacoes.js';
 import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, faltaParaKit, META_KITS } from './missao.js';
@@ -59,7 +60,7 @@ export class Aventura extends Phaser.Scene {
     // Toldo das tendas: ao cair sobre ele, quica alto (segurando PULAR vai mais alto).
     this.physics.add.collider(this.jogador, this.toldos, (j, toldo) => {
       if (!j.body.touching.down) return;
-      j.quicar(this.entrada.pular ? 430 : 360); tocar('pulo');
+      j.quicar(this.entrada.pular ? 430 : 360); tocar('pulo'); this.tutorial?.concluir('toldo');
       const t = toldo.getData('visual');
       this.tweens.add({ targets: t, scaleY: t.scaleY * .94, duration: 70, yoyo: true });
     });
@@ -85,7 +86,7 @@ export class Aventura extends Phaser.Scene {
     this.frutas = this.physics.add.group();
     this.physics.add.overlap(this.frutas, this.capivaras, (f, c) => {
       if (c.getData('alimentada')) return;
-      f.destroy(); c.setData('alimentada', true); c.setVelocityX(0); c.play('capivara-comer');
+      f.destroy(); c.setData('alimentada', true); c.setVelocityX(0); c.play('capivara-comer'); this.tutorial?.concluir('caju');
       this.aviso('A capivara gostou do caju!', '#f5c875');
     });
 
@@ -98,6 +99,7 @@ export class Aventura extends Phaser.Scene {
     this.events.once('shutdown', () => {
       this.uiAbort.abort(); $('controles').hidden = true; $('dialogo').hidden = true; $('interagir').hidden = true;
       $('pular-intro').hidden = true; $('transicao').hidden = true; $('dialogo').classList.remove('no-alto');
+      this.tutorial?.esconder();
     });
     this.atualizarHUD();
     if (this.registry.get('comIntro')) this.comecarIntro(); else this.comecarJogo();
@@ -265,6 +267,9 @@ export class Aventura extends Phaser.Scene {
     this.jogador.body.enable = true; this.jogador.body.reset(80, CHAO); this.jogador.play('parado');
     this.entrada.ignorarAteSoltar();
     $('controles').hidden = false; $('dialogo').hidden = true;
+    // dicas só na primeira partida desta visita
+    this.tutorial = new Tutorial(!this.registry.get('tutorialVisto')); this.registry.set('tutorialVisto', true);
+    this.tutorial.mostrar('andar', 0);
     this.ultimoHUD = ''; this.atualizarHUD();
   }
 
@@ -298,11 +303,11 @@ export class Aventura extends Phaser.Scene {
     $('dialogo-titulo').textContent = 'PEDRO · SHOWROOM ITAJUBÁ';
     $('dialogo-texto').textContent = CAMPANHA.boasVindasPedro;
     $('fechar-dialogo').textContent = 'Vamos montar os kits →';
-    $('dialogo').hidden = false; $('fechar-dialogo').focus({ preventScroll: true });
+    $('dialogo').hidden = false; $('controles').hidden = true; this.tutorial?.esconder(); $('fechar-dialogo').focus({ preventScroll: true });
   }
   fecharDialogo() {
     if (!this.dialogoAberto) return;
-    this.dialogoAberto = false; $('dialogo').hidden = true;
+    this.dialogoAberto = false; $('dialogo').hidden = true; $('controles').hidden = false;
     this.entrada.ignorarAteSoltar(); this.physics.world.resume(); this.pedro.play('pedro-parado');
     this.pedroEntra();
   }
@@ -357,6 +362,17 @@ export class Aventura extends Phaser.Scene {
     if (contexto?.tipo === 'pedro') this.abrirDialogo();
   }
 
+  // Ordem das dicas: andar → pular → caju quando a primeira capivara aparece → toldo na primeira tendinha.
+  atualizarTutorial(agora) {
+    const t = this.tutorial; if (!t?.ativo || this.sala !== 'cidade') return;
+    t.atualizar(agora);
+    const x = this.jogador.x;
+    if (x > 125) t.concluir('andar');
+    if (t.feitos.has('andar')) t.mostrar('pular', agora);
+    const capivara = this.capivaras.getChildren().find(c => !c.getData('alimentada') && c.x - x > 0 && c.x - x < 170);
+    if (capivara && t.feitos.has('pular')) t.mostrar('caju', agora);
+    if (TENDAS.some(tx => tx - x > 0 && tx - x < 150) && t.feitos.has('pular')) t.mostrar('toldo', agora);
+  }
   atualizarHUD() {
     const segundos = Math.max(0, Math.ceil(DURACAO_SEGUNDOS - this.tempo));
     const m = this.missao, assinatura = [m.coletados.caju, m.coletados.roma, m.estoque.caixa, this.jogador?.vida, segundos, m.fase, m.kits].join('|');
@@ -395,7 +411,9 @@ export class Aventura extends Phaser.Scene {
     this.tempo += delta / 1000;
     const agora = this.tempo * 1000; // relógio de jogo ativo: pausa, intro, transição e conversa não contam
     const soltou = this.jogador.atualizar(this.entrada, agora, delta, true);
-    if (this.entrada.pularApertou) tocar('pulo');
+    if (this.entrada.pularApertou) { tocar('pulo'); this.tutorial?.concluir('pular'); }
+    if (this.entrada.frutaApertou) this.tutorial?.concluir('caju');
+    this.atualizarTutorial(agora);
     if (soltou && agora >= this.proximoArremesso) {
       this.proximoArremesso = agora + 350;
       const dir = this.jogador.olhandoDireita ? 1 : -1;

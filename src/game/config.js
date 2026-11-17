@@ -3,8 +3,11 @@ export const ALTURA = 270;
 export const DURACAO_SEGUNDOS = 75;
 // O mundo é medido em unidades de 480x270. O canvas tem o dobro (960x540) e a câmera usa zoom 2 na
 // cidade e zoom 3 no showroom, onde os fundos têm 3 pixels de textura por unidade.
-export const ZOOM_CIDADE = 2;
-export const ZOOM_SHOWROOM = 3;
+// Tela quadrada (960x960), pensada para o celular em pé: ocupa toda a largura, a cidade aparece inteira do céu
+// ao chão (270 de altura, 270 de largura visível) e o showroom preenche a altura com os fundos de 180.
+export const TELA = { largura: 960, altura: 960 };
+export const ZOOM_CIDADE = TELA.altura / 270;
+export const ZOOM_SHOWROOM = TELA.altura / 180;
 export const SHOWROOM = { x: 5216, largura: 320, topo: 90, altura: 180 }; // cada um dos dois fundos (fachada, interior)
 export const MUNDO = SHOWROOM.x + SHOWROOM.largura * 2;
 export const ARTE_JOGADOR = 3; // pixels de textura por unidade do mundo no sprite da exploradora

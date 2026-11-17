@@ -37,3 +37,17 @@ Capturas reais em `docs/capturas/v2-*.png`.
 - Aparelho real; um robô joga sem errar, então a folga de 21 s precisa ser medida com pessoas.
 - A arte das tendas é desenhada em código, sem passar por um gerador de imagem como as demais. Se ficar abaixo do resto, dá para pedir uma tenda nas mesmas medidas (96×80 unidades, 288×240 pixels).
 - O selo "Powered by Netlify" continua sobre os botões da direita no celular.
+
+# Celular em pé (17/11/2026, segunda rodada)
+
+Pedido: o jogo estava pensado para tela deitada e cheia; no celular em pé ficava pequeno, com os botões por cima do jogo e sem instruções claras.
+
+- **Tela do jogo quadrada** (960×960), ocupando toda a largura: a cidade aparece inteira, do céu ao chão, e a exploradora fica maior. No showroom a câmera aproxima para os fundos preencherem a altura. Constantes em `TELA`, `ZOOM_CIDADE` e `ZOOM_SHOWROOM` (`src/game/config.js`).
+- **Partida em coluna, sem rolagem:** HUD no alto, jogo no meio e, embaixo, um painel próprio com setas grandes à esquerda e Caju e Pular à direita, perto dos polegares. Nada fica por cima do jogo.
+- **Falas da abertura e do Pedro** aparecem no painel de baixo, no lugar dos botões, e não cobrem mais a cena.
+- **Dicas da primeira partida** (`src/game/Tutorial.js`): balão com seta e botão piscando para andar, pular, dar caju à primeira capivara e quicar na primeira tendinha. Cada dica some quando a pessoa faz a ação ou depois de alguns segundos; no computador o texto mostra as teclas.
+- **Selo do Netlify:** quando aparece, o painel ganha folga embaixo para o selo não cobrir os botões. O selo não é escondido.
+
+Testado no Chromium com toque emulado em 390×844 e 412×915: sem rolagem, sem erros, setas + pular com dois dedos, dicas na ordem. A partida completa por teclado continua passando (vitrine aos 57,5 s).
+
+Proposta para o espaço que sobra entre o jogo e os botões: `docs/capturas/proposta-espaco-vertical.png` (aguardando escolha).
