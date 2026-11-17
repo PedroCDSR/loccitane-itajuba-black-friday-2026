@@ -7,19 +7,19 @@
   <title>A Última Aventura • L’Occitane Itajubá</title>
 </head>
 <body>
-<header><a class="marca" href="#">L’OCCITANE <span>AU BRÉSIL · ITAJUBÁ</span></a><button id="som" aria-pressed="false">Som: desligado</button></header>
+<header><a class="marca" href="#">L’OCCITANE <span>AU BRÉSIL · ITAJUBÁ</span></a><button id="som" class="som-alternar" aria-pressed="true">Som: ligado</button></header>
 <main>
   <section id="inicio" class="cartao">
     <p class="eyebrow">NOVEMBRO DE 2026 · UMA HISTÓRIA PARA GUARDAR</p>
     <h1>A Última<br><em>Aventura</em></h1>
     <p class="subtitulo">Última Black Friday L’Occitane Itajubá</p><p id="despedida"></p>
-    <div class="convite"><span>01 · Recupere Caju e Romã pela cidade</span><span>02 · Encontre Pedro no showroom</span><span>03 · Monte três kits</span></div>
+    <div class="convite"><span>01 · Pegue Caju e Romã pela cidade</span><span>02 · Quique no toldo das tendinhas</span><span>03 · Capivara? Pise, dê caju ou pule por cima</span><span>04 · No showroom, monte três kits com o Pedro</span></div>
     <button id="jogar" class="principal">Começar a aventura <span aria-hidden="true">→</span></button>
-    <p class="ajuda">Modo fácil · sem pressa: passeie pela cidade e pelo showroom · cinco corações.<br>Teclado e controles de toque.</p>
+    <p class="ajuda">Modo fácil · sem pressa: passeie pela cidade e pelo showroom · cinco corações.<br>Encostar de lado numa capivara tira 1 coração.<br>Teclado e controles de toque.</p>
     <p class="nota">Campanha em preparação · condições do benefício ainda serão definidas pela loja.</p>
   </section>
   <section id="partida" hidden aria-label="Jogo de plataforma">
-    <div id="hud"><span id="local">Itajubá</span><span id="presentes">Caju 0 · Romã 0</span><span id="vida">5 ♥</span><button id="pausar" hidden aria-label="Pausar aventura">Ⅱ</button></div>
+    <div id="hud"><span id="local">Itajubá</span><span id="presentes">Caju 0 · Romã 0</span><span id="vida">5 ♥</span><button id="som-hud" class="som-alternar" aria-pressed="true" aria-label="Som ligado" title="Som"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path class="ondas" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path class="mudo" d="M16 9l6 6M22 9l-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button><button id="pausar" hidden aria-label="Pausar aventura">Ⅱ</button></div>
     <div id="objetivo-panel"><span id="objetivo">Reúna os produtos</span><span id="kits">Kits 0/3</span></div>
     <div id="palco">
       <div id="jogo"></div>
@@ -39,7 +39,7 @@
         </div>
       </div>
     </div>
-    <p class="ajuda">Caju e Romã são os produtos da missão. O botão Caju oferece a fruta às capivaras e não gasta os produtos coletados.</p>
+    <p class="ajuda">Caju e Romã são os produtos da missão. Capivara no caminho: pule em cima para ela dormir, use o botão Caju para ela comer (não gasta os produtos coletados) ou pule por cima.</p>
   </section>
   <section id="final" class="cartao" hidden>
     <p class="eyebrow">ITAJUBÁ, OBRIGADA POR CADA ENCONTRO</p><h1 id="final-titulo">O melhor<br><em>é compartilhar.</em></h1>

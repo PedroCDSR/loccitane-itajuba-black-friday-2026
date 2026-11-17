@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
 import { Jogador } from './Jogador.js';
 import { Entrada } from './Entrada.js';
-import { criarArte } from './arte.js';
+import { criarArte, criarCapivaraDormindo, criarZ } from './arte.js';
+import { contatoCapivara, capivaraInofensiva, forcaQuique } from './capivaras.js';
 import { criarCenario, TENDA } from './cenario.js';
 import { Tutorial } from './Tutorial.js';
 import { GuiaShowroom } from './guiaShowroom.js';
@@ -46,10 +47,10 @@ export class Aventura extends Phaser.Scene {
   create() {
     if (this.falhas.length) { this.game.events.emit('falha-assets'); this.scene.stop(); return; }
     $('loading').hidden = true;
-    criarArte(this); criarCenario(this);
+    criarArte(this); criarCapivaraDormindo(this); criarZ(this); criarCenario(this);
     for (const texture of this.textures.getTextureKeys()) this.textures.get(texture).setFilter(Phaser.Textures.FilterMode.NEAREST);
     this.fim = false; this.presentes = 0; this.tempo = 0; this.checkpoint = 80;
-    this.proximoArremesso = 0; this.missao = criarMissao(); this.dialogoAberto = false;
+    this.proximoArremesso = 0; this.missao = criarMissao(); this.dialogoAberto = false; this.capivaraDoPisao = null;
     this.pedroPerto = false; this.pedroConversou = false; this.pedidoInteracao = false;
     this.estacoes = []; this.ultimoHUD = ''; this.avisoFaltaAte = 0;
     this.uiAbort = new AbortController();
@@ -64,7 +65,7 @@ export class Aventura extends Phaser.Scene {
     // Toldo das tendas: ao cair sobre ele, quica alto (segurando PULAR vai mais alto).
     this.physics.add.collider(this.jogador, this.toldos, (j, toldo) => {
       if (!j.body.touching.down) return;
-      j.quicar(this.entrada.pular ? 430 : 360); tocar('pulo'); this.tutorial?.concluir('toldo');
+      j.quicar(this.entrada.pular ? 430 : 360); tocar('toldo'); this.tutorial?.concluir('toldo');
       const t = toldo.getData('visual');
       this.tweens.add({ targets: t, scaleY: t.scaleY * .94, duration: 70, yoyo: true });
     });
@@ -80,18 +81,23 @@ export class Aventura extends Phaser.Scene {
       c.body.setSize(72, 48).setOffset(12, 24); c.setData('origem', x); c.play('capivara-andar');
     }
     this.physics.add.collider(this.capivaras, this.solidos);
+    // Cair em cima faz a capivara dormir (e quica); encostar de lado tira 1 coração.
     this.physics.add.overlap(this.jogador, this.capivaras, (j, c) => {
-      if (c.getData('alimentada') || j.estaInvencivel(this.tempo * 1000)) return;
-      const vida = j.levarDano(c.x, this.tempo * 1000);
-      this.aviso('Ai! Seus produtos estão guardados.', '#fff0d2');
+      const contato = contatoCapivara({ vy: j.body.velocity.y, baseAnterior: j.body.prev.y + j.body.height },
+        { topo: c.body.top, dormindo: c.getData('dormindo'), alimentada: c.getData('alimentada') });
+      if (contato === 'pisao') { this.adormecer(c); return; }
+      if (contato !== 'dano' || j.estaInvencivel(this.tempo * 1000)) return;
+      const vida = j.levarDano(c.x, this.tempo * 1000); tocar('dano');
+      this.aviso('Ai! De lado ela empurra. Pise nela ou dê caju!', '#fff0d2');
+      this.tutorial?.mostrar('dano', this.tempo * 1000, true);
       if (vida === 0) j.reposicionar(this.checkpoint, 200, this.tempo * 1000);
       this.atualizarHUD();
     });
     this.frutas = this.physics.add.group();
     this.physics.add.overlap(this.frutas, this.capivaras, (f, c) => {
-      if (c.getData('alimentada')) return;
-      f.destroy(); c.setData('alimentada', true); c.setVelocityX(0); c.play('capivara-comer'); this.tutorial?.concluir('caju');
-      this.aviso('A capivara gostou do caju!', '#f5c875');
+      if (capivaraInofensiva({ dormindo: c.getData('dormindo'), alimentada: c.getData('alimentada') })) return;
+      f.destroy(); c.setData('alimentada', true); c.setVelocityX(0); c.play('capivara-comer'); tocar('capivara'); this.tutorial?.concluir('caju');
+      this.aviso('Nham! A capivara comeu feliz.', '#f5c875');
     });
 
     // Cidade e showroom são "salas" separadas: a câmera nunca mostra as duas ao mesmo tempo.
@@ -144,6 +150,32 @@ export class Aventura extends Phaser.Scene {
   umSentido(grupo, x, y, largura) {
     const z = this.add.zone(x, y, largura, 6); this.physics.add.existing(z, true);
     const c = z.body.checkCollision; c.down = c.left = c.right = false; grupo.add(z); return z;
+  }
+
+  // Pisão: a capivara deita, fecha os olhos, respira devagar e solta "zzz". Fica inofensiva até o fim.
+  adormecer(c) {
+    const j = this.jogador;
+    c.setData('dormindo', true); c.setVelocityX(0);
+    j.quicar(forcaQuique(this.entrada.pular)); tocar('toldo'); this.tutorial?.concluir('pisao');
+    this.aviso('Zzz… a capivara dormiu!', '#d8e6ff');
+    this.dormir(c);
+  }
+  // Visual do sono (também usado na abertura): olhos fechados, respiração lenta e "zzz" subindo.
+  dormir(c) {
+    c.anims.stop(); c.setTexture('capivara-dormindo');
+    const base = c.scaleY;
+    this.tweens.add({ targets: c, scaleY: { from: base * .82, to: base }, duration: 180, ease: 'Back.out' });
+    this.tweens.add({ targets: c, scaleY: base * .95, delay: 200, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+    // cabeça fica do lado para onde ela olha; os Z sobem em zigue-zague, crescem e somem
+    const soltarZ = (i = 0) => {
+      if (!c.active) return;
+      const lado = c.flipX ? -1 : 1, z = this.add.image(c.x + lado * 9, c.y - 18, 'zzz').setScale(.55).setDepth(6);
+      this.tweens.add({ targets: z, x: z.x + lado * 10, y: z.y - 22, scale: 1.1, duration: 1400, ease: 'Sine.out', onComplete: () => z.destroy() });
+      this.tweens.add({ targets: z, alpha: { from: 1, to: 0 }, delay: 800, duration: 600 });
+      this.tweens.add({ targets: z, angle: { from: -10, to: 10 }, duration: 350, yoyo: true, repeat: 1 });
+      c.setData('proximoZ', this.time.delayedCall(i % 3 === 2 ? 900 : 450, () => soltarZ(i + 1)));
+    };
+    soltarZ();
   }
 
   // ---------- Showroom ----------
@@ -201,7 +233,8 @@ export class Aventura extends Phaser.Scene {
     if (!item.active || this.estado !== 'jogo') return;
     const tipo = item.getData('tipo');
     item.getData('sinal')?.destroy(); item.destroy();
-    coletarProduto(this.missao, tipo); this.presentes++; tocar('coleta');
+    coletarProduto(this.missao, tipo); this.presentes++; tocar(tipo);
+    if (tipo === 'caixa') this.tutorial?.concluir('caixas');
     this.aviso({ caju: '+1 Caju', roma: '+1 Romã', caixa: '+1 caixa de presente' }[tipo], { caju: '#f5cc73', roma: '#ffa5c0', caixa: '#fff1d5' }[tipo]);
     this.atualizarHUD();
   }
@@ -240,7 +273,7 @@ export class Aventura extends Phaser.Scene {
       // capivara entra, derruba a entrega e os frascos voam pela rua
       this.capivaraIntro.play('capivara-andar');
       this.tweens.add({ targets: this.capivaraIntro, x: 196, duration: 900, onComplete: () => {
-        tocar('pulo');
+        tocar('derruba');
         this.tweens.add({ targets: this.entregaIntro, angle: { from: 0, to: 70 }, x: '+=14', y: '+=4', duration: 260 });
         this.frascosIntro.forEach((f, i) => {
           const destinoX = 300 + i * 90, altura = 60 + (i % 3) * 25;
@@ -252,11 +285,36 @@ export class Aventura extends Phaser.Scene {
       } });
     }
     if (n === 2) this.jogador.setFlipX(false);
+    if (n === 4) this.demonstrarPisao();
+  }
+  // Enquanto a fala explica as capivaras, a exploradora mostra o pisão: a capivara chega perto, ela pula em cima,
+  // quica e a capivara dorme com "zzz".
+  demonstrarPisao() {
+    const c = this.capivaraIntro, j = this.jogador, alvo = j.x + 46;
+    c.play('capivara-andar');
+    this.tweens.add({ targets: c, x: alvo, duration: 700, onComplete: () => {
+      if (this.estado !== 'intro') return;
+      c.anims.stop(); j.play('pulando');
+      this.tweens.add({ targets: j, x: alvo - 4, duration: 520 });
+      this.tweens.add({ targets: j, y: CHAO - 52, duration: 260, ease: 'Sine.out', onComplete: () => {
+        j.play('caindo');
+        this.tweens.add({ targets: j, y: CHAO - 14, duration: 260, ease: 'Sine.in', onComplete: () => {
+          if (this.estado !== 'intro') return;
+          this.dormir(c); tocar('pulo'); j.play('pulando');
+          this.tweens.add({ targets: j, x: alvo - 34, duration: 560 });
+          this.tweens.add({ targets: j, y: CHAO - 44, duration: 260, ease: 'Sine.out', onComplete: () => {
+            j.play('caindo');
+            this.tweens.add({ targets: j, y: CHAO, duration: 300, ease: 'Sine.in', onComplete: () => { if (this.estado === 'intro') j.play('parado'); } });
+          } });
+        } });
+      } });
+    } });
   }
   avancarDialogo() {
     if (this.estado === 'intro') {
       this.passoIntro++;
       const linhas = CAMPANHA.introCena;
+      if (this.passoIntro > 0) tocar('botao');
       if (this.passoIntro >= linhas.length) { this.terminarIntro(); return; }
       this.passoDaIntro(this.passoIntro);
       const l = linhas[this.passoIntro];
@@ -295,7 +353,7 @@ export class Aventura extends Phaser.Scene {
     $('transicao-titulo').textContent = showroom ? 'Showroom' : 'De volta a';
     $('transicao-nome').textContent = showroom ? 'L’Occitane au Brésil' : 'Itajubá';
     $('transicao-sub').textContent = showroom ? 'Itajubá' : 'Passeie à vontade';
-    $('transicao').hidden = false;
+    $('transicao').hidden = false; tocar('transicao');
     const cam = this.cameras.main;
     cam.fadeOut(380, 30, 16, 22);
     cam.once('camerafadeoutcomplete', () => {
@@ -326,7 +384,7 @@ export class Aventura extends Phaser.Scene {
   abrirDialogo() {
     this.dialogoAberto = true; this.entrada.ignorarAteSoltar();
     this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
-    this.pedro.play('pedro-conversa');
+    this.pedro.play('pedro-conversa'); tocar('pedro');
     $('dialogo-titulo').textContent = 'PEDRO · SHOWROOM ITAJUBÁ';
     $('dialogo-texto').textContent = CAMPANHA.boasVindasPedro;
     $('fechar-dialogo').textContent = 'Vamos montar os kits →';
@@ -358,11 +416,11 @@ export class Aventura extends Phaser.Scene {
       if (this.tempo * 1000 > this.avisoFaltaAte) {
         this.avisoFaltaAte = this.tempo * 1000 + 1800;
         const nomes = { caju: 'Caju', roma: 'Romã', caixa: 'caixa de presente' };
-        this.aviso(`Falta: ${falta.map(f => nomes[f]).join(', ')}`);
+        this.aviso(`Falta: ${falta.map(f => nomes[f]).join(', ')}`); tocar('falta');
       }
       return;
     }
-    montarKit(this.missao, estacao.id); tocar('coleta'); this.atualizarHUD();
+    montarKit(this.missao, estacao.id); tocar('kit'); this.atualizarHUD(); this.tutorial?.concluir('bancada');
     const pronto = this.missao.kits === META_KITS, numero = this.missao.kits;
     // os três itens voam até a bancada; o kit aparece com um brilho
     const voos = ['caju', 'roma', 'embalagem'].map(t => this.add.image(this.jogador.x, this.jogador.y - 30, t)
@@ -377,7 +435,7 @@ export class Aventura extends Phaser.Scene {
       }
       this.pedroBancada.play('pedro-aceno');
       this.aviso(pronto ? 'Vitrine pronta! Obrigado pela ajuda!' : `Kit ${numero} pronto!`, '#ffe7a6');
-      if (pronto) this.tweens.add({ targets: this.saida, alpha: 1, duration: 400 });
+      if (pronto) { tocar('vitrine'); this.tweens.add({ targets: this.saida, alpha: 1, duration: 400 }); }
     });
   }
 
@@ -389,16 +447,28 @@ export class Aventura extends Phaser.Scene {
     if (contexto?.tipo === 'pedro') this.abrirDialogo();
   }
 
-  // Ordem das dicas: andar → pular → caju quando a primeira capivara aparece → toldo na primeira tendinha.
+  // Ordem das dicas (Tutorial.js): andar → pular → toldo na 1ª tendinha → pisão na 1ª capivara → caju na 2ª.
+  // No showroom: caixas no alto → bancada → saída.
   atualizarTutorial(agora) {
-    const t = this.tutorial; if (!t?.ativo || this.sala !== 'cidade') return;
+    const t = this.tutorial; if (!t?.ativo) return;
     t.atualizar(agora);
     const x = this.jogador.x;
+    if (this.sala === 'showroom') {
+      const m = this.missao;
+      if (m.kits >= META_KITS) { t.mostrar('saida', agora, true); return; }
+      if (m.fase === 'showroom') t.mostrar('caixas', agora);
+      if (m.fase === 'showroom' && !faltaParaKit(m).length) t.mostrar('bancada', agora, t.atual === 'caixas');
+      return;
+    }
     if (x > 125) t.concluir('andar');
     if (t.feitos.has('andar')) t.mostrar('pular', agora);
-    const capivara = this.capivaras.getChildren().find(c => !c.getData('alimentada') && c.x - x > 0 && c.x - x < 170);
-    if (capivara && t.feitos.has('pular')) t.mostrar('caju', agora);
-    if (TENDAS.some(tx => tx - x > 0 && tx - x < 150) && t.feitos.has('pular')) t.mostrar('toldo', agora);
+    if (!t.feitos.has('pular')) return;
+    if (TENDAS.some(tx => tx - x > 0 && tx - x < 150)) t.mostrar('toldo', agora);
+    if (x > TENDAS[0] + 60) t.concluir('toldo');
+    const capivara = this.capivaras.getChildren().find(c => !c.getData('alimentada') && !c.getData('dormindo') && c.x - x > 0 && c.x - x < 170);
+    if (!capivara) return;
+    if (!t.feitos.has('pisao')) { this.capivaraDoPisao ??= capivara; if (capivara === this.capivaraDoPisao) t.mostrar('pisao', agora); }
+    else if (capivara !== this.capivaraDoPisao) t.mostrar('caju', agora);
   }
   // Sem relógio no HUD: a partida não tem limite de tempo (pedido do Pedro). O tempo de passeio aparece só no final.
   atualizarHUD() {
@@ -470,17 +540,18 @@ export class Aventura extends Phaser.Scene {
     this.tempo += delta / 1000;
     const agora = this.tempo * 1000; // relógio de jogo ativo (invencibilidade, avisos): pausa, intro, transição e conversa não contam
     const soltou = this.jogador.atualizar(this.entrada, agora, delta, true);
-    if (this.entrada.pularApertou) { tocar('pulo'); this.tutorial?.concluir('pular'); }
-    if (this.entrada.frutaApertou) this.tutorial?.concluir('caju');
+    if (this.jogador.pulou) tocar('pulo');
+    if (this.entrada.pularApertou) this.tutorial?.concluir('pular');
+    if (this.entrada.frutaApertou && this.tutorial?.atual === 'caju') this.tutorial.concluir('caju');
     this.atualizarTutorial(agora);
     if (soltou && agora >= this.proximoArremesso) {
       this.proximoArremesso = agora + 350;
       const dir = this.jogador.olhandoDireita ? 1 : -1;
       const f = this.frutas.create(this.jogador.x + dir * 22, this.jogador.y - 20, 'caju-fruta').setScale(1 / 3);
-      f.body.setAllowGravity(false); f.setVelocityX(dir * 260);
+      f.body.setAllowGravity(false); f.setVelocityX(dir * 260); tocar('arremesso');
       this.time.delayedCall(1500, () => { if (f.active) f.destroy(); });
     }
-    for (const c of this.capivaras.getChildren()) if (!c.getData('alimentada')) {
+    for (const c of this.capivaras.getChildren()) if (!c.getData('alimentada') && !c.getData('dormindo')) {
       const dir = Math.sin(agora / 1800 + c.getData('origem')) > 0 ? 1 : -1;
       c.setVelocityX(dir * MODO_FACIL.capivaraVelocidade); c.setFlipX(dir < 0);
     }
