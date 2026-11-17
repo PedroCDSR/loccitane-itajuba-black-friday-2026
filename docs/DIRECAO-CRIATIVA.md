@@ -10,7 +10,7 @@ O usuário declarou autorização expressa para usar a marca. Essa declaração 
 
 - Site oficial consultado: https://br.loccitaneaubresil.com/ — associa brasilidade, presentes, ingredientes e sensorialidade. Caju, Romã, Capim-Limão e Ninfa das Águas aparecem no catálogo consultado. Não transportar descontos, preços, termos, política de dados ou contato nacional para a campanha local.
 - Perfil indicado pelo usuário: https://www.instagram.com/loccitane.itajuba/ — consulta automatizada indisponível nesta execução; não inferir telefone ou dados não verificados.
-- Seis screenshots do usuário: fachada e interior descritos em `references/showroom/README.md`. Os binários não foram disponibilizados ao executor; precisam ser anexados ao repositório para referência visual direta.
+- Seis screenshots do usuário: fachada e interior descritos em `references/showroom/README.md`. Os arquivos originais estão em `references/showroom/` (ver manifest.json).
 
 **Esta é uma interpretação para o jogo, não um manual oficial da marca.** Usar logotipo e tipografia oficiais quando fornecidos; não redesenhar o emblema a partir de memória.
 

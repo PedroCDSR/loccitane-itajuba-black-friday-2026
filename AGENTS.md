@@ -13,7 +13,7 @@ Leia README.md, docs/DIRECAO-CRIATIVA.md, docs/HANDOFF-FABLE-5.2.md e references
 - Máximo absoluto de desconto: 10%. Configuração comercial em src/data/campanha.js. Nunca usar dados do outro negócio.
 - Sem cupons de uso único no cliente. Sem alegar validação antifraude ou cadastro persistente inexistente.
 - Leads na base seguem via mensagem revisável no WhatsApp. Não armazenar PII no navegador nem enviar PII nas métricas. Marketing opcional e desmarcado.
-- As seis fotos foram vistas na conversa, mas seus binários não estavam acessíveis no ambiente. manifest.json registra a pendência; nunca apresentar descrições ou desenhos como anexos originais.
+- As seis fotos estão em references/showroom/ (status present no manifest.json, com SHA-256). Não as use como fundo do jogo nem as coloque em public/.
 - O repositório é público: não commitar leads, segredos ou credenciais. .env* está ignorado.
 - Antes de entregar: npm test e npm run build; registrar quais testes de navegador realmente foram feitos. Não dizer que arte ou mobile estão homologados sem conferir.
 - Usuário pretende continuar com Fable 5.2. Manter módulos simples e evitar refatoração sem necessidade.

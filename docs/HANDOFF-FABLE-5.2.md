@@ -4,7 +4,7 @@
 
 Você está no repositório `PedroCDSR/loccitane-itajuba-black-friday-2026`, um jogo próprio de plataforma com Phaser 4 e Vite. Leia AGENTS.md, README.md e docs/DIRECAO-CRIATIVA.md. O usuário autorizou a marca L’Occitane. Melhore esta base sem importar o histórico ou personagens Disney e sem reintroduzir dança.
 
-Priorize acabamento visual e diversão: cidade de Itajubá reconhecível, exploradora original com animação fluida, kits/frascos/sacolas coletáveis, caju para alimentar capivaras, fachada de pedra e toldo vermelho com jardim, interior com estantes de madeira clara. Preserve controles touch/teclado e partida de 60–90 segundos. Use as seis fotos catalogadas em references/showroom/README.md quando seus arquivos forem adicionados; consulte manifest.json e não afirme ter visto arquivos marcados missing.
+Priorize acabamento visual e diversão: cidade de Itajubá reconhecível, exploradora original com animação fluida, kits/frascos/sacolas coletáveis, caju para alimentar capivaras, fachada de pedra e toldo vermelho com jardim, interior com estantes de madeira clara. Preserve controles touch/teclado e partida de 60–90 segundos. Use as seis fotos em references/showroom/ (manifest.json, status present).
 
 A arte atual é provisória, com sprites procedurais em src/game/arte.js. Troque por spritesheets de alta qualidade mantendo nomes de texturas, tamanhos de quadros e hitboxes, ou ajuste o carregador de forma mínima. Cidade reaproveitada está em public/assets/cidade. O desenho da fachada/interior fica em Aventura.js/arte.js; leve a um módulo próprio somente se ajudar a substituição por assets finais. Não invente manual de marca ou logo vetorial.
 

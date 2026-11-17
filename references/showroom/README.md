@@ -1,8 +1,8 @@
 # Seis referências enviadas na conversa
 
-As seis imagens foram visualizadas, mas não recebemos caminho local, identificador de download ou URL dos seus binários. **Nenhuma das seis fotos está incluída neste commit.** Este catálogo conserva a direção de cada anexo para o próximo agente, mas não substitui os arquivos. O screenshot 404 de uma mensagem anterior não é referência do showroom.
+As seis fotos enviadas pelo Pedro estão incluídas neste diretório, com os nomes abaixo (status `present` em `manifest.json`, com SHA-256). A associação foi feita pela ordem de envio e pelo conteúdo visível; confirmar com o Pedro se algum nome estiver trocado. O screenshot 404 de uma mensagem anterior não é referência do showroom.
 
-Adicionar os originais com estes nomes, mantendo atribuições e sem converter descrições em imagens falsas:
+Arquivos originais com estes nomes:
 
 | ID / nome esperado | Conteúdo observado | Aplicação |
 | --- | --- | --- |
@@ -19,4 +19,4 @@ Guardar screenshots apenas aqui, como referência, e não em `public/`: fotos de
 
 As três últimas imagens parecem capturas de publicações/fotos da loja. Registrar o fotógrafo/origem quando informado. Não inventar autorização específica além da declaração do usuário.
 
-Depois de adicionar: atualizar `manifest.json` para `present`, registrar caminho e hash SHA-256, conferir as seis imagens e revisar o showroom. O caminho futuro é reservado, não prova de arquivo existente.
+Manifesto atualizado para `present`, com caminho e SHA-256. Falta revisar o showroom com essas imagens.

@@ -1,42 +1,48 @@
 {
-  "status": "pending_original_files",
-  "source": "Seis imagens visíveis na conversa do usuário; binários não acessíveis nesta execução",
+  "status": "present",
+  "source": "Seis imagens enviadas pelo Pedro na conversa (arquivos originais). Ordem de envio = ordem de exibição; associação feita pelo executor, a confirmar.",
   "images": [
     {
       "id": 1,
       "expected_file": "01-fachada-obliqua.jpg",
-      "status": "missing",
-      "sha256": null
+      "status": "present",
+      "sha256": "ff871aedfbf02293afde985fa9c98b21cbd8945398b4a1b650de02c3cd5e0b9f",
+      "path": "references/showroom/01-fachada-obliqua.jpg"
     },
     {
       "id": 2,
       "expected_file": "02-fachada-jardim.jpg",
-      "status": "missing",
-      "sha256": null
+      "status": "present",
+      "sha256": "7893e15f07e5661799b0699299fa2ab981b0a435cbdbfa0d7efd223ec79f71d4",
+      "path": "references/showroom/02-fachada-jardim.jpg"
     },
     {
       "id": 3,
       "expected_file": "03-toldo-vermelho.jpg",
-      "status": "missing",
-      "sha256": null
+      "status": "present",
+      "sha256": "9a4b12b775e2f233c0861c39b02694e7da932b107e35aac92b69ded3124ba722",
+      "path": "references/showroom/03-toldo-vermelho.jpg"
     },
     {
       "id": 4,
       "expected_file": "04-kits-presentes.jpg",
-      "status": "missing",
-      "sha256": null
+      "status": "present",
+      "sha256": "3fa42a64cc7417f88c20ee79483cb0ed52501b553b55c862925399ca58452ccc",
+      "path": "references/showroom/04-kits-presentes.jpg"
     },
     {
       "id": 5,
       "expected_file": "05-estantes-showroom.jpg",
-      "status": "missing",
-      "sha256": null
+      "status": "present",
+      "sha256": "646cda1ba1ac45db7cfbd98c38ae3745131834e44249e6ea3d3b5e2da0c1bdc2",
+      "path": "references/showroom/05-estantes-showroom.jpg"
     },
     {
       "id": 6,
       "expected_file": "06-jardim-bandeira.jpg",
-      "status": "missing",
-      "sha256": null
+      "status": "present",
+      "sha256": "25b044e2fff0a4497b8dceb7cdf048947e9dee7043e9b7f10995b691faeff44e",
+      "path": "references/showroom/06-jardim-bandeira.jpg"
     }
   ]
 }

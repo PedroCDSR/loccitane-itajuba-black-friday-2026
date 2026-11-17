@@ -9,6 +9,6 @@
 | Exploradora, presente, frasco, caju, chão, caixa e showroom procedurais | Criados para esta base. Arte provisória original. Sem sprites ou referências Disney transferidos. |
 | Efeitos sonoros | Síntese Web Audio própria desta base; nenhuma música do projeto anterior |
 | Marca L’Occitane au Brésil | Autorização expressa declarada pelo usuário nesta conversa. Marca usada em texto, sem arquivo de logo oficial fornecido. |
-| Seis screenshots do showroom | Vistos na conversa, arquivos binários indisponíveis nesta execução. Não incluídos no commit; catálogo em references/showroom. Alguns têm atribuição Google Street View, a preservar como referência. |
+| Seis fotos do showroom | Enviadas pelo Pedro na conversa; cópias originais em references/showroom (referência, não entram no build). Três são capturas com atribuição Google Street View, preservada no arquivo. Uso comercial depende da autorização da marca. |
 
 Não há assets do pacote 14collective, personagens Disney, músicas, fotos de pessoas ou logos G9 neste repositório. O histórico Git do outro projeto não foi copiado. Nenhuma licença global de código aberto foi atribuída ao conjunto de marca/arte/código por conta própria.

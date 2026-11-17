@@ -43,6 +43,6 @@ Site estático. Importe este repositório no Netlify: build `npm run build`, sa�
 
 ## Limitações
 
-Arte nova provisória; preservar a técnica e substituir pelo acabamento 16 bits final. Não há logo vetorial oficial: marca em texto. Seis anexos do showroom estão catalogados por descrição, mas **os arquivos originais não puderam ser obtidos nesta execução**, portanto não estão no GitHub. Enviar os arquivos para `references/showroom/` conforme o manifesto. Descrições não substituem fotos. Navegador e aparelhos reais ainda precisam ser homologados.
+Arte nova provisória; preservar a técnica e substituir pelo acabamento 16 bits final. Não há logo vetorial oficial: marca em texto. As seis fotos do showroom estão em `references/showroom/` (referência, sem uso direto no build). Falta revisar o showroom com elas. Navegador e aparelhos reais ainda precisam ser homologados.
 
 Leia CREDITS.md para origem de código/arte e licenças; docs/AUDITORIA.md para o recorte da migração.
