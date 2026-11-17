@@ -42,12 +42,12 @@ Capturas reais em `docs/capturas/v2-*.png`.
 
 Pedido: o jogo estava pensado para tela deitada e cheia; no celular em pé ficava pequeno, com os botões por cima do jogo e sem instruções claras.
 
-- **Tela do jogo quadrada** (960×960), ocupando toda a largura: a cidade aparece inteira, do céu ao chão, e a exploradora fica maior. No showroom a câmera aproxima para os fundos preencherem a altura. Constantes em `TELA`, `ZOOM_CIDADE` e `ZOOM_SHOWROOM` (`src/game/config.js`).
+- **Tela do jogo ocupa todo o espaço entre o placar e os botões** (opção A, "mais zoom", escolhida pelo Pedro sobre `docs/capturas/proposta-espaco-vertical.png`). A largura do jogo é fixa em 960 px e a altura acompanha a proporção da área de cada celular (`tamanhoTela` em `src/main.js`, recalculada se a tela mudar). A câmera aproxima até a cidade (270 de altura) ou o showroom (180) preencherem a altura: num iPhone em pé aparecem cerca de 160 unidades da rua e 110 do showroom, com a exploradora bem maior.
 - **Partida em coluna, sem rolagem:** HUD no alto, jogo no meio e, embaixo, um painel próprio com setas grandes à esquerda e Caju e Pular à direita, perto dos polegares. Nada fica por cima do jogo.
-- **Falas da abertura e do Pedro** aparecem no painel de baixo, no lugar dos botões, e não cobrem mais a cena.
+- **Falas da abertura e do Pedro** aparecem no alto da tela do jogo; os botões ficam sempre no lugar, para a tela não mudar de tamanho. O botão "Conversar com Pedro" flutua acima dos botões e some durante a conversa.
 - **Dicas da primeira partida** (`src/game/Tutorial.js`): balão com seta e botão piscando para andar, pular, dar caju à primeira capivara e quicar na primeira tendinha. Cada dica some quando a pessoa faz a ação ou depois de alguns segundos; no computador o texto mostra as teclas.
 - **Selo do Netlify:** quando aparece, o painel ganha folga embaixo para o selo não cobrir os botões. O selo não é escondido.
 
-Testado no Chromium com toque emulado em 390×844 e 412×915: sem rolagem, sem erros, setas + pular com dois dedos, dicas na ordem. A partida completa por teclado continua passando (vitrine aos 57,5 s).
+Testado no Chromium com toque emulado em 390×844 e 412×915: sem rolagem, sem erros, setas + pular com dois dedos, dicas na ordem, altura do jogo fixa do começo à conversa com o Pedro. A partida completa por teclado continua passando (vitrine em cerca de 57 s).
 
-Proposta para o espaço que sobra entre o jogo e os botões: `docs/capturas/proposta-espaco-vertical.png` (aguardando escolha).
+Atenção: com o zoom, o showroom mostra só cerca de 110 unidades de largura no celular em pé; vale conferir com gente jogando se a escalada das estantes fica confortável.

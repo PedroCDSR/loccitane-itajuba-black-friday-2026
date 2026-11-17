@@ -31,13 +31,13 @@ body.jogando #partida{display:flex;flex-direction:column;height:100dvh;max-width
 #partida #hud #vida{grid-column:1;grid-row:1}
 #partida #hud #tempo{font-variant-numeric:tabular-nums;font-weight:700}
 #partida #objetivo-panel{border-radius:0;padding:6px 12px;font-size:12px}
-#partida #palco{position:relative;width:min(100%,calc(100dvh - var(--hud) - var(--painel-min)));margin:0 auto;flex:none}
-#partida #jogo{aspect-ratio:1/1;width:100%}
-#partida #painel{position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;min-height:var(--painel-min);
+#partida #palco{position:relative;width:100%;flex:1;min-height:0;margin:0 auto}
+#partida #jogo{position:absolute;inset:0;width:auto;aspect-ratio:auto}
+#partida #painel{position:relative;flex:none;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;
   padding:12px max(12px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));background:linear-gradient(#304f3d,#26402f)}
 body.com-selo #partida #painel{padding-bottom:calc(82px + env(safe-area-inset-bottom,0px))}
 /* falas da abertura e do Pedro: no painel, no lugar dos botões */
-#partida #dialogo{position:static;margin:0;max-width:none;left:auto;right:auto;bottom:auto;top:auto;padding:14px 16px;text-align:left;box-shadow:none}
+#partida #dialogo{position:absolute;z-index:8;top:10px;left:10px;right:10px;bottom:auto;margin:0;max-width:560px;margin-inline:auto;padding:14px 16px;text-align:left;box-shadow:0 8px 24px #20151a66}
 #partida #dialogo p{font-size:15px;line-height:1.5;margin:4px 0 12px}#partida #dialogo .eyebrow{font-size:11px}
 #partida #dialogo .acoes-dialogo{justify-content:flex-start}#partida #dialogo .principal{font-size:14px;min-height:48px}
 /* botões */
@@ -50,11 +50,11 @@ body.com-selo #partida #painel{padding-bottom:calc(82px + env(safe-area-inset-bo
 #partida #controles .caju .icone{width:22px;height:22px;background:url('/assets/runtime-sprites/caju-fruta.webp') center/contain no-repeat;image-rendering:pixelated}
 #partida #controles .pular{width:clamp(84px,25vw,112px);height:clamp(84px,25vw,112px);border-radius:50%;background:#942c39;border-color:#f3a5b1;font-size:17px}
 #partida #controles button.pressed{background:#b18b45;transform:scale(.96)}
-#partida #controles #interagir{align-self:stretch;min-height:50px;border-radius:12px;background:#942c39;border-color:#f3a5b1;font-size:15px}
+#partida #controles #interagir{position:absolute;left:12px;right:12px;bottom:calc(100% + 6px);z-index:6;min-height:50px;box-shadow:0 6px 18px #0006;border-radius:12px;background:#942c39;border-color:#f3a5b1;font-size:15px}
 #partida #controles .interacao{position:static;transform:none}
 /* balão de dica com seta para o botão */
 #dica{position:absolute;left:12px;right:12px;bottom:calc(100% - 4px);z-index:5;pointer-events:none}
-#painel #dica{position:relative;left:auto;right:auto;bottom:auto}
+#painel #dica{position:absolute;left:12px;right:12px;bottom:calc(100% + 4px)}
 #dica p{margin:0;background:#fff4df;color:#3a2a22;border:2px solid #e6b84a;border-radius:12px;padding:10px 14px;font-size:15px;font-weight:600;line-height:1.35;text-align:center;box-shadow:0 6px 18px #0005}
 #dica::after{content:"";position:absolute;top:100%;left:var(--seta,50%);transform:translateX(-50%);border:12px solid transparent;border-top-color:#e6b84a;animation:quica .8s ease-in-out infinite}
 @keyframes quica{50%{transform:translate(-50%,6px)}}

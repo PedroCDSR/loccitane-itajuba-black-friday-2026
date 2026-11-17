@@ -24,12 +24,21 @@ function concluir({presentes, caju=0, roma=0, kits=0, motivo}){
   $('beneficio').textContent=podeResgatar(CAMPANHA)?`Seu benefício: ${percentualSeguro(CAMPANHA.oferta.descontoPercentual)}% de desconto.`:'Prévia do benefício: até 10% de desconto. Resgate em preparação.';
   $('condicoes').textContent=podeResgatar(CAMPANHA)?`Validade: ${CAMPANHA.oferta.validade}. ${CAMPANHA.oferta.condicoes}`:'A oferta será ativada após a definição de validade e condições pela loja.';
 }
+// Altura da tela do jogo na proporção da área livre (largura fixa em 960 px de jogo).
+function tamanhoTela(){
+  const r=$('jogo').getBoundingClientRect?.();
+  if(!r||!r.width||!r.height)return TELA.altura;
+  return Math.round(Math.min(TELA.alturaMax,Math.max(TELA.alturaMin,TELA.largura*r.height/r.width)));
+}
+let ajusteTela=0;
+function ajustarTela(){cancelAnimationFrame?.(ajusteTela);ajusteTela=requestAnimationFrame?.(()=>{if(jogo&&emPartida){const h=tamanhoTela();if(Math.abs(jogo.scale.height-h)>2)jogo.scale.setGameSize(TELA.largura,h);}})}
+if(typeof ResizeObserver!=='undefined')new ResizeObserver(ajustarTela).observe($('jogo'));
 async function iniciar(comIntro=false){
-  $('inicio').hidden=true;$('final').hidden=true;$('resgate').hidden=true;$('resgate').reset();$('partida').hidden=false;$('controles').hidden=true;$('pausar').hidden=false;document.body.classList.add('jogando');emPartida=true;pausado=false;
+  $('inicio').hidden=true;$('final').hidden=true;$('resgate').hidden=true;$('resgate').reset();$('partida').hidden=false;$('controles').hidden=false;$('pausar').hidden=false;document.body.classList.add('jogando');emPartida=true;pausado=false;
   $('loading').hidden=false;$('tentar-carga').hidden=true;$('loading-texto').textContent='Preparando a aventura…';
   registrar('inicio');
   if(jogo){jogo.registry.set('comIntro',comIntro);jogo.scene.start('Aventura');return;}
-  jogo=new Phaser.Game({type:Phaser.AUTO,parent:'jogo',width:TELA.largura,height:TELA.altura,pixelArt:true,roundPixels:true,backgroundColor:'#cdd7b0',scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},input:{activePointers:4},audio:{noAudio:true},physics:{default:'arcade',arcade:{gravity:{x:0,y:JOGADOR.gravidade},debug:false}},scene:[Aventura]});
+  jogo=new Phaser.Game({type:Phaser.AUTO,parent:'jogo',width:TELA.largura,height:tamanhoTela(),pixelArt:true,roundPixels:true,backgroundColor:'#cdd7b0',scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH},input:{activePointers:4},audio:{noAudio:true},physics:{default:'arcade',arcade:{gravity:{x:0,y:JOGADOR.gravidade},debug:false}},scene:[Aventura]});
   jogo.registry.set('comIntro',comIntro);
   jogo.events.on('conclusao',concluir);
   jogo.events.on('falha-assets',()=>{emPartida=false;$('loading-texto').textContent='Não foi possível carregar todas as imagens. Confira sua conexão e tente novamente.';$('tentar-carga').hidden=false;});

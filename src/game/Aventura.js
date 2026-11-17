@@ -7,7 +7,7 @@ import { Tutorial } from './Tutorial.js';
 import { carregarArte } from './assets.js';
 import { carregarPedro, criarPedro } from './pedro-animacoes.js';
 import { criarMissao, coletarProduto, montarKit, objetivoMissao, criarProdutosCidade, faltaParaKit, META_KITS } from './missao.js';
-import { ALTURA, MUNDO, DURACAO_SEGUNDOS, SHOWROOM, ZOOM_CIDADE, ZOOM_SHOWROOM, MODO_FACIL } from './config.js';
+import { ALTURA, MUNDO, DURACAO_SEGUNDOS, SHOWROOM, ALTURA_CIDADE, ALTURA_SHOWROOM, MODO_FACIL } from './config.js';
 import { CAMPANHA } from '../data/campanha.js';
 import { registrar } from '../services/metricas.js';
 import { tocar } from '../services/som.js';
@@ -93,7 +93,7 @@ export class Aventura extends Phaser.Scene {
     // Cidade e showroom são "salas" separadas: a câmera nunca mostra as duas ao mesmo tempo.
     this.physics.world.setBounds(0, 0, FACHADA, ALTURA);
     const cam = this.cameras.main;
-    cam.setZoom(ZOOM_CIDADE); cam.setBounds(0, 0, FACHADA, ALTURA); cam.startFollow(this.jogador, true, .15, .15); cam.setDeadzone(64, 56);
+    cam.setZoom(this.scale.height / ALTURA_CIDADE); cam.setBounds(0, 0, FACHADA, ALTURA); cam.startFollow(this.jogador, true, .15, .15); cam.setDeadzone(64, 56);
     this.sala = 'cidade';
     this.entrada = new Entrada(this);
     this.events.once('shutdown', () => {
@@ -219,7 +219,7 @@ export class Aventura extends Phaser.Scene {
     this.entregaIntro = entrega;
     this.capivaraIntro = this.add.sprite(300, CHAO, 'capivara', 0).setOrigin(.5, 1).setScale(1 / 3).setFlipX(true).setDepth(5);
     this.tweens.add({ targets: this.jogador, x: 96, duration: 1300, onComplete: () => { if (this.estado === 'intro') this.jogador.play('parado'); } });
-    $('controles').hidden = true; $('pular-intro').hidden = false; $('dialogo').classList.add('no-alto');
+    $('pular-intro').hidden = false; $('dialogo').classList.add('no-alto');
     this.ultimoHUD = ''; this.atualizarHUD(); $('local').textContent = 'Itajubá';
     this.avancarDialogo();
   }
@@ -285,7 +285,7 @@ export class Aventura extends Phaser.Scene {
       this.physics.world.setBounds(FACHADA, 0, MUNDO - FACHADA, ALTURA);
       this.solidos.add(this.pisoShowroom);
       this.jogador.body.reset(FACHADA + 24, CHAO); this.jogador.olhandoDireita = true; this.checkpoint = FACHADA + 24;
-      cam.setZoom(ZOOM_SHOWROOM); cam.setBounds(FACHADA, SHOWROOM.topo, MUNDO - FACHADA, SHOWROOM.altura);
+      cam.setZoom(this.scale.height / ALTURA_SHOWROOM); cam.setBounds(FACHADA, SHOWROOM.topo, MUNDO - FACHADA, SHOWROOM.altura);
       cam.centerOn(FACHADA + 80, 180);
       registrar('chegada_showroom');
       this.time.delayedCall(650, () => {
@@ -303,11 +303,11 @@ export class Aventura extends Phaser.Scene {
     $('dialogo-titulo').textContent = 'PEDRO · SHOWROOM ITAJUBÁ';
     $('dialogo-texto').textContent = CAMPANHA.boasVindasPedro;
     $('fechar-dialogo').textContent = 'Vamos montar os kits →';
-    $('dialogo').hidden = false; $('controles').hidden = true; this.tutorial?.esconder(); $('fechar-dialogo').focus({ preventScroll: true });
+    $('dialogo').hidden = false; $('interagir').hidden = true; this.tutorial?.esconder(); $('fechar-dialogo').focus({ preventScroll: true });
   }
   fecharDialogo() {
     if (!this.dialogoAberto) return;
-    this.dialogoAberto = false; $('dialogo').hidden = true; $('controles').hidden = false;
+    this.dialogoAberto = false; $('dialogo').hidden = true;
     this.entrada.ignorarAteSoltar(); this.physics.world.resume(); this.pedro.play('pedro-parado');
     this.pedroEntra();
   }
@@ -355,7 +355,7 @@ export class Aventura extends Phaser.Scene {
   }
 
   contextoInteracao() {
-    if (this.pedroPerto && !this.pedroConversou) return { tipo: 'pedro', texto: 'Conversar · E / Enter' };
+    if (this.pedroPerto && !this.pedroConversou && !this.dialogoAberto) return { tipo: 'pedro', texto: 'Conversar com Pedro' };
     return null;
   }
   interagir(contexto) {
@@ -393,9 +393,13 @@ export class Aventura extends Phaser.Scene {
       caju: this.missao.coletados.caju, roma: this.missao.coletados.roma, kits: this.missao.kits });
     this.scene.stop();
   }
+  // Zoom pela altura da tela (que muda com o celular) e câmera um pouco à frente de quem anda.
   atualizarCamera() {
     const cam = this.cameras.main;
-    cam.setFollowOffset(this.jogador.olhandoDireita ? -40 : 40, 0);
+    const zoom = this.scale.height / (this.sala === 'showroom' ? ALTURA_SHOWROOM : ALTURA_CIDADE);
+    if (Math.abs(cam.zoom - zoom) > .001) cam.setZoom(zoom);
+    const frente = Math.min(40, (this.scale.width / zoom) * .2);
+    cam.setFollowOffset(this.jogador.olhandoDireita ? -frente : frente, 0);
     this.morros.tilePositionX = cam.scrollX * .15 * 3; this.casas.tilePositionX = cam.scrollX * .4 * 3;
   }
 
