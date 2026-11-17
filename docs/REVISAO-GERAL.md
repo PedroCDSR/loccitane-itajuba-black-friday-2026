@@ -227,10 +227,15 @@ Seguindo `docs/HANDOFF-CLAUDE.md` (versão consolidada na `main`, `a2563ba`) e o
   - caixa da Karina sem cobri-la;
   - pausa e retomada;
   - sem erros nem 4xx/5xx.
-- 412×915 e computador 1280×800: o mesmo roteiro (resultado abaixo).
+- 412×915 e computador 1280×800: o mesmo roteiro, tudo passou. A caixa da Karina termina em 200 px, e a cabeça dela começa em 271 px (412×915) e em 345 px (computador). No computador, a cena da capivara aparece com a câmera de 0 a 296. Capturas em `docs/capturas/revisao-hud-<tamanho>-*.png`.
+- Não testado: aparelho real, som ouvido por alguém e a partida inteira de ponta a ponta com a interface nova (a cidade foi atravessada em parte com atalhos de teste).
 
 ### Não feito nesta rodada
 
 - **Loader do Caju** (`public/assets/carregamento/`): o README pede para normalizar as margens e limpar o halo antes de integrar. Ficou para outra rodada.
 - **Cards de 3% e 5%:** pendentes de decisão do Pedro. A oferta continua desativada e o teto de 10% não mudou.
 - **Sem deploy:** como pede o handoff, o trabalho foi para a branch `claude/modest-hamilton-dqefs6` e não para a `dev`, que publica sozinha no Netlify.
+
+### Observação sobre o Netlify
+
+Os deploys de produção da `main` desde `f3238e3` aparecem como `error`/`skipped` na API do Netlify, sem mensagem de erro. O site publicado continua em `723a7cf`. Vale conferir no painel do Netlify (pode ser uma regra de ignorar build ou o limite do plano).
