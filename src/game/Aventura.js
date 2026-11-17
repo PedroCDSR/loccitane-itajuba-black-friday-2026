@@ -1,3 +1,4 @@
+import { carregarConvidadas, criarConvidadas, atualizarConvidadas, despedirConvidada } from './convidadas.js';
 import * as Phaser from 'phaser';
 import { Jogador } from './Jogador.js';
 import { Entrada } from './Entrada.js';
@@ -60,7 +61,7 @@ export class Aventura extends Phaser.Scene {
     carregarArte(this);
     for (const n of ['fachada', 'interior', 'caju', 'roma', 'bandeira-jardim', 'logo-tenda', 'selo-tenda']) this.load.image(n, `assets/showroom/${n}.png`);
     this.load.image('capim', 'assets/produtos/capim-limao-colonia-sprite.png');
-    carregarPedro(this); carregarKarina(this);
+    carregarPedro(this); carregarKarina(this); carregarConvidadas(this);
   }
 
   create() {
@@ -141,6 +142,7 @@ export class Aventura extends Phaser.Scene {
       this.tutorial?.esconder();
     });
     this.atualizarHUD();
+    criarConvidadas(this, CHAO);
     if (this.registry.get('comIntro')) this.comecarIntro(); else this.comecarJogo();
   }
 
@@ -471,7 +473,8 @@ export class Aventura extends Phaser.Scene {
     const quem = this.dialogoAberto;
     if (!quem) return;
     this.dialogoAberto = false; this.esconderFala();
-    this.entrada.ignorarAteSoltar(); this.physics.world.resume(); this[quem].play(`${quem}-${quem === 'pedro' ? 'parado' : 'parada'}`);
+    this.entrada.ignorarAteSoltar(); this.physics.world.resume(); this[quem].play(`${quem}-${quem === 'karina' ? 'parada' : 'parado'}`);
+    if (quem === 'mariana' || quem === 'marcela') { despedirConvidada(this, quem); return; }
     if (quem === 'pedro') { this.pedroConversou = true; this.pedro.disableInteractive(); } else this.karinaEntra();
   }
   // Karina sai da porta e aparece ao lado da bancada.
@@ -683,6 +686,7 @@ export class Aventura extends Phaser.Scene {
       this.guia.esconder();
       if (x > PORTAL + 8) { this.entrarNoShowroom(); return; }
       if (x > this.checkpoint + MODO_FACIL.checkpointDistancia) this.checkpoint = x;
+      if (typeof atualizarConvidadas === 'function' && atualizarConvidadas(this)) return;
       // Pedro na praça: acena quando ela chega perto e a conversa abre sozinha na primeira passagem, lado a lado
       const pertoPedro = !this.pedroConversou && Math.abs(x - PEDRO_PRACA) < 45;
       if (pertoPedro !== this.pedroPerto) { this.pedroPerto = pertoPedro; this.pedro.play(pertoPedro ? 'pedro-aceno' : 'pedro-parado'); }

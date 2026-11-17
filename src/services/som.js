@@ -1,14 +1,14 @@
-// Sons do jogo, todos gerados em código com Web Audio: nenhum arquivo de áudio, nada de terceiros nem do projeto anterior.
+// Efeitos em Web Audio e trilha instrumental fornecida pelo usuário.
 //
 // - O contexto de áudio só nasce no primeiro toque ou tecla (exigência do iPhone/Safari) e é retomado a cada gesto.
 // - A escolha liga/desliga fica no localStorage ('aventura-som'); se o navegador bloquear o armazenamento, vale "ligado".
 // - definirAtivo(false) suspende tudo (pausa, aba escondida, janela sem foco); definirAtivo(true) retoma.
 // - Volumes: efeitos num barramento a 0,5 e música a 0,161 (pedido do Pedro: mais alta), com um compressor no fim para segurar picos.
 
-import { MUSICA } from '../data/musica.js';
+
 
 const CHAVE = 'aventura-som';
-export const VOLUME_MUSICA = 1; // Volume solicitado pelo usuário.
+export const VOLUME_MUSICA = .9; // Volume solicitado pelo usuário.
 const N = m => 440 * 2 ** ((m - 69) / 12); // nota MIDI → Hz
 
 let ctx = null, efeitos = null, trilha = null, ruidoBuffer = null;
@@ -114,6 +114,7 @@ function montar() {
   return true;
 }
 function acordar() {
+  sincronizarTrilha();
   if (!ligado || !ativo) return;
   if (!ctx && !montar()) return;
   if (ctx.state !== 'running') ctx.resume().catch(() => {});
@@ -132,12 +133,14 @@ export function aoMudarSom(fn) { ouvintes.add(fn); }
 export function alternarSom() {
   ligado = !ligado; salvarPreferencia();
   if (ligado) { acordar(); tocar('botao'); } else ctx?.suspend().catch(() => {});
+  sincronizarTrilha();
   for (const fn of ouvintes) fn(ligado);
   return ligado;
 }
 // Falso na pausa, com a aba escondida ou a janela sem foco: suspende efeitos e música juntos.
 export function definirAtivo(valor) {
   ativo = valor;
+  sincronizarTrilha();
   if (!ctx) return;
   if (ativo && ligado) ctx.resume().catch(() => {}); else ctx.suspend().catch(() => {});
 }
@@ -152,38 +155,17 @@ export function tocar(nome) {
   som(ctx, efeitos, t + .005);
 }
 
-// ---------- Música de fundo: "Espalhe Amor" (L’Occitane), enviada pelo Pedro em MIDI ----------
-// O MIDI vira uma lista de notas em src/data/musica.js (ferramentas/converter_midi.py) e toca neste sintetizador,
-// com timbre de piano macio, em loop. Sem arquivo de áudio nem biblioteca de MIDI.
-// VELOCIDADE: 1 = andamento original do MIDI (o Pedro testou 12% mais rápida e preferiu o original).
+// Trilha enviada pelo usuário; efeitos do jogo permanecem sintetizados.
 export const VELOCIDADE_MUSICA = 1;
-const SEG_POR_TICK = 60 / (MUSICA.bpm * VELOCIDADE_MUSICA) / MUSICA.divisao, FIM_MUSICA = MUSICA.fim * SEG_POR_TICK + .6; // pausa curta antes de repetir
-const TOTAL_NOTAS = MUSICA.notas.length / 4;
-export function tocarNota(c, saida, t, nota, vel, dur) { // uma nota de piano (exportado para conferência)
-  const vol = .48 * vel / 127, grave = nota < 48; // pico da trilha ~0,08, como a música anterior
-  const queda = Math.min(2.2, Math.max(.18, dur + .12)); // a nota morre sozinha, como corda de piano
-  tom(c, saida, t, { f: N(nota), dur: queda, tipo: 'triangle', vol, ataque: .005, filtro: grave ? 700 : 2400 });
-  tom(c, saida, t, { f: N(nota + 12), dur: queda * .4, tipo: 'sine', vol: vol * (grave ? .15 : .25), ataque: .004 });
-}
-let relogioMusica = 0, inicioVolta = 0, indice = 0;
-function agendar() {
-  if (!ctx || ctx.state !== 'running') return;
-  const agora = ctx.currentTime;
-  if (!inicioVolta || inicioVolta + FIM_MUSICA < agora - 1) { inicioVolta = agora + .08; indice = 0; } // começo ou aba voltou de segundo plano
-  for (let n = 0; n < 64; n++) { // no máximo 64 notas por chamada
-    if (indice >= TOTAL_NOTAS) { if (inicioVolta + FIM_MUSICA > agora + .3) return; inicioVolta += FIM_MUSICA; indice = 0; }
-    const k = indice * 4, t = inicioVolta + MUSICA.notas[k] * SEG_POR_TICK;
-    if (t > agora + .3) return;
-    if (t >= agora - .05) tocarNota(ctx, trilha, Math.max(t, agora), MUSICA.notas[k + 2], MUSICA.notas[k + 3], MUSICA.notas[k + 1] * SEG_POR_TICK);
-    indice++;
+export const ARQUIVO_MUSICA = 'assets/audio/instrumental.mp3';
+let faixa = null, musicaPedida = false;
+function sincronizarTrilha() {
+  if (!musicaPedida || !ligado || !ativo) { faixa?.pause(); return; }
+  if (!faixa && typeof Audio !== 'undefined') {
+    faixa = new Audio(new URL(ARQUIVO_MUSICA, document.baseURI).href);
+    faixa.loop = true; faixa.preload = 'auto'; faixa.volume = VOLUME_MUSICA;
   }
+  if (faixa?.paused) faixa.play().catch(() => {}); // primeiro gesto tenta novamente se autoplay for bloqueado
 }
-export function musica(tocando) {
-  clearInterval(relogioMusica); relogioMusica = 0;
-  if (!tocando) return;
-  inicioVolta = 0; indice = 0;
-  relogioMusica = setInterval(agendar, 60);
-}
-
-// Tenta autoplay normal; o primeiro gesto continua retomando o áudio se o navegador bloquear.
+export function musica(tocando) { musicaPedida = tocando; sincronizarTrilha(); }
 export function tentarMusicaInicial() { acordar(); musica(true); }

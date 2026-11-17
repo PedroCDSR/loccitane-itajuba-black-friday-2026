@@ -7,7 +7,9 @@ export const CAMPANHA = {
   // Títulos em maiúsculas e minúsculas: na fonte pixel o acento das maiúsculas quase some (1 pixel).
   // Conversas do jogo. Pedro: texto dele mesmo (17/11/2026). Karina: texto ditado pelo Pedro (pedido de ajuda com os kits).
   conversas: {
-    pedro: { titulo: 'Pedro · L’Occitane Itajubá', texto: 'Oi! Eu sou o Pedro. Em janeiro de 2023 nós trouxemos a L’Occitane para Itajubá, com o objetivo de trazer uma nova forma de autocuidado para a cidade.', botao: 'CONTINUAR' },
+    pedro: { titulo: 'Pedro · L’Occitane Itajubá', texto: 'Sabe o que fez esse lugar especial? Cada pessoa que entrou, escolheu um presente e levou um pouquinho da nossa história.\n\nHoje é a sua vez de fazer parte dela. Leve os produtos até a Karina. Ainda temos uma última lembrança para criar juntos.', botao: 'VAMOS LÁ' },
+    mariana: { titulo: 'Mariana · L’Occitane Itajubá', texto: 'Oi! Sou a Mariana. Esse cantinho foi um projeto da nossa família… e acabou fazendo parte da história de tanta gente!\n\nVivemos muitas coisas boas aqui. Que bom ter você nessa última aventura!', botao: 'ATÉ JÁ' },
+    marcela: { titulo: 'Marcela · L’Occitane Itajubá', texto: 'Sou a Marcela! Adorei colocar um pouquinho da minha criatividade nas campanhas da loja. Foi muito especial fazer parte disso tudo.\n\nAgora corre lá! A Karina já está te esperando. Ainda tem uma surpresa pra você!', botao: 'VAMOS LÁ' },
     karina: { titulo: 'Karina · Showroom Itajubá', botao: 'VAMOS LÁ', texto: 'Que bom que você chegou! Preciso da sua ajuda para montar os kits de presente: cada um leva um Caju, uma Romã e uma caixa. As caixas estão no alto das estantes, lá dentro. Você consegue pegar para mim, por favor? Depois é só passar na bancada.' },
   },
   // Abertura encenada no jogo. Ficção de jogo: não descreve um incidente real da loja.

@@ -25,6 +25,8 @@ async function carregar() {
       ...['fachada','interior','caju','roma','bandeira-jardim','logo-tenda','selo-tenda'].map(n=>`assets/showroom/${n}.png`),
       'assets/produtos/capim-limao-colonia-sprite.png',
       'assets/personagens/karina/karina-spritesheet.png',
+      'assets/personagens/mariana/mariana-spritesheet.png',
+      'assets/personagens/marcela/marcela-spritesheet.png',
     ];
     let concluidos = 0;
     const total = arquivos.length + 1;

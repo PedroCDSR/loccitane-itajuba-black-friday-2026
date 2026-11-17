@@ -26,9 +26,10 @@ test('sem gesto da pessoa nenhum contexto de áudio é criado e tocar não quebr
   assert.deepEqual(som.historico, []);
 });
 
-test('nenhum arquivo de áudio externo no código do jogo', () => {
-  const fonte = readFileSync(new URL('../src/services/som.js', import.meta.url), 'utf8');
-  assert.doesNotMatch(fonte, /\.(mp3|ogg|wav|m4a)\b|fetch\(|new Audio\(/);
+test('instrumental local substitui a trilha antiga, com volume 0,9', () => {
+ assert.equal(som.VOLUME_MUSICA,.9);
+ assert.equal(som.ARQUIVO_MUSICA,'assets/audio/instrumental.mp3');
+ assert.ok(readFileSync(new URL('../public/assets/audio/instrumental.mp3',import.meta.url)).length>1000);
 });
 
 test('cada nota tem queda de volume no código, não dentro de comentário (sem estalo no fim)', () => {
@@ -37,15 +38,14 @@ test('cada nota tem queda de volume no código, não dentro de comentário (sem 
   assert.equal(ativas.filter(l => /exponentialRampToValueAtTime\(\.0001, t \+ dur\)/.test(l)).length, 2);
 });
 
-test('música de fundo vem do MIDI enviado pelo Pedro: notas válidas, em ordem, ~1 min 44 s', async () => {
-  const { MUSICA } = await import('../src/data/musica.js');
-  const n = MUSICA.notas;
-  assert.equal(n.length % 4, 0); assert.equal(n.length / 4, 1108);
-  for (let i = 0; i < n.length; i += 4) {
-    assert.ok(n[i + 1] > 0 && n[i + 2] >= 21 && n[i + 2] <= 108 && n[i + 3] > 0 && n[i + 3] <= 127);
-    if (i) assert.ok(n[i] >= n[i - 4], 'notas em ordem de início');
-  }
-  const segundos = MUSICA.fim / MUSICA.divisao * 60 / MUSICA.bpm;
-  assert.ok(segundos > 100 && segundos < 108, `${segundos} s`);
-  assert.equal(typeof som.tocarNota, 'function'); assert.equal(typeof som.musica, 'function');
+test('trilha pausa, retoma e respeita o controle de som', () => {
+ let play=0,pause=0;
+ globalThis.document={baseURI:'https://example.com/jogo/'};
+ globalThis.Audio=class {constructor(src){this.src=src;this.paused=true;}play(){play++;this.paused=false;return Promise.resolve();}pause(){pause++;this.paused=true;}};
+ som.musica(true);assert.equal(play,1);
+ som.definirAtivo(false);assert.equal(pause,1);
+ som.definirAtivo(true);assert.equal(play,2);
+ som.alternarSom();assert.equal(pause,2);
+ som.alternarSom();assert.equal(play,3);
+ som.musica(false);assert.equal(pause,3);
 });

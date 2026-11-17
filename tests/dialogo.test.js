@@ -26,9 +26,10 @@ test('Pedro na praça: conta a chegada da L’Occitane a Itajubá e não mexe na
   Object.assign(s,{tempo:5,fim:false,missao:{conversouKarina:false},tweens:{add(){entrou++;}},entrada:{ignorarAteSoltar(){}},jogador:{body:{setVelocity(){}},play(){}},pedro:{play:a=>tocadas.push(a),disableInteractive(){}},karina:{play(){}},physics:{world:{pause(){},resume(){}}}});
   s.abrirDialogo('pedro');
   assert.match(elements['dialogo-titulo'].textContent,/Pedro/);
-  assert.match(elements['dialogo-texto'].textContent,/janeiro de 2023/);
-  s.avancarDialogo();assert.match(elements['dialogo-texto'].textContent,/autocuidado/,'segunda página');assert.equal(s.dialogoAberto,'pedro','avançar a página não fecha a conversa');
-  s.avancarDialogo();assert.equal(s.dialogoAberto,false,'depois da última página, avançar fecha');
+  assert.match(elements['dialogo-texto'].textContent,/Sabe o que fez esse lugar especial/);
+  s.avancarDialogo();assert.match(elements['dialogo-texto'].textContent,/nossa história/,'segunda página');assert.equal(s.dialogoAberto,'pedro','avançar a página não fecha a conversa');
+  for(let i=0;i<20&&s.dialogoAberto;i++)s.avancarDialogo();
+  assert.equal(s.dialogoAberto,false,'depois da última página, avançar fecha');
   assert.equal(s.pedroConversou,true);assert.equal(s.missao.conversouKarina,false);assert.equal(entrou,0,'a Karina continua na porta do showroom');
   assert.deepEqual(tocadas,['pedro-conversa','pedro-parado']);
 });
