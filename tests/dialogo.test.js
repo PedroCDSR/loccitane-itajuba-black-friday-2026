@@ -13,17 +13,34 @@ test('conversa interrompe física/cronômetro e retoma uma vez descartando o inp
   const source=readFileSync(new URL('../src/game/Aventura.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/gm,'').replace('export class Aventura','class Aventura');
   const Klass=vm.runInNewContext(source+'\nAventura;',{Phaser:{Scene:class{}},CAMPANHA,SHOWROOM,paginar,tocar(){},document:{getElementById:id=>elements[id]}});
   const s=new Klass();let pauses=0,resumes=0,discard=0,velocity;
-  let entrou=0;Object.assign(s,{tempo:22,fim:false,missao:{conversouKarina:false},tweens:{add(){entrou++;}},karinaBancada:{},entrada:{limpar(){},ignorarAteSoltar(){discard++;},atualizar(){},interagirApertou:false},jogador:{body:{setVelocity(...v){velocity=v;}},play(){}},karina:{play(){},disableInteractive(){}},physics:{world:{pause(){pauses++;},resume(){resumes++;}}}});
+  let entrou=0;Object.assign(s,{tempo:22,fim:false,missao:{conversouKarina:false},tweens:{add(){entrou++;}},karinaBancada:{},entrada:{limpar(){},ignorarAteSoltar(){discard++;},atualizar(){},interagirApertou:false},jogador:{body:{setVelocity(...v){velocity=v;},setVelocityX(){},blocked:{down:true},touching:{},velocity:{y:0}},play(){}},karina:{play(){},disableInteractive(){}},physics:{world:{pause(){pauses++;},resume(){resumes++;}}}});
   s.abrirDialogo();assert.equal(elements.controles.hidden,false,'os botões ficam: esconder mudaria o tamanho da tela do jogo');assert.deepEqual(velocity,[0,0]);assert.equal(pauses,1);assert.equal(elements.dialogo.hidden,false);
   s.update(999999,2000);assert.equal(s.tempo,22);
   s.fecharDialogo();s.fecharDialogo();assert.equal(resumes,1);assert.equal(entrou,2,'Karina sai da porta e aparece na bancada uma vez só');assert.equal(s.missao.conversouKarina,true);assert.equal(elements.dialogo.hidden,true);assert.equal(discard,2);
+});
+test('conversa aberta no ar: a exploradora termina de cair e só então a cena congela',()=>{
+  const elements={dialogo:{hidden:true},'dialogo-texto':{},'dialogo-titulo':{},'fechar-dialogo':{hidden:true,focus(){}},controles:{hidden:false},interagir:{hidden:false}};
+  const source=readFileSync(new URL('../src/game/Aventura.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/gm,'').replace('export class Aventura','class Aventura');
+  const Klass=vm.runInNewContext(source+'\nAventura;',{Phaser:{Scene:class{}},CAMPANHA,SHOWROOM,paginar,tocar(){},document:{getElementById:id=>elements[id]}});
+  const s=new Klass();let pauses=0,quadros=0,avancos=0;
+  const body={blocked:{down:false},touching:{},velocity:{x:80,y:-200},setVelocity(x,y){body.velocity={x,y};},setVelocityX(x){body.velocity.x=x;},setVelocityY(y){body.velocity.y=y;}};
+  const capivara={vx:10,setVelocityX(v){capivara.vx=v;}};
+  Object.assign(s,{tempo:5,fim:false,missao:{conversouKarina:false},tweens:{add(){}},entrada:{ignorarAteSoltar(){},atualizar(){},interagirApertou:false,pularApertou:false},
+    capivaras:{getChildren:()=>[capivara]},atualizarCamera(){},avancarDialogo(){avancos++;},
+    jogador:{body,play(){},atualizar(entrada){quadros++;assert.equal(entrada.direita,false);if(quadros===3)body.blocked.down=true;return false;}},
+    pedro:{play(){},disableInteractive(){}},physics:{world:{pause(){pauses++;},resume(){}}}});
+  s.abrirDialogo('pedro');
+  assert.equal(pauses,0,'no ar a física continua');assert.equal(body.velocity.x,0);assert.ok(body.velocity.y>-200,'a subida é cortada');assert.equal(capivara.vx,0,'capivaras param durante a fala');
+  s.update(0,16);s.update(0,16);assert.equal(pauses,0);
+  s.update(0,16);assert.equal(pauses,1,'pousou: congela');assert.equal(s.pousando,false);
+  s.update(0,16);assert.equal(quadros,3,'depois de pousar não mexe mais nela');assert.equal(avancos,0);
 });
 test('Pedro na praça: convida a fazer parte da história e não mexe na missão do showroom',()=>{
   const elements={dialogo:{hidden:true},'dialogo-texto':{},'dialogo-titulo':{},'fechar-dialogo':{hidden:true,focus(){}},controles:{hidden:false},interagir:{hidden:false}};
   const source=readFileSync(new URL('../src/game/Aventura.js',import.meta.url),'utf8').replace(/^import[^\n]*\n/gm,'').replace('export class Aventura','class Aventura');
   const Klass=vm.runInNewContext(source+'\nAventura;',{Phaser:{Scene:class{}},CAMPANHA,SHOWROOM,paginar,tocar(){},document:{getElementById:id=>elements[id]}});
   const s=new Klass();const tocadas=[];let entrou=0;
-  Object.assign(s,{tempo:5,fim:false,missao:{conversouKarina:false},tweens:{add(){entrou++;}},entrada:{ignorarAteSoltar(){}},jogador:{body:{setVelocity(){}},play(){}},pedro:{play:a=>tocadas.push(a),disableInteractive(){}},karina:{play(){}},physics:{world:{pause(){},resume(){}}}});
+  Object.assign(s,{tempo:5,fim:false,missao:{conversouKarina:false},tweens:{add(){entrou++;}},entrada:{ignorarAteSoltar(){}},jogador:{body:{setVelocity(){},setVelocityX(){},blocked:{down:true},touching:{},velocity:{y:0}},play(){}},pedro:{play:a=>tocadas.push(a),disableInteractive(){}},karina:{play(){}},physics:{world:{pause(){},resume(){}}}});
   s.abrirDialogo('pedro');
   assert.match(elements['dialogo-titulo'].textContent,/Pedro/);
   assert.match(elements['dialogo-texto'].textContent,/Sabe o que tornou nosso showroom especial/);

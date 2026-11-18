@@ -51,6 +51,8 @@ const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
 // Dicas só na primeira partida da visita. Fica no módulo: o registry morre junto com o Phaser.Game a cada reinício.
 let tutorialVisto = false;
+// Entrada vazia: a exploradora termina de cair (gravidade e animação) sem obedecer aos botões.
+const PARADA = { esquerda: false, direita: false, pular: false, pularApertou: false, fruta: false, frutaApertou: false };
 
 export class Aventura extends Phaser.Scene {
   constructor() { super('Aventura'); }
@@ -95,7 +97,7 @@ export class Aventura extends Phaser.Scene {
     this.physics.add.collider(this.jogador, this.plataformas);
     // Toldo das tendas: ao cair sobre ele, quica alto (segurando PULAR vai mais alto).
     this.physics.add.collider(this.jogador, this.toldos, (j, toldo) => {
-      if (!j.body.touching.down) return;
+      if (!j.body.touching.down || this.dialogoAberto) return; // durante a fala ela só pousa, sem quicar
       j.quicar(this.entrada.pular ? 430 : 360); tocar('toldo'); this.tutorial?.concluir('toldo');
       const t = toldo.getData('visual'); // o toldo da fachada faz parte da arte de fundo: só quica
       if (t) this.tweens.add({ targets: t, scaleY: t.scaleY * .94, duration: 70, yoyo: true });
@@ -114,6 +116,7 @@ export class Aventura extends Phaser.Scene {
     this.physics.add.collider(this.capivaras, this.solidos);
     // Cair em cima faz a capivara dormir (e quica); encostar de lado tira 1 coração.
     this.physics.add.overlap(this.jogador, this.capivaras, (j, c) => {
+      if (this.dialogoAberto) return; // terminando de cair durante uma fala: sem pisão nem dano
       const contato = contatoCapivara({ vy: j.body.velocity.y, baseAnterior: j.body.prev.y + j.body.height },
         { topo: c.body.top, dormindo: c.getData('dormindo'), alimentada: c.getData('alimentada') });
       if (contato === 'pisao') { this.adormecer(c); return; }
@@ -389,8 +392,9 @@ export class Aventura extends Phaser.Scene {
       this.mostrarFala(l.titulo, l.texto, botao);
       return;
     }
+    if (this.dialogoAberto === 'presente') return; // o presente está a caminho
     if (this.dialogoAberto === 'karina-final') {
-      this.dialogoAberto = false; this.esconderFala(); this.concluir('vitrine'); return;
+      this.dialogoAberto = 'presente'; this.esconderFala(); this.entregarPresente(() => this.concluir('vitrine')); return;
     }
     if (this.dialogoAberto) this.fecharDialogo();
   }
@@ -468,7 +472,7 @@ export class Aventura extends Phaser.Scene {
   // quem: 'pedro' ou 'karina'. Textos em CAMPANHA.conversas.
   abrirDialogo(quem = 'karina') {
     this.dialogoAberto = quem; // mostrarFala descarta o toque que abriu a conversa
-    this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
+    this.pausarParaFala();
     (quem === 'karinaInterior' ? this.karinaBancada : this[quem]).play(`${quem === 'karinaInterior' ? 'karina' : quem}-conversa`); tocar('conversa');
     const fala = CAMPANHA.conversas[quem];
     this.mostrarFala(fala.titulo, fala.texto, fala.botao);
@@ -477,7 +481,7 @@ export class Aventura extends Phaser.Scene {
   fecharDialogo() {
     const quem = this.dialogoAberto;
     if (!quem) return;
-    this.dialogoAberto = false; this.esconderFala();
+    this.dialogoAberto = false; this.esconderFala(); this.pousando = false;
     if (quem === 'karinaInterior') {
       this.karinaInteriorFalou = true;
       this.entrada.ignorarAteSoltar(); this.physics.world.resume();
@@ -504,13 +508,14 @@ export class Aventura extends Phaser.Scene {
     // A exploradora pega as caixas; a Karina monta os presentes, sem receita de cosméticos.
     const prontas = Math.min(META_KITS, this.missao.coletados.caixa);
     if (prontas <= this.missao.kits) return;
+    const ultimo = prontas === META_KITS;
     for (let n = this.missao.kits; n < prontas; n++) {
-      this.estacoes[n]?.visual.setAlpha(1);
+      if (!(ultimo && n === META_KITS - 1)) this.estacoes[n]?.visual.setAlpha(1); // o último kit acende na cena de entrega
       if (!this.missao.estacoes.includes(n)) this.missao.estacoes.push(n);
     }
     this.missao.kits = prontas;
+    if (ultimo) { this.cenaEntrega(); return; }
     this.karinaBancada.play('karina-aceno'); tocar('kit'); this.atualizarHUD();
-    if (prontas === META_KITS) { this.tutorial?.esconder(); this.concluir('vitrine'); }
   }
 
   contextoInteracao() {
@@ -579,12 +584,72 @@ export class Aventura extends Phaser.Scene {
     aviso.classList.add('visivel'); this.objetivoSome?.remove?.();
     this.objetivoSome = this.time?.delayedCall(5000, () => aviso.classList.remove('visivel'));
   }
+  // Conversa abre na hora; se ela estiver no ar, termina de cair e só então a cena congela (ver pousar).
+  pausarParaFala() {
+    const j = this.jogador, corpo = j.body;
+    for (const c of this.capivaras?.getChildren() ?? []) c.setVelocityX(0);
+    corpo.setVelocityX(0);
+    if (corpo.blocked.down || corpo.touching.down) { corpo.setVelocity(0, 0); this.physics.world.pause(); j.play('parado'); this.pousando = false; return; }
+    j.subindoComBotao = false;
+    if (corpo.velocity.y < 0) corpo.setVelocityY(corpo.velocity.y * .3); // corta a subida, como soltar o PULAR
+    this.pousando = true;
+  }
+  pousar(delta) {
+    const j = this.jogador;
+    j.atualizar(PARADA, this.tempo * 1000, delta); this.atualizarCamera();
+    if (!(j.body.blocked.down || j.body.touching.down)) return;
+    this.pousando = false; j.body.setVelocity(0, 0); this.physics.world.pause(); j.play('parado');
+  }
+  // Cena da última caixa: ela voa até a bancada e vira o terceiro kit; a tela escurece e a exploradora
+  // reaparece no chão, diante da Karina, para ouvir o agradecimento.
+  cenaEntrega() {
+    this.estado = 'cena'; this.entrada.limpar(); this.tutorial?.esconder(); this.guia.esconder(); $('interagir').hidden = true;
+    $('objetivo-aviso')?.classList?.remove('visivel'); // o "2/3" não fica na tela durante a cena
+    const j = this.jogador, estacao = this.estacoes[META_KITS - 1];
+    const caixa = this.add.image(j.x, j.y - 34, 'embalagem').setScale(.3).setDepth(8);
+    const [x0, y0, x1, y1] = [caixa.x, caixa.y, estacao.x, py(646) - 8];
+    this.tweens.addCounter({ from: 0, to: 1, duration: 800, ease: 'Sine.inOut',
+      onUpdate: t => { const k = t.getValue(); caixa.setPosition(x0 + (x1 - x0) * k, y0 + (y1 - y0) * k - 36 * Math.sin(Math.PI * k)); caixa.setAngle(360 * k); },
+      onComplete: () => {
+        caixa.destroy(); tocar('kit'); this.karinaBancada.play('karina-aceno'); this.atualizarHUD();
+        const v = estacao.visual, base = v.scale; v.setAlpha(1);
+        this.tweens.add({ targets: v, scale: base * 1.25, duration: 160, yoyo: true });
+        this.time.delayedCall(900, () => this.reunirComKarina());
+      } });
+  }
+  reunirComKarina() {
+    const cam = this.cameras.main;
+    cam.fadeOut(350, 30, 16, 22);
+    cam.once('camerafadeoutcomplete', () => {
+      // à direita da Karina, virada para ela
+      const j = this.jogador, x = this.karinaBancada.x + 30;
+      j.body.reset(x, CHAO); j.olhandoDireita = false; j.estavaNoAr = false; j.setFlipX(true); j.play('parado');
+      this.karinaBancada.play('karina-parada'); cam.centerOn(x - 15, 180);
+      this.time.delayedCall(250, () => {
+        cam.fadeIn(400, 30, 16, 22);
+        cam.once('camerafadeincomplete', () => this.concluir('vitrine'));
+      });
+    });
+  }
+  // Depois da despedida, um presente sai das mãos da Karina e chega à exploradora; aí vem o cupom.
+  entregarPresente(pronto) {
+    const k = this.karinaBancada, j = this.jogador;
+    k.play('karina-aceno');
+    const p = this.add.image(k.x + 6, k.y - 26, 'presente').setOrigin(.5, 1).setScale(.24).setDepth(8);
+    const [x0, y0, x1, y1] = [p.x, p.y, j.x + (j.olhandoDireita ? 4 : -4), j.y - 30];
+    this.tweens.addCounter({ from: 0, to: 1, duration: 750, ease: 'Sine.inOut',
+      onUpdate: t => { const n = t.getValue(); p.setPosition(x0 + (x1 - x0) * n, y0 + (y1 - y0) * n - 22 * Math.sin(Math.PI * n)); },
+      onComplete: () => {
+        tocar('caixa');
+        this.tweens.add({ targets: p, scale: .34, duration: 220, yoyo: true, onComplete: () => this.time.delayedCall(250, pronto) });
+      } });
+  }
   concluir(motivo) {
     if (this.fim) return;
     if (!this.despedidaKarina) {
       this.despedidaKarina = true;
       this.dialogoAberto = 'karina-final';
-      this.jogador.body.setVelocity(0, 0); this.physics.world.pause(); this.jogador.play('parado');
+      this.pausarParaFala();
       this.karinaBancada?.play('karina-conversa');
       const fala = CAMPANHA.conversas.karinaFinal;
       this.mostrarFala(fala.titulo, fala.texto, fala.botao);
@@ -640,8 +705,13 @@ export class Aventura extends Phaser.Scene {
       if (this.entrada.interagirApertou || this.entrada.pularApertou) this.avancarDialogo();
       this.atualizarCamera(); return;
     }
-    if (this.dialogoAberto) { if (this.entrada.interagirApertou || this.entrada.pularApertou) this.avancarDialogo(); return; }
+    if (this.dialogoAberto) {
+      if (this.pousando) this.pousar(delta);
+      if (this.entrada.interagirApertou || this.entrada.pularApertou) this.avancarDialogo();
+      return;
+    }
     if (this.estado === 'transicao') return;
+    if (this.estado === 'cena') { this.tempo += delta / 1000; this.jogador.atualizar(PARADA, this.tempo * 1000, delta); this.atualizarCamera(); return; }
     this.tempo += delta / 1000;
     const agora = this.tempo * 1000; // relógio de jogo ativo (invencibilidade, avisos): pausa, intro, transição e conversa não contam
     const soltou = this.jogador.atualizar(this.entrada, agora, delta, true);

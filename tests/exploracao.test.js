@@ -51,14 +51,23 @@ test('última caixa inicia agradecimento da Karina sem exigir saída ou produtos
   s.update(0, 16); assert.equal(s.fim, false, 'sem kits a saída não conclui');
   s.mostrarFala = (titulo, texto, botao) => { s.falaFinal = { titulo, texto, botao }; };
   s.esconderFala = () => {}; s.avancarFala = () => false;
-  s.karinaInteriorFalou = true; s.karinaBancada = {play(){}};
+  s.karinaInteriorFalou = true; s.karinaBancada = { x: SHOWROOM.x + 549, y: 240, play() {} };
+  // cena com tweens e câmera instantâneos: caixa voa → kit → escurece → reposiciona → fala → presente → cupom
+  const criados = [];
+  const obj = () => { const o = { setScale: () => o, setDepth: () => o, setOrigin: () => o, setPosition: () => o, setAngle: () => o, destroy() { o.destruido = true; } }; criados.push(o); return o; };
+  s.add = { image: obj }; s.tweens = { addCounter(c) { c.onUpdate({ getValue: () => 1 }); c.onComplete(); }, add(c) { c.onComplete?.(); } };
+  s.estacoes = [0, 1, 2].map(i => ({ x: SHOWROOM.x + 480 + i * 20, visual: { alpha: .28, scale: .3, setAlpha(a) { this.alpha = a; } } }));
+  Object.assign(s.jogador.body, { blocked: { down: true }, touching: {}, velocity: { y: 0 }, setVelocityX() {}, setVelocityY() {} }); s.jogador.setFlipX = () => {};
   s.missao.coletados.caixa = META_KITS; s.update(0, 16);
   assert.equal(s.fim, false); assert.equal(s.emitidos.length, 0);
+  assert.equal(s.estacoes[2].visual.alpha, 1, 'a última caixa vira o terceiro kit');
+  assert.equal(s.jogador.x, s.karinaBancada.x + 30, 'a exploradora reaparece à direita da Karina'); assert.equal(s.jogador.olhandoDireita, false, 'virada para a Karina'); assert.equal(s.jogador.y, 240);
   assert.equal(s.dialogoAberto, 'karina-final');
   assert.equal(s.falaFinal.botao, 'REVELAR MEU PRESENTE');
   assert.match(s.falaFinal.texto, /Muito obrigada/);
   s.avancarDialogo();
   assert.equal(s.fim, true); assert.equal(s.emitidos[0][1].motivo, 'vitrine');
+  assert.equal(criados.length, 2, 'uma caixa voando para a bancada e um presente para a exploradora');
 });
 
 test('voltar à cidade e retornar ao showroom preserva missão, itens e capivaras, sem disparar em loop', () => {
