@@ -113,3 +113,33 @@ body.preparando header,body.preparando footer{visibility:hidden}.abertura-loadin
 /* Abertura enxuta: a história e Jogar cabem na primeira tela móvel. */
 body:not(.jogando) header{padding:14px 18px}body:not(.jogando) main{padding:20px 14px}.pergaminho{padding:22px clamp(20px,5vw,45px);margin:8px auto 24px;max-width:620px}.pergaminho .era-uma-vez{font:italic 700 23px/1.3 Georgia,serif;margin:13px 0 17px}.pergaminho .eyebrow{font-size:7px;margin:0}.historia-abertura{font:17px/1.55 Georgia,'Times New Roman',serif;letter-spacing:.005em}.historia-abertura p{margin:0 0 14px}.historia-abertura p:first-child::first-letter{font-size:40px}.historia-abertura .chamada-final{font-size:18px;line-height:1.5;margin:18px 0 12px}.chamada-final strong{font-weight:700}.chamada-final span{color:#942c39}.pergaminho #jogar{margin:5px auto 3px;min-height:48px;padding:12px 25px}.pergaminho ~ footer{display:none}#encerramento>.eyebrow{display:none}#encerramento-titulo{margin:10px 0 14px;font-size:18px}.encerramento .cupom-palco{margin:16px auto}.encerramento .selo-conquista{margin:8px 0}.encerramento #resgatar-premio{margin-top:12px}.faixa-liberada{background:#942c39;color:#fff4df;font-weight:bold}@media(max-width:480px){.pergaminho{padding:20px 20px 16px}.historia-abertura{font-size:16px;line-height:1.5}.historia-abertura p{margin-bottom:12px}.historia-abertura .chamada-final{font-size:17px;margin:14px 0 10px}.pergaminho .era-uma-vez{font-size:21px;margin:12px 0 15px}.pergaminho .eyebrow{font-size:6px}.marca{font-size:16px}}@media(max-height:700px) and (max-width:480px){body:not(.jogando) header{padding:10px 14px}body:not(.jogando) main{padding:15px 12px}.pergaminho{padding:16px 18px 12px}.historia-abertura{font-size:15px;line-height:1.45}.historia-abertura .chamada-final{font-size:16px;margin:10px 0 8px}.pergaminho .era-uma-vez{font-size:19px;margin:9px 0 12px}}
 .acoes-sociais{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:440px;margin:18px auto 12px}.acoes-sociais a,.acoes-sociais button{flex:1;min-width:98px;min-height:44px;display:flex;align-items:center;justify-content:center;padding:10px 8px;border:1px solid #942c3955;background:transparent;color:#942c39;font:12px system-ui,sans-serif;text-decoration:none;border-radius:3px}.acoes-sociais a:hover,.acoes-sociais button:hover{background:#942c390d}.salvar-convite{font-size:12px;color:#304f3d;display:inline-block;padding:8px}
+/* Título recebe foco programático (leitores de tela) no final; sem contorno, pois não é um controle. */
+#encerramento-titulo:focus{outline:none}
+/* Celular deitado (altura baixa): o painel verde empilhado deixava ~110–250 px de jogo e a fala cobria tudo
+   (a 640×360 a caixa ficava por cima de PULAR ABERTURA). Aqui os botões flutuam sobre a parte de baixo do jogo. */
+@media (orientation:landscape) and (max-height:500px){
+  body.jogando #partida{max-width:none}
+  #partida #painel{position:absolute;left:0;right:0;bottom:0;z-index:7;background:none;pointer-events:none;padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+  #partida #controles .grupo,#partida #controles #interagir{pointer-events:auto}
+  #partida #controles [data-controle=esquerda],#partida #controles [data-controle=direita],#partida #controles .caju{width:60px;height:60px;background-color:#304f3dcc}
+  #partida #controles .caju{background-color:#c8762fe6}
+  #partida #controles .pular{width:72px;height:72px}
+  #partida #controles #interagir{left:auto;right:0;width:auto;min-width:200px}
+  #partida #dialogo{top:calc(env(safe-area-inset-top,0px) + 56px)}
+  /* dica no alto, longe da exploradora (que fica na faixa dos botões) */
+  #partida #painel #dica{position:fixed;top:calc(env(safe-area-inset-top,0px) + 112px);bottom:auto;left:50%;right:auto;width:min(520px,70vw);transform:translateX(-50%)}
+  #partida #painel #dica::after{display:none}
+  #partida #painel #dica p{font-size:13px;padding:7px 12px}
+}
+/* Abertura com o celular deitado: compacta o pergaminho para o Jogar caber sem rolar. */
+@media (orientation:landscape) and (max-height:500px){
+  body:not(.jogando) header{padding:6px 16px}
+  body:not(.jogando) main{padding:8px 12px}
+  .pergaminho{padding:12px 28px 10px;margin:4px auto 16px}
+  .pergaminho .era-uma-vez{font-size:17px;margin:4px 0 6px}
+  .historia-abertura{max-width:640px;font-size:14px;line-height:1.4}
+  .historia-abertura p{margin:0 0 6px}
+  .historia-abertura p:first-child::first-letter{font-size:30px;padding-top:3px}
+  .historia-abertura .chamada-final{font-size:15px;margin:6px 0 4px}
+  .pergaminho #jogar{min-height:44px;padding:8px 22px;margin-top:2px}
+}
