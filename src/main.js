@@ -81,9 +81,9 @@ $('resgate').onsubmit=e=>{
 };
 $('compartilhar').href=linkCompartilhar(window.location.href);$('compartilhar').onclick=()=>registrar('clique_compartilhar');
 
-// O Netlify injeta o selo "Powered by Netlify" (#nl-badge-frame) nas páginas publicadas. No plano pago (Personal)
-// o próprio script do selo permite escondê-lo; aqui ele some para todos, sem cobrir os botões do jogo.
-const verSelo=()=>{const selo=document.getElementById('nl-badge-frame');if(selo)selo.style.setProperty('display','none','important');};
+// O selo do plano gratuito do Netlify fica fixo no canto de baixo. Sem escondê-lo, o painel ganha folga embaixo
+// para o selo não cobrir os botões.
+const verSelo=()=>document.body.classList.toggle('com-selo',!!document.getElementById('nl-badge-frame'));
 if(typeof MutationObserver!=='undefined'){new MutationObserver(verSelo).observe(document.body,{childList:true});verSelo();}
 
 window.addEventListener('aventura:voltar-inicio',()=>{emPartida=false;pausado=false;$('pausa').hidden=true;definirAtivo(true);musica(true);});
