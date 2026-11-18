@@ -3,7 +3,8 @@ import { registrar } from './services/metricas.js';
 const $ = id => document.getElementById(id);
 const pagina = new URL(import.meta.env.BASE_URL, window.location.href);
 pagina.search = ''; pagina.hash = '';
-const texto = `Vem viver essa última aventura por Itajubá comigo! Jogue, encontre a família no showroom e descubra sua recompensa: ${pagina.href}`;
+const texto = `Acabei de jogar a última aventura da L’Occitane Itajubá e desbloqueei um desconto! 🎁 Vem passear por Itajubá e descobrir sua recompensa também:
+${pagina.href}`;
 let imagem, pedido = null;
 $('instagram-final').href = CAMPANHA.instagram;
 $('whatsapp-final').href = `https://wa.me/${CAMPANHA.whatsapp}`;
