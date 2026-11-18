@@ -1,6 +1,6 @@
 import './compartilhar-jogo.js';
 import { CAMPANHA } from './data/campanha.js';
-import { RECOMPENSAS, RECOMPENSA_FINAL, FAIXAS, desempenho } from './data/recompensas.js';
+import { RECOMPENSAS, RECOMPENSA_FINAL, desempenho } from './data/recompensas.js';
 import { linkCupomWhatsApp } from './services/cupom.js';
 import { tocar } from './services/som.js';
 const $ = id => document.getElementById(id);
@@ -37,15 +37,6 @@ function abrirFinal(resultado = {}, teste = false) {
   const chave = placar.chave;
   atual = RECOMPENSAS[chave] || RECOMPENSAS[RECOMPENSA_FINAL];
   pagina = 0;
-  $('placar-produtos').textContent = `${placar.produtos} produtos × 10 = ${placar.pontosProdutos} pontos`;
-  $('placar-kits').textContent = `${placar.vida} vidas ao chegar · menor vida: ${placar.vidaMinima} · produtos fora do showroom: ${placar.brindes}/2`;
-  $('placar-total').textContent = `${placar.total} pontos`;
-  for (const faixa of FAIXAS) {
-    const linha = $(`faixa-${faixa.chave}`);
-    linha.classList.toggle('faixa-liberada', faixa.chave === chave);
-    linha.querySelector('td:first-child').textContent = faixa.regra;
-    linha.querySelector('td:last-child').textContent = faixa.chave === chave ? 'Seu cupom ✦' : 'Não selecionado';
-  }
   $('inicio').hidden = true;
   $('partida').hidden = true;
   $('pausa').hidden = true;

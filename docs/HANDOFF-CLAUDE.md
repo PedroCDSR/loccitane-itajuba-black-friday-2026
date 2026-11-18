@@ -18,7 +18,7 @@ Atualizado em17/11/2026. Este documento substitui a direção histórica de HAND
 - Mariana: prancha aprovada preservada. Marcela: runtime usa uma nova exportação baseada na folha aprovada, porque o arquivo original exibido no chat não ficou disponível; essa diferença está documentada em references/personagens/README.md.
 - Karina acolhe na porta. Ao entrar, espera perto da entrada e pede ajuda com caixas nas prateleiras. Depois segue à bancada. A exploradora pega3 caixas, Karina monta kits automaticamente. Cosméticos não são consumidos. Última caixa inicia agradecimento com caixa de diálogo padrão dentro do showroom; último avanço revela prêmio.
 - Não existe placa/objetivo de saída nem obrigação de caminhar até saída para concluir. Manter retorno à cidade durante a exploração.
-- Final: cupom quadrado como recompensa, breve comemoração, resgate abaixo da imagem em destaque. Desconto explicitamente em toda a loja. Placar detalhado e ações Compartilhe, Instagram, WhatsApp são secundários. Nenhum envio automático de mensagem.
+- Final: cupom quadrado como recompensa, breve comemoração, resgate abaixo da imagem em destaque. Desconto explicitamente em toda a loja. Sem placar, estatísticas ou critérios visíveis no final (pedido atualizado). Abaixo das ações Compartilhe, Instagram e WhatsApp, mostrar “* Desconto válido para uma compra por CPF.”, divisor e despedida com moldura pixelada, dois parágrafos na mesma fonte/tamanho e coração ao final. O cálculo interno das recompensas permanece igual. Nenhum envio automático de mensagem.
 
 ## Pontuação atual
 
