@@ -18,3 +18,7 @@ Os três recortes preservam os pixels da folha fonte. Esta folha foi gerada nova
 Ainda não conectados ao loader. Usar progresso real do carregamento para selecionar o estado, sem temporizador fictício; mostrar 100% somente ao concluir. Pré-carregar estes próprios indicadores antes dos assets principais, com fallback simples de texto.
 
 São propostas visuais, não uma animação normalizada: escalas e margens de 0/20 e 50/70/100 diferem e precisam de alinhamento antes da integração. A folha tripla contém halo semitransparente em torno dos frascos; revisar sobre o fundo verde e remover o halo antes do acabamento final. Os níveis de líquido são ilustrativos, sem medição geométrica exata. Nenhum teste visual em navegador foi feito nesta rodada.
+
+## Versões de runtime (18/11/2026)
+
+O loader usa `caju-000.webp` … `caju-100.webp`: as mesmas artes reduzidas para 900 px de altura (LANCZOS, WebP q88). Exibidas a 300 px de altura no máximo, ficam idênticas na tela e somam ~260 KB contra ~3,3 MB dos PNG, que eram baixados antes do primeiro indicador aparecer. Os PNG acima continuam como fonte.

@@ -6,7 +6,7 @@ const etapas = [0, 20, 50, 70, 100];
 const estados = [];
 function mostrar(valor) {
   const etapa = etapas.filter(e => e <= valor).at(-1);
-  $('caju-loading').src = `${base}assets/carregamento/caju-${String(etapa).padStart(3,'0')}.png`;
+  $('caju-loading').src = `${base}assets/carregamento/caju-${String(etapa).padStart(3,'0')}.webp`;
   $('progresso-abertura').value = valor;
   $('texto-abertura').textContent = `Preparando sua aventura… ${valor}%`;
 }
@@ -16,7 +16,7 @@ async function carregar() {
     // Primeiro os próprios indicadores; nunca avançar por um relógio fictício.
     await Promise.all(etapas.map(n => new Promise(resolve => {
       const img = new Image(); estados.push(img); img.onload = img.onerror = resolve;
-      img.src = `${base}assets/carregamento/caju-${String(n).padStart(3,'0')}.png`;
+      img.src = `${base}assets/carregamento/caju-${String(n).padStart(3,'0')}.webp`;
     })));
     const arquivos = [
       ...Object.values(CIDADE).map(n=>`assets/runtime-cidade/${n}.webp`),
