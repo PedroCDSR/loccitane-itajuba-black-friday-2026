@@ -49,6 +49,8 @@ const DESENHADAS = ['tenda', 'placa', 'brilho', 'bandeira', 'capivara-dormindo',
 const ESCALA = SHOWROOM.largura / 1672; // as artes do showroom foram desenhadas em 1672 px de largura
 const px = (base, x) => base + x * ESCALA, py = y => SHOWROOM.topo + y * ESCALA;
 const $ = id => document.getElementById(id);
+// Dicas só na primeira partida da visita. Fica no módulo: o registry morre junto com o Phaser.Game a cada reinício.
+let tutorialVisto = false;
 
 export class Aventura extends Phaser.Scene {
   constructor() { super('Aventura'); }
@@ -406,7 +408,7 @@ export class Aventura extends Phaser.Scene {
     this.entrada.ignorarAteSoltar();
     $('controles').hidden = false; $('dialogo').hidden = true;
     // dicas só na primeira partida desta visita
-    this.tutorial = new Tutorial(!this.registry.get('tutorialVisto')); this.registry.set('tutorialVisto', true);
+    this.tutorial = new Tutorial(!tutorialVisto); tutorialVisto = true;
     this.tutorial.mostrar('andar', 0);
     this.ultimoHUD = ''; this.atualizarHUD();
   }
@@ -437,7 +439,7 @@ export class Aventura extends Phaser.Scene {
         this.trecho = trecho;
         if (trecho === 'interior') {
           if (!this.karinaConversou) this.karinaEntra();
-          if (this.missao.fase !== 'showroom') { this.missao.fase = 'showroom'; this.time.delayedCall(900, () => this.aviso('Caixas no alto das estantes!')); }
+          if (this.missao.fase !== 'showroom') { this.missao.fase = 'showroom'; this.time.delayedCall(900, () => { if (!this.dialogoAberto) this.aviso('Caixas no alto das estantes!'); }); }
         }
         this.physics.world.setBounds(TRECHO[trecho], 0, SHOWROOM.largura, ALTURA);
         this.jogador.body.reset(chegada, trecho === 'fachada' ? chaoFachada(chegada) : CHAO); this.jogador.olhandoDireita = direita; this.checkpoint = chegada;
