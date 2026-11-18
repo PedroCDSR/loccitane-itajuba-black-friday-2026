@@ -27,7 +27,7 @@ body.jogando #partida{display:flex;flex-direction:column;height:100dvh;max-width
 #partida #jogo{position:absolute;inset:0;width:auto;aspect-ratio:auto}
 #partida #painel{position:relative;flex:none;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;
   padding:12px max(12px,env(safe-area-inset-left,0px)) calc(14px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-right,0px));background:linear-gradient(#304f3d,#26402f)}
-body.com-selo #partida #painel{padding-bottom:calc(82px + env(safe-area-inset-bottom,0px))}
+
 /* falas da abertura e do Pedro: no painel, no lugar dos botões */
 /* botões */
 #partida #controles{position:static;display:flex;flex-direction:column;gap:10px;padding:0;background:none;pointer-events:auto}
@@ -150,3 +150,6 @@ body:not(.jogando) header{padding:14px 18px}body:not(.jogando) main{padding:20px
 .despedida-final p{font:clamp(10px,2.65vw,12px)/2.15 Pixel,monospace;font-weight:400;letter-spacing:0;margin:0;text-align:center;overflow-wrap:break-word}
 .despedida-final p+p{margin-top:24px}
 .coracao-despedida{display:block;width:36px;height:32px;margin:26px auto 0}
+
+/* selo do Netlify: escondido também por CSS, caso apareça antes do script do jogo */
+#nl-badge-frame{display:none!important}
