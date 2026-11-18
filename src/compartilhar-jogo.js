@@ -1,4 +1,5 @@
 import { CAMPANHA } from './data/campanha.js';
+import { registrar } from './services/metricas.js';
 const $ = id => document.getElementById(id);
 const pagina = new URL(import.meta.env.BASE_URL, window.location.href);
 pagina.search = ''; pagina.hash = '';
@@ -6,6 +7,8 @@ const texto = `Vem viver essa última aventura por Itajubá comigo! Jogue, encon
 let imagem, pedido = null;
 $('instagram-final').href = CAMPANHA.instagram;
 $('whatsapp-final').href = `https://wa.me/${CAMPANHA.whatsapp}`;
+$('instagram-final').addEventListener('click', () => registrar('instagram'));
+$('whatsapp-final').addEventListener('click', () => registrar('whatsapp'));
 // Prepara a imagem antes do clique para preservar a ativação do usuário ao abrir o menu nativo.
 // Fora da abertura: são ~2,5 MB que antes disputavam o carregamento inicial. Baixa uns segundos depois de começar
 // a partida (já com a cidade carregada) ou, no mais tardar, no encerramento.
@@ -26,11 +29,13 @@ $('compartilhar-jogo').onclick = async () => {
       const dados = {title:'Uma última aventura · L’Occitane Itajubá',text:texto};
       if (imagem && navigator.canShare?.({files:[imagem]})) dados.files = [imagem];
       await navigator.share(dados);
+      registrar('compartilhou');
     } else {
-      $('salvar-convite').hidden = false;
+      $('salvar-convite').hidden = false; registrar('compartilhar_fallback');
       window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank', 'noopener,noreferrer');
     }
   } catch (erro) {
+    registrar(erro.name === 'AbortError' ? 'compartilhar_cancelado' : 'compartilhar_fallback');
     if (erro.name !== 'AbortError') {
       status.hidden = false;
       status.textContent = 'Salve a imagem abaixo e compartilhe com quem você quer convidar.';

@@ -3,9 +3,10 @@ import { CAMPANHA } from './data/campanha.js';
 import { RECOMPENSAS, RECOMPENSA_FINAL, desempenho } from './data/recompensas.js';
 import { linkCupomWhatsApp } from './services/cupom.js';
 import { tocar } from './services/som.js';
+import { registrar } from './services/metricas.js';
 const $ = id => document.getElementById(id);
 const base = import.meta.env.BASE_URL;
-let pagina = 0, atual, falas = [], sessao = 0;
+let pagina = 0, atual, falas = [], sessao = 0, chaveAtual = 'roma';
 
 function prepararImagem() {
   const token = ++sessao;
@@ -36,6 +37,7 @@ function abrirFinal(resultado = {}, teste = false) {
   const placar = desempenho(resultado);
   const chave = placar.chave;
   atual = RECOMPENSAS[chave] || RECOMPENSAS[RECOMPENSA_FINAL];
+  chaveAtual = RECOMPENSAS[chave] ? chave : RECOMPENSA_FINAL;
   pagina = 0;
   $('inicio').hidden = true;
   $('partida').hidden = true;
@@ -62,7 +64,8 @@ $('voltar-inicio').onclick = () => {
   window.dispatchEvent(new CustomEvent('aventura:voltar-inicio'));
   $('jogar').focus();
 };
-window.addEventListener('aventura:encerramento', e => abrirFinal(e.detail));
+window.addEventListener('aventura:encerramento', e => { abrirFinal(e.detail); registrar(`cupom_${chaveAtual}`); });
+$('resgatar-premio').addEventListener('click', () => registrar(`resgatar_${chaveAtual}`));
 // Confetes CSS finitos; sem loop de renderização ou dependência adicional.
 for (let i = 0; i < 22; i++) {
   const p = document.createElement('i');
