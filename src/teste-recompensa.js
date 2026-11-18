@@ -45,7 +45,6 @@ function abrirFinal(resultado = {}, teste = false) {
   $('pausar').hidden = true;
   document.body.classList.remove('jogando');
   $('final').hidden = false;
-  $('encerramento-titulo').textContent = 'Vitrine pronta!';
   $('premio-final').hidden = false;
   $('premio-final').classList.remove('revelado');
   $('titulo-premio').textContent = `Você ganhou ${atual.percentual}% de desconto em toda a loja!`;
@@ -53,7 +52,7 @@ function abrirFinal(resultado = {}, teste = false) {
   $('resgatar-premio').href = linkCupomWhatsApp(CAMPANHA.whatsapp, url.href, atual);
   $('voltar-inicio').textContent = teste ? 'Voltar ao início · testar outro cupom' : 'Voltar ao início';
   prepararImagem(); // Pré-carrega durante a conversa; CTA só aparece na revelação.
-  $('encerramento-titulo').focus();
+  $('recompensa-titulo').focus();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 $('recarregar-premio').onclick = prepararImagem;
