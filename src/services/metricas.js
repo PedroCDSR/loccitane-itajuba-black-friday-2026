@@ -1,6 +1,7 @@
 // Métricas anônimas no GoatCounter (painel: https://loccitane-itajuba.goatcounter.com).
 // Sem cookies e sem dados pessoais: só nomes fixos de eventos. Nunca enviar nome, telefone ou texto de mensagem.
 // O script oficial (index.html) não conta em localhost; em teste local os eventos só aparecem no console.
+// Na dev (dev--…netlify.app) visitas entram como /dev/… e eventos como dev/…, para não misturar com produção.
 const EVENTOS = {
   inicio: 'partida-iniciada',
   chegada_showroom: 'chegou-showroom',
@@ -20,7 +21,7 @@ const fila = [];
 function enviar(caminho) {
   const gc = typeof window !== 'undefined' ? window.goatcounter : undefined;
   if (!gc?.count) { if (fila.length < 30) fila.push(caminho); return; } // script ainda carregando (ou bloqueado)
-  try { gc.count({ path: caminho, title: caminho, event: true }); } catch { /* métrica nunca quebra o jogo */ }
+  try { gc.count({ path: (location.hostname.startsWith('dev--') ? 'dev/' : '') + caminho, title: caminho, event: true }); } catch { /* métrica nunca quebra o jogo */ }
 }
 // Esvazia a fila quando o script do GoatCounter terminar de carregar.
 if (typeof window !== 'undefined' && typeof setInterval === 'function') {
